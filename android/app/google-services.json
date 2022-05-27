@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "159254472357",
+    "project_id": "dropshare-b6a08",
+    "storage_bucket": "dropshare-b6a08.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:159254472357:android:124296210fd6a81e29cf4c",
+        "android_client_info": {
+          "package_name": "com.dropshare.dropshare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "159254472357-pve0kcehl8qbhre34skit1nv0n47s6vm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAXaCAASqqQbq7K2rZb3JJX7dfB_Outvo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "159254472357-pve0kcehl8qbhre34skit1nv0n47s6vm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
