@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'locationpicker.dart';
+import '../locations/locationpicker.dart';
 
 class Create extends StatefulWidget {
   const Create({Key? key}) : super(key: key);
@@ -23,7 +23,7 @@ class _CreateState extends State<Create> {
         child: ListView(children: [
           CupertinoFormSection(margin: const EdgeInsets.all(12), children: [
             CupertinoTextFormFieldRow(
-              placeholder: 'Title',
+                placeholder: 'Title',
             ),
             CupertinoTextFormFieldRow(
                 placeholder: 'Price',

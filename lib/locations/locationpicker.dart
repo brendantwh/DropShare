@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'location.dart';
 
 class LocationPicker extends StatefulWidget {
   const LocationPicker({Key? key}) : super(key: key);
@@ -8,22 +9,6 @@ class LocationPicker extends StatefulWidget {
 }
 
 class _LocationPickerState extends State<LocationPicker> {
-  final List<String> _locations = <String>[
-    'Eusoff',
-    'Kent Ridge',
-    'KE VII',
-    'Raffles',
-    'Sheares',
-    'Temasek',
-    'PGP',
-    'RVRC',
-    'CAPT',
-    'RC4',
-    'Tembusu',
-    'NUSC',
-    'UTR',
-  ];
-
   final double _kItemExtent = 32.0;
   int _selectedLocation = 0;
 
@@ -31,7 +16,7 @@ class _LocationPickerState extends State<LocationPicker> {
     showCupertinoModalPopup<void>(
         context: context,
         builder: (BuildContext context) => Container(
-              height: 216,
+              height: 250,
               padding: const EdgeInsets.only(top: 6.0),
               // The Bottom margin is provided to align the popup above the system navigation bar.
               margin: EdgeInsets.only(
@@ -50,25 +35,23 @@ class _LocationPickerState extends State<LocationPicker> {
   @override
   Widget build(BuildContext context) {
     return CupertinoButton(
-        padding: EdgeInsets.zero,
-        onPressed: () => _showDialog(
-              CupertinoPicker(
-                  magnification: 1.22,
-                  squeeze: 1.2,
-                  useMagnifier: true,
-                  itemExtent: _kItemExtent,
-                  onSelectedItemChanged: (int selectedItem) {
-                    setState(() {
-                      _selectedLocation = selectedItem;
-                    });
-                  },
-                  children:
-                      List<Widget>.generate(_locations.length, (int index) {
-                    return Center(child: Text(_locations[index]));
-                  })),
-            ),
-        child: Text(
-          _locations[_selectedLocation],
-        ));
+      padding: EdgeInsets.zero,
+      onPressed: () => _showDialog(
+        CupertinoPicker(
+            magnification: 1.22,
+            squeeze: 1.2,
+            useMagnifier: true,
+            itemExtent: _kItemExtent,
+            onSelectedItemChanged: (int location) {
+              setState(() {
+                _selectedLocation = location;
+              });
+            },
+            children: List<Widget>.generate(Location.count, (int index) {
+              return Center(child: Text(Location.values[index].locationName));
+            })),
+      ),
+      child: Text(Location.values[_selectedLocation].locationName),
+    );
   }
 }

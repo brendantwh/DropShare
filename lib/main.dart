@@ -2,12 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:dropshare/listings/indiv.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter/cupertino.dart';
-import 'listings.dart';
+import 'listings/listingspage.dart';
 import 'login.dart';
-import 'create.dart';
+import 'listings/create.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,9 +28,10 @@ class MyApp extends StatelessWidget {
           child: Login(),
         ),
       routes: {
-        'listings': (_) => const Listings(),
+        'listings': (_) => const ListingsPage(),
         'login': (_) => const Login(),
         'create': (_) => const Create(),
+        'indiv': (context) => const IndivListing()
       }
       );
   }

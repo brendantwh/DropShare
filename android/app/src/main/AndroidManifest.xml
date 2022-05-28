@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.dropshare.dropshare">
    <application
-        android:label="dropshare"
+        android:label="DropShare"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
