@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'authentication.dart';
 
 class Login extends StatefulWidget {
   const Login({Key? key}) : super(key: key);
@@ -8,9 +9,9 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  TextEditingController nameController = TextEditingController();
+  final Authentication auth = Authentication();
+  TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  String login = 'Login';
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +30,8 @@ class _LoginState extends State<Login> {
               Container(
                 padding: const EdgeInsets.all(10),
                 child: CupertinoTextField(
-                  controller: nameController,
-                  placeholder: 'Username',
+                  controller: emailController,
+                  placeholder: 'Email',
                 ),
               ),
               Container(
@@ -46,8 +47,30 @@ class _LoginState extends State<Login> {
                   padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
                   child: CupertinoButton.filled(
                     child: const Text('Login'),
+                    onPressed: () async {
+                      try {
+                        await auth.signIn(
+                            email: emailController.text,
+                            password: passwordController.text).then((result) {
+                          if (result == null) {
+                            Authentication.showSuccessDialog(context, 'signed in');
+                          } else {
+                            Authentication.showErrorDialog(context, result);
+                          }
+                        });
+                      } catch (e) {
+                        print(e);
+                      }
+                    },
+                  )
+              ),
+              Container(
+                  height: 70,
+                  padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
+                  child: CupertinoButton.filled(
+                    child: const Text('Sign up here'),
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, 'listings');
+                      Navigator.pushNamed(context, 'signup');
                     },
                   ))
             ],

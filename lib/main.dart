@@ -7,7 +7,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:flutter/cupertino.dart';
 import 'listings/listingspage.dart';
-import 'login.dart';
+import 'auth/login.dart';
+import 'auth/signup.dart';
 import 'listings/create.dart';
 
 Future<void> main() async {
@@ -30,8 +31,9 @@ class MyApp extends StatelessWidget {
       routes: {
         'listings': (_) => const ListingsPage(),
         'login': (_) => const Login(),
+        'signup': (_) => const Signup(),
         'create': (_) => const Create(),
-        'indiv': (context) => const IndivListing()
+        'indiv': (context) => const IndivListing(),
       }
       );
   }
