@@ -24,7 +24,12 @@ class Authentication {
   }
 
   Future signOut() async {
-    await _auth.signOut();
+    try {
+      await _auth.signOut();
+      return null;
+    } on FirebaseAuthException catch (e) {
+      return e.message;
+    }
   }
 
 
@@ -57,7 +62,9 @@ class Authentication {
           CupertinoDialogAction(
             isDefaultAction: true,
             onPressed: () {
-              Navigator.pushReplacementNamed(context, 'listings');
+              Authentication().user == null
+                  ? Navigator.pushReplacementNamed(context, 'login')
+                  : Navigator.pushReplacementNamed(context, 'listings');
             },
             child: const Text('Ok'),
           )
