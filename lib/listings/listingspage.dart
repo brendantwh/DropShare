@@ -19,90 +19,91 @@ class _ListingsPageState extends State<ListingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-        navigationBar: CupertinoNavigationBar(
-            automaticallyImplyLeading: false,
-            middle: const Text('DropShare'),
-            trailing: Wrap(spacing: 10, children: <Widget>[
-              GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, 'create');
-                  },
-                  child: const Icon(CupertinoIcons.add)),
-              GestureDetector(
-                  onTap: () {
-                    showCupertinoDialog(
-                        context: context,
-                        builder: (context) {
-                          return CupertinoAlertDialog(
-                              title: const Text('Sign out'),
-                              content: const Text('Are you sure you want to sign out?'),
-                              actions: <CupertinoDialogAction>[
-                                CupertinoDialogAction(
-                                  isDefaultAction: true,
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: const Text('No'),
-                                ),
-                                CupertinoDialogAction(
-                                  onPressed: () async {
-                                    try {
-                                      await auth.signOut().then((result) {
-                                        if (result == null) {
-                                          Authentication.showSuccessDialog(
-                                              context, 'signed out');
-                                        } else {
-                                          Authentication.showErrorDialog(context, result);
+    return WillPopScope(
+        onWillPop: () async => false,
+        child: CupertinoPageScaffold(
+            navigationBar: CupertinoNavigationBar(
+                automaticallyImplyLeading: false,
+                middle: const Text('DropShare'),
+                trailing: Wrap(spacing: 10, children: <Widget>[
+                  GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, 'create');
+                      },
+                      child: const Icon(CupertinoIcons.add)),
+                  GestureDetector(
+                      onTap: () {
+                        showCupertinoDialog(
+                            context: context,
+                            builder: (context) {
+                              return CupertinoAlertDialog(
+                                  title: const Text('Sign out'),
+                                  content: const Text(
+                                      'Are you sure you want to sign out?'),
+                                  actions: <CupertinoDialogAction>[
+                                    CupertinoDialogAction(
+                                      isDefaultAction: true,
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: const Text('No'),
+                                    ),
+                                    CupertinoDialogAction(
+                                      onPressed: () async {
+                                        try {
+                                          await auth.signOut().then((result) {
+                                            if (result == null) {
+                                              Authentication.showSuccessDialog(
+                                                  context, 'signed out');
+                                            } else {
+                                              Authentication.showErrorDialog(
+                                                  context, result);
+                                            }
+                                          });
+                                        } catch (e) {
+                                          print(e);
                                         }
-                                      });
-                                    } catch (e) {
-                                      print(e);
-                                    }
-                                  },
-                                  child: const Text(
-                                      'Sign out',
-                                      style: TextStyle(
-                                          color: CupertinoColors.destructiveRed
-                                      )
-                                  ),
-                                )
-                              ]
-                          );
-                        }
-                    );
-                  },
-                  child:
-                      const Icon(CupertinoIcons.person_crop_circle_badge_xmark))
-            ])
-        ),
-        child: SafeArea(
-            minimum: const EdgeInsets.fromLTRB(20.0, 100.0, 20.0, 0),
-            child: StreamBuilder<QuerySnapshot>(
-                stream: items,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return const Text('Something went wrong');
-                  }
+                                      },
+                                      child: const Text('Sign out',
+                                          style: TextStyle(
+                                              color: CupertinoColors
+                                                  .destructiveRed)),
+                                    )
+                                  ]);
+                            });
+                      },
+                      child: const Icon(
+                          CupertinoIcons.person_crop_circle_badge_xmark))
+                ])
+            ),
+            child: SafeArea(
+                minimum: const EdgeInsets.fromLTRB(20.0, 100.0, 20.0, 0),
+                child: StreamBuilder<QuerySnapshot>(
+                    stream: items,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return const Text('Something went wrong');
+                      }
 
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Text("Loading");
-                  }
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Text("Loading");
+                      }
 
-                  return GridView.count(
-                      crossAxisCount: 2,
-                      children: snapshot.data!.docs
-                          .map<Widget>((DocumentSnapshot document) {
-                        Listing l = Listing.fromFirestore(
-                            document as DocumentSnapshot<Map<String, dynamic>>);
-                        return GestureDetector(
-                            onTap: () {
-                              Navigator.pushNamed(context, 'indiv',
-                                  arguments: l);
-                            },
-                            child: Text(l.title));
-                      }).toList());
-                })
+                      return GridView.count(
+                          crossAxisCount: 2,
+                          children: snapshot.data!.docs
+                              .map<Widget>((DocumentSnapshot document) {
+                            Listing l = Listing.fromFirestore(document
+                                as DocumentSnapshot<Map<String, dynamic>>);
+                            return GestureDetector(
+                                onTap: () {
+                                  Navigator.pushNamed(context, 'indiv',
+                                      arguments: l);
+                                },
+                                child: Text(l.title));
+                          }).toList());
+                    })
+            )
         )
     );
   }
