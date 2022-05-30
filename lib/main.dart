@@ -1,16 +1,17 @@
-// Copyright 2018 The Flutter team. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+// Cupertino design
+import 'package:flutter/cupertino.dart';
 
-import 'package:dropshare/listings/indiv.dart';
+// Firebase packages
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'firebase_options.dart';
-import 'package:flutter/cupertino.dart';
-import 'listings/listingspage.dart';
+
+// DropShare pages
 import 'auth/login.dart';
 import 'auth/signup.dart';
 import 'listings/create.dart';
+import 'listings/indiv.dart';
+import 'listings/listingspage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

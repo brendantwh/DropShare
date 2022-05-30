@@ -34,7 +34,7 @@ class Authentication {
 
 
   static void showErrorDialog(BuildContext context, String content) {
-    showCupertinoModalPopup<void>(
+    showCupertinoDialog<void>(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
         title: const Text('Error'),

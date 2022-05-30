@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
-import 'listing.dart';
-import 'package:dropshare/locations/location.dart';
 import 'package:intl/intl.dart';
+import 'listing.dart';
+import '../locations/location.dart';
 
 class IndivListing extends StatefulWidget {
   const IndivListing({Key? key}) : super(key: key);
@@ -16,7 +16,9 @@ class _IndivListingState extends State<IndivListing> {
     final listing = ModalRoute.of(context)?.settings.arguments as Listing;
     final String time = DateFormat('hh:mm a, dd MMM yyyy').format(listing.time);
     final String location = Location.values[listing.location].locationName;
-    final String price = NumberFormat.currency(locale: 'en_SG', symbol: '\$').format(listing.price);
+    final String price = listing.price == 0
+        ? 'Free'
+        : NumberFormat.currency(locale: 'en_SG', symbol: '\$').format(listing.price);
 
     return CupertinoPageScaffold(
         navigationBar: const CupertinoNavigationBar(
@@ -32,9 +34,9 @@ class _IndivListingState extends State<IndivListing> {
                   Text('Price: $price'),
                   Text('Location: $location'),
                   Text('Time: $time'),
+                  Text('Description: ${listing.description}')
                 ],
               )
-
           )
         )
     );

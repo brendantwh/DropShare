@@ -21,10 +21,11 @@ class _SignupState extends State<Signup> {
         ),
         child: Center(
           child: ListView(
+            physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             children: <Widget>[
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: CupertinoTextField(
                   controller: emailController,
                   placeholder: 'Email',
@@ -44,16 +45,22 @@ class _SignupState extends State<Signup> {
                   child: CupertinoButton.filled(
                     child: const Text('Sign up'),
                     onPressed: () async {
-                      try {
-                        await auth.signUp(email: emailController.text, password: passwordController.text).then((result) {
-                          if (result == null) {
-                            Authentication.showSuccessDialog(context, 'registered account');
-                          } else {
-                            Authentication.showErrorDialog(context, result);
-                          }
-                        });
-                      } catch (e) {
-                        print(e);
+                      if (emailController.text.isEmpty) {
+                        Authentication.showErrorDialog(context, 'Email field is empty');
+                      } else if (passwordController.text.isEmpty) {
+                        Authentication.showErrorDialog(context, 'Password field is empty');
+                      } else {
+                        try {
+                          await auth.signUp(email: emailController.text, password: passwordController.text).then((result) {
+                            if (result == null) {
+                              Authentication.showSuccessDialog(context, 'registered account');
+                            } else {
+                              Authentication.showErrorDialog(context, result);
+                            }
+                          });
+                        } catch (e) {
+                          print(e);
+                        }
                       }
                     },
                   ))
