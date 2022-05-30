@@ -30,19 +30,47 @@ class _ListingsPageState extends State<ListingsPage> {
                   },
                   child: const Icon(CupertinoIcons.add)),
               GestureDetector(
-                  onTap: () async {
-                    try {
-                      await auth.signOut().then((result) {
-                        if (result == null) {
-                          Authentication.showSuccessDialog(
-                              context, 'signed out');
-                        } else {
-                          Authentication.showErrorDialog(context, result);
+                  onTap: () {
+                    showCupertinoDialog(
+                        context: context,
+                        builder: (context) {
+                          return CupertinoAlertDialog(
+                              title: const Text('Sign out'),
+                              content: const Text('Are you sure you want to sign out?'),
+                              actions: <CupertinoDialogAction>[
+                                CupertinoDialogAction(
+                                  isDefaultAction: true,
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text('No'),
+                                ),
+                                CupertinoDialogAction(
+                                  onPressed: () async {
+                                    try {
+                                      await auth.signOut().then((result) {
+                                        if (result == null) {
+                                          Authentication.showSuccessDialog(
+                                              context, 'signed out');
+                                        } else {
+                                          Authentication.showErrorDialog(context, result);
+                                        }
+                                      });
+                                    } catch (e) {
+                                      print(e);
+                                    }
+                                  },
+                                  child: const Text(
+                                      'Sign out',
+                                      style: TextStyle(
+                                          color: CupertinoColors.destructiveRed
+                                      )
+                                  ),
+                                )
+                              ]
+                          );
                         }
-                      });
-                    } catch (e) {
-                      print(e);
-                    }
+                    );
                   },
                   child:
                       const Icon(CupertinoIcons.person_crop_circle_badge_xmark))

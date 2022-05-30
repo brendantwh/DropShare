@@ -26,14 +26,21 @@ class _IndivListingState extends State<IndivListing> {
         ),
         child: SafeArea(
           child: Container(
-            margin: const EdgeInsets.all(20.0),
+            margin: const EdgeInsets.fromLTRB(20, 30, 20, 0),
             child:
               ListView(
                 children: [
-                  Text('Item: ${listing.title}'),
+                  Text(
+                      listing.title,
+                      style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w600)
+                  ),
+                  const SizedBox(height: 24),
                   Text('Price: $price'),
                   Text('Location: $location'),
                   Text('Time: $time'),
+                  const SizedBox(height: 24),
                   Text('Description: ${listing.description}')
                 ],
               )

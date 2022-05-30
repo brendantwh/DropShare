@@ -50,7 +50,10 @@ class _MyAppState extends State<MyApp> {
             case 'indiv':
               return CupertinoPageRoute(builder: (context) => const IndivListing(), settings: settings);
           }
-        }
+        },
+        theme: const CupertinoThemeData(
+          brightness: Brightness.light  // Force light mode
+        )
     );
   }
 }
