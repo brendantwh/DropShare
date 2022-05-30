@@ -63,8 +63,8 @@ class Authentication {
             isDefaultAction: true,
             onPressed: () {
               Authentication().user == null
-                  ? Navigator.pushReplacementNamed(context, 'login')
-                  : Navigator.pushReplacementNamed(context, 'listings');
+                  ? Navigator.pushNamedAndRemoveUntil(context, 'login', (Route<dynamic> route) => false)
+                  : Navigator.pushNamedAndRemoveUntil(context, 'listings', (Route<dynamic> route) => false);
             },
             child: const Text('Ok'),
           )
