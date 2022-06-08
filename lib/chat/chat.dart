@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../listings/listing.dart';
 import 'chathelper.dart';
 import 'message.dart';
+import 'bubble.dart';
 
 class Chat extends StatefulWidget {
   const Chat({Key? key}) : super(key: key);
@@ -96,7 +97,7 @@ class _ChatState extends State<Chat> {
                   ),
                   Flexible(
                     child: Container(
-                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 15),
+                      padding: const EdgeInsets.fromLTRB(10, 0, 10, 15),
                       child: StreamBuilder<QuerySnapshot>(
                           stream: messages,
                           builder: (context, snapshot) {
@@ -110,20 +111,17 @@ class _ChatState extends State<Chat> {
 
                             return ListView.separated(
                                 separatorBuilder: (context, index) {
-                                  return const SizedBox(height: 20);
+                                  return const SizedBox(height: 5);
                                 },
+                                shrinkWrap: true,
                                 reverse: true,
-                                padding: const EdgeInsets.all(10),
+                                padding: const EdgeInsets.only(top: 10),
                                 itemCount: snapshot.data!.docs.length,
                                 itemBuilder: (context, index) {
                                   Message msg = Message.fromFirestore(snapshot.data!.docs[index] as DocumentSnapshot<Map<String, dynamic>>);
-                                  String from;
-                                  if (msg.sentBy == currentUid) {
-                                    from = 'You';
-                                  } else {
-                                    from = msg.sentBy;
-                                  }
-                                  return Text('From $from: ${msg.message} at ${msg.time}');
+                                  bool isMine = msg.sentBy == currentUid;
+
+                                  return Bubble(msg: msg, isMine: isMine);
                                 }
                             );
                           })
@@ -159,7 +157,7 @@ class _ChatState extends State<Chat> {
                                       } else {
                                         Message msg = Message(
                                             sentBy: currentUid,
-                                            message: messageController.text,
+                                            message: messageController.text.trim(),
                                             time: ''
                                         );
                                         ChatHelper.manageChat(listing.docId!, buyerId);

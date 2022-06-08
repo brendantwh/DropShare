@@ -28,6 +28,7 @@ class _SignupState extends State<Signup> {
                 padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: CupertinoTextField(
                   controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
                   placeholder: 'Email',
                 ),
               ),

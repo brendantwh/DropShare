@@ -15,7 +15,7 @@ class Create extends StatefulWidget {
 }
 
 class _CreateState extends State<Create> {
-  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController titleController = TextEditingController();
   double price = 0;
   String description = '';
 
@@ -29,7 +29,7 @@ class _CreateState extends State<Create> {
             middle: const Text('Create listing'),
             trailing: GestureDetector(
                 onTap: () {
-                  if (_titleController.text.isEmpty) {
+                  if (titleController.text.isEmpty) {
                     showCupertinoDialog(
                         context: context,
                         builder: (context) {
@@ -50,11 +50,11 @@ class _CreateState extends State<Create> {
                     );
                   } else {
                     Listing l = Listing(
-                        title: _titleController.text,
+                        title: titleController.text.trim(),
                         time: DateTime.now(),
                         price: price,
                         location: _selectedLocation,
-                        description: description,
+                        description: description.trim(),
                         uid: uid
                     );
                     items.add(l.toFirestore());
@@ -67,7 +67,7 @@ class _CreateState extends State<Create> {
           CupertinoFormSection(margin: const EdgeInsets.all(12), children: [
             CupertinoTextFormFieldRow(
               placeholder: 'Title',
-              controller: _titleController,
+              controller: titleController,
             ),
             CupertinoTextFormFieldRow(
                 placeholder: 'Price - empty for free',
