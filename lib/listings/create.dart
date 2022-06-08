@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'listing.dart';
 import '../locations/location.dart';
@@ -21,6 +22,7 @@ class _CreateState extends State<Create> {
   @override
   Widget build(BuildContext context) {
     CollectionReference items = FirebaseFirestore.instance.collection('listings');
+    final String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
 
     return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
@@ -52,7 +54,9 @@ class _CreateState extends State<Create> {
                         time: DateTime.now(),
                         price: price,
                         location: _selectedLocation,
-                        description: description);
+                        description: description,
+                        uid: uid
+                    );
                     items.add(l.toFirestore());
                     Navigator.pushReplacementNamed(context, 'listings');
                     _selectedLocation = 0;

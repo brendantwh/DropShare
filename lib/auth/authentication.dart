@@ -54,22 +54,25 @@ class Authentication {
 
   static void showSuccessDialog(BuildContext context, String action) {
     showCupertinoModalPopup<void>(
+      barrierDismissible: false,
       context: context,
-      builder: (BuildContext context) => CupertinoAlertDialog(
-        title: const Text('Success'),
-        content: Text('Successfully $action'),
-        actions: <CupertinoDialogAction>[
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: () {
-              Authentication().user == null
-                  ? Navigator.pushNamedAndRemoveUntil(context, 'login', (Route<dynamic> route) => false)
-                  : Navigator.pushNamedAndRemoveUntil(context, 'listings', (Route<dynamic> route) => false);
-            },
-            child: const Text('Ok'),
-          )
-        ],
-      ),
+      builder: (BuildContext context) => WillPopScope(
+          onWillPop: () async => false,
+          child: CupertinoAlertDialog(
+            title: const Text('Success'),
+            content: Text('Successfully $action'),
+            actions: <CupertinoDialogAction>[
+              CupertinoDialogAction(
+                isDefaultAction: true,
+                onPressed: () {
+                  Authentication().user == null
+                      ? Navigator.pushNamedAndRemoveUntil(context, 'login', (Route<dynamic> route) => false)
+                      : Navigator.pushNamedAndRemoveUntil(context, 'listings', (Route<dynamic> route) => false);
+                },
+                child: const Text('Ok'),
+              )
+            ],
+          ))
     );
   }
 }

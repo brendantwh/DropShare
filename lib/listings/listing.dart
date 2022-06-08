@@ -6,13 +6,18 @@ class Listing {
   final num price;
   final int location;
   final String? description;
+  final String uid;
+  String? docId;
 
   Listing(
       {required this.title,
       required this.time,
       required this.price,
       required this.location,
-      this.description});
+      this.description,
+      required this.uid,
+      this.docId}
+      );
 
   factory Listing.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
@@ -22,7 +27,9 @@ class Listing {
         time: (data?['time'] as Timestamp).toDate(),
         price: data?['price'].toDouble(),
         location: data?['location'].toInt(),
-        description: data?['description'] ?? ''
+        description: data?['description'] ?? '',
+        uid: data?['uid'] ?? 'Unknown',
+        docId: snapshot.id
     );
   }
 
@@ -32,7 +39,8 @@ class Listing {
       'time': Timestamp.fromDate(time),
       'price': price,
       'location': location,
-      'description': description
+      'description': description,
+      'uid': uid
     };
   }
 }
