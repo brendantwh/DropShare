@@ -61,6 +61,8 @@ class _ChatState extends State<Chat> {
 
     final String currentUid = FirebaseAuth.instance.currentUser?.uid ?? '';
 
+    List<String> dates = <String>[];
+
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
           trailing: GestureDetector(
@@ -70,7 +72,8 @@ class _ChatState extends State<Chat> {
                     builder: (context) {
                       return CupertinoAlertDialog(
                           title: const Text('Report this listing?'),
-                          content: const Text('Are you sure you want to report this listing?'),
+                          content: const Text(
+                              'Are you sure you want to report this listing?'),
                           actions: <CupertinoDialogAction>[
                             CupertinoDialogAction(
                               onPressed: () {
@@ -79,25 +82,20 @@ class _ChatState extends State<Chat> {
                               child: const Text('No'),
                             ),
                             CupertinoDialogAction(
-                              isDefaultAction: true,
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text(
-                                  'Report',
-                                  style: TextStyle(color: CupertinoColors.destructiveRed))
-                            )
-                          ]
-                      );
-                    }
-                );
+                                isDefaultAction: true,
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Report',
+                                    style: TextStyle(
+                                        color: CupertinoColors.destructiveRed)))
+                          ]);
+                    });
               },
               child: const Text(
-                  'Report',
+                'Report',
                 style: TextStyle(color: CupertinoColors.destructiveRed),
-              )
-          )
-      ),
+              ))),
       child: SafeArea(
           child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -120,6 +118,14 @@ class _ChatState extends State<Chat> {
                             return const Text("Loading");
                           }
 
+                          dates.clear();
+                          for (var message in snapshot.data!.docs) {
+                            Message msg = Message.fromFirestore(message
+                                as DocumentSnapshot<Map<String, dynamic>>);
+                            dates.add(msg.date!);
+                          }
+                          dates.add('show');  // for top bubble to always show datestamp
+
                           return ListView.separated(
                               separatorBuilder: (context, index) {
                                 return const SizedBox(height: 5);
@@ -134,32 +140,61 @@ class _ChatState extends State<Chat> {
                                     as DocumentSnapshot<Map<String, dynamic>>);
                                 bool isMine = msg.sentBy == currentUid;
 
-                                if (index == snapshot.data!.docs.length - 1) {
-                                  // first chat bubble (top)
+                                bool newDate;
+
+                                if (dates[index] != dates[index + 1]) {
+                                  newDate = true;
+                                } else {
+                                  newDate = false;
+                                }
+
+                                Text dateStamp = Text(dates[index],
+                                    style: const TextStyle(
+                                        color: CupertinoColors.secondaryLabel,
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600));
+
+                                if (index == snapshot.data!.docs.length - 1 &&
+                                    index == 0) {
+                                  // only one message, show date stamp
+                                  return Column(
+                                    children: [
+                                      dateStamp,
+                                      Bubble(msg: msg, isMine: isMine),
+                                      const SizedBox(height: 56)
+                                    ],
+                                  );
+                                } else if (index ==
+                                    snapshot.data!.docs.length - 1) {
+                                  // first chat bubble at the top, always show date stamp
                                   return Column(
                                     children: [
                                       const SizedBox(height: 72),
-                                      Text(
-                                          msg.date!,
-                                          style: const TextStyle(
-                                            color: CupertinoColors.secondaryLabel,
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w600
-                                          )
-                                      ),
+                                      dateStamp,
                                       Bubble(msg: msg, isMine: isMine)
                                     ],
                                   );
                                 } else if (index == 0) {
-                                  // last chat bubble (bottom)
+                                  // last chat bubble at bottom
                                   return Column(
                                     children: [
+                                      newDate
+                                          ? dateStamp
+                                          : const SizedBox.shrink(),
                                       Bubble(msg: msg, isMine: isMine),
                                       const SizedBox(height: 56),
                                     ],
                                   );
                                 } else {
-                                  return Bubble(msg: msg, isMine: isMine);
+                                  // everything else in between
+                                  return Column(
+                                    children: [
+                                      newDate
+                                          ? dateStamp
+                                          : const SizedBox.shrink(),
+                                      Bubble(msg: msg, isMine: isMine),
+                                    ],
+                                  );
                                 }
                               });
                         })),
