@@ -2,6 +2,8 @@
 import 'package:dropshare/chat/chatlist.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'dart:io';
+
 // Firebase packages
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -60,9 +62,17 @@ class _MyAppState extends State<MyApp> {
               return CupertinoPageRoute(builder: (_) => const Userpage(), settings: settings);
           }
         },
-        theme: const CupertinoThemeData(
-          brightness: Brightness.light  // Force light mode
-        )
+        theme: Platform.isIOS
+            ? const CupertinoThemeData(brightness: Brightness.light) // Force light mode
+            : const CupertinoThemeData(
+                brightness: Brightness.light,  // Force light mode
+                textTheme: CupertinoTextThemeData(
+                  textStyle: TextStyle(
+                      color: CupertinoColors.black,
+                      fontFamily: 'Inter'
+                  )
+                )
+              )
     );
   }
 }

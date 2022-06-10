@@ -1,3 +1,5 @@
+import 'dart:ui' as ui;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -45,8 +47,8 @@ class _ChatState extends State<Chat> {
     final Listing listing = helper.listing;
     final String price = listing.price == 0
         ? 'Free'
-        : NumberFormat.currency(locale: 'en_SG', symbol: '\$').format(listing.price);
-    
+        : NumberFormat.currency(locale: 'en_SG', symbol: '\$')
+            .format(listing.price);
 
     final CollectionReference chat = FirebaseFirestore.instance
         .collection('listings')
@@ -60,121 +62,209 @@ class _ChatState extends State<Chat> {
     final String currentUid = FirebaseAuth.instance.currentUser?.uid ?? '';
 
     return CupertinoPageScaffold(
-        navigationBar: const CupertinoNavigationBar(
-            middle: Text('Chat')
-        ),
-        child: SafeArea(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Container(
-                      padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
-                      decoration: const BoxDecoration(
-                          color: CupertinoColors.secondarySystemBackground,
-                          border: Border(
-                              bottom: BorderSide(width: 1, color: CupertinoColors.opaqueSeparator))),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              Text(
-                                  listing.title,
-                                  style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600)
-                              ),
-                              const SizedBox(height: 7),
-                              Text(price, style: const TextStyle(fontSize: 16))
-                            ],
-                          ),
-                          const SizedBox(
-                            child: Text('Picture')
-                          )
-                        ],
-                      )
-                  ),
-                  Flexible(
-                    child: Container(
-                      padding: const EdgeInsets.fromLTRB(10, 0, 10, 15),
-                      child: StreamBuilder<QuerySnapshot>(
-                          stream: messages,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasError) {
-                              return const Text('Something went wrong');
-                            }
+      navigationBar: CupertinoNavigationBar(
+          trailing: GestureDetector(
+              onTap: () {
+                showCupertinoDialog(
+                    context: context,
+                    builder: (context) {
+                      return CupertinoAlertDialog(
+                          title: const Text('Report this listing?'),
+                          content: const Text('Are you sure you want to report this listing?'),
+                          actions: <CupertinoDialogAction>[
+                            CupertinoDialogAction(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text('No'),
+                            ),
+                            CupertinoDialogAction(
+                              isDefaultAction: true,
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: const Text(
+                                  'Report',
+                                  style: TextStyle(color: CupertinoColors.destructiveRed))
+                            )
+                          ]
+                      );
+                    }
+                );
+              },
+              child: const Text(
+                  'Report',
+                style: TextStyle(color: CupertinoColors.destructiveRed),
+              )
+          )
+      ),
+      child: SafeArea(
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Flexible(
+              fit: FlexFit.loose,
+              child: Stack(children: [
+                Container(
+                    height: double.infinity,
+                    padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                    child: StreamBuilder<QuerySnapshot>(
+                        stream: messages,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasError) {
+                            return const Text('Something went wrong');
+                          }
 
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              return const Text("Loading");
-                            }
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Text("Loading");
+                          }
 
-                            return ListView.separated(
-                                separatorBuilder: (context, index) {
-                                  return const SizedBox(height: 5);
-                                },
-                                shrinkWrap: true,
-                                reverse: true,
-                                padding: const EdgeInsets.only(top: 10),
-                                itemCount: snapshot.data!.docs.length,
-                                itemBuilder: (context, index) {
-                                  Message msg = Message.fromFirestore(snapshot.data!.docs[index] as DocumentSnapshot<Map<String, dynamic>>);
-                                  bool isMine = msg.sentBy == currentUid;
+                          return ListView.separated(
+                              separatorBuilder: (context, index) {
+                                return const SizedBox(height: 5);
+                              },
+                              shrinkWrap: true,
+                              reverse: true,
+                              padding: const EdgeInsets.only(top: 10),
+                              itemCount: snapshot.data!.docs.length,
+                              itemBuilder: (context, index) {
+                                Message msg = Message.fromFirestore(snapshot
+                                        .data!.docs[index]
+                                    as DocumentSnapshot<Map<String, dynamic>>);
+                                bool isMine = msg.sentBy == currentUid;
 
+                                if (index == snapshot.data!.docs.length - 1) {
+                                  // first chat bubble (top)
+                                  return Column(
+                                    children: [
+                                      const SizedBox(height: 72),
+                                      Text(
+                                          msg.date!,
+                                          style: const TextStyle(
+                                            color: CupertinoColors.secondaryLabel,
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600
+                                          )
+                                      ),
+                                      Bubble(msg: msg, isMine: isMine)
+                                    ],
+                                  );
+                                } else if (index == 0) {
+                                  // last chat bubble (bottom)
+                                  return Column(
+                                    children: [
+                                      Bubble(msg: msg, isMine: isMine),
+                                      const SizedBox(height: 56),
+                                    ],
+                                  );
+                                } else {
                                   return Bubble(msg: msg, isMine: isMine);
                                 }
-                            );
-                          })
-                    )
-                  ),
-                  Container(
-                      padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-                      child: CupertinoTextField(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: CupertinoColors.opaqueSeparator),
-                          borderRadius: BorderRadius.circular(20.0),
-                        ),
-                        controller: messageController,
-                        onChanged: (text) {
-                          // see TextEditingController listener for problem
-                          // setState(() { });
-                        },
-                        placeholder: 'Message',
-                        padding: const EdgeInsets.fromLTRB(10, 5, 5, 5),
-                        minLines: 1,
-                        maxLines: 5,
-                        textAlignVertical: TextAlignVertical.bottom,
-                        suffix: SizedBox(
-                            height: 32,
-                            width: 32,
-                            child: CupertinoButton(
-                                padding: const EdgeInsets.all(0),
-                                onPressed: // enableSend
-                                    true
-                                    ? () {
-                                      if (messageController.text.isEmpty) {
-                                        print('No');
-                                      } else {
-                                        Message msg = Message(
-                                            sentBy: currentUid,
-                                            message: messageController.text.trim(),
-                                            time: ''
-                                        );
-                                        ChatHelper.manageChat(listing.docId!, buyerId);
-                                        chat.add(msg.toFirestore());
-                                        messageController.clear();
-                                      }
-                                    }
-                                    : null,
-                                child: const Icon(CupertinoIcons.arrow_up_circle_fill, size: 32)
-                            )
-                        ),
-                        suffixMode: OverlayVisibilityMode.always,
-                      )
-                  )
-                ],
-            )
-        ),
+                              });
+                        })),
+                Align(
+                    alignment: Alignment.topCenter,
+                    child: ClipRect(
+                      child: BackdropFilter(
+                          filter: ui.ImageFilter.blur(sigmaX: 7.5, sigmaY: 7.5),
+                          child: Container(
+                              height: 72,
+                              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                              decoration: const BoxDecoration(
+                                  color: Color(0xEBF2F2F7),
+                                  border: Border(
+                                      bottom: BorderSide(
+                                          width: 0.3,
+                                          color: CupertinoColors
+                                              .opaqueSeparator))),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Text(listing.title,
+                                          style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w600)),
+                                      const SizedBox(height: 7),
+                                      Text(price,
+                                          style: const TextStyle(fontSize: 16))
+                                    ],
+                                  ),
+                                  const SizedBox(child: Text('Picture'))
+                                ],
+                              ))),
+                    )),
+                Align(
+                    alignment: Alignment.bottomCenter,
+                    child: ClipRect(
+                        child: BackdropFilter(
+                            filter: ui.ImageFilter.blur(sigmaX: 7, sigmaY: 7),
+                            child: Container(
+                                decoration: const BoxDecoration(
+                                    color: Color(0xEBFFFFFF)),
+                                padding:
+                                    const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                                child: CupertinoTextField(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: CupertinoColors.opaqueSeparator),
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                  controller: messageController,
+                                  onChanged: (text) {
+                                    // see TextEditingController listener for problem
+                                    // setState(() { });
+                                  },
+                                  placeholder: 'Message',
+                                  padding:
+                                      const EdgeInsets.fromLTRB(10, 5, 5, 5),
+                                  minLines: 1,
+                                  maxLines: 5,
+                                  textAlignVertical: TextAlignVertical.bottom,
+                                  suffix: SizedBox(
+                                      height: 32,
+                                      width: 32,
+                                      child: CupertinoButton(
+                                          padding: const EdgeInsets.all(0),
+                                          onPressed: // enableSend
+                                              true
+                                                  ? () {
+                                                      if (messageController
+                                                          .text.isEmpty) {
+                                                        print('No');
+                                                      } else {
+                                                        Message msg = Message(
+                                                            sentBy: currentUid,
+                                                            message:
+                                                                messageController
+                                                                    .text
+                                                                    .trim(),
+                                                            time: '');
+                                                        ChatHelper.manageChat(
+                                                            listing.docId!,
+                                                            buyerId);
+                                                        chat.add(
+                                                            msg.toFirestore());
+                                                        messageController
+                                                            .clear();
+                                                      }
+                                                    }
+                                                  : null,
+                                          child: const Icon(
+                                              CupertinoIcons
+                                                  .arrow_up_circle_fill,
+                                              size: 32))),
+                                  suffixMode: OverlayVisibilityMode.always,
+                                )))))
+              ])),
+        ],
+      )),
     );
   }
 }

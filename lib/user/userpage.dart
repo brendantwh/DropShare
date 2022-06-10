@@ -37,13 +37,13 @@ class _UserpageState extends State<Userpage> {
                               'Are you sure you want to sign out?'),
                           actions: <CupertinoDialogAction>[
                             CupertinoDialogAction(
-                              isDefaultAction: true,
                               onPressed: () {
                                 Navigator.pop(context);
                               },
                               child: const Text('No'),
                             ),
                             CupertinoDialogAction(
+                              isDefaultAction: true,
                               onPressed: () async {
                                 try {
                                   await auth.signOut().then((result) {
