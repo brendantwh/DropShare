@@ -32,15 +32,29 @@ class _UserpageState extends State<Userpage> {
                     context: context,
                     builder: (context) {
                       return CupertinoAlertDialog(
-                          title: const Text('Sign out'),
-                          content: const Text(
-                              'Are you sure you want to sign out?'),
+                          title: Text(
+                              'Sign out',
+                              style: TextStyle(
+                                  fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                              )
+                          ),
+                          content: Text(
+                              'Are you sure you want to sign out?',
+                              style: TextStyle(
+                                  fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                              )
+                          ),
                           actions: <CupertinoDialogAction>[
                             CupertinoDialogAction(
                               onPressed: () {
                                 Navigator.pop(context);
                               },
-                              child: const Text('No'),
+                              child: Text(
+                                  'No',
+                                  style: TextStyle(
+                                      fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                                  )
+                              ),
                             ),
                             CupertinoDialogAction(
                               isDefaultAction: true,
@@ -59,10 +73,13 @@ class _UserpageState extends State<Userpage> {
                                   print(e);
                                 }
                               },
-                              child: const Text('Sign out',
+                              child: Text('Sign out',
                                   style: TextStyle(
                                       color: CupertinoColors
-                                          .destructiveRed)),
+                                          .destructiveRed,
+                                      fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                                  )
+                              ),
                             )
                           ]);
                     });
@@ -72,7 +89,17 @@ class _UserpageState extends State<Userpage> {
         ),
         child: SafeArea(
           minimum: const EdgeInsets.fromLTRB(20.0, 100.0, 20.0, 0),
-          child: ListingGrid(stream: userListings),
+          child: Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                child: Text('You are ${FirebaseAuth.instance.currentUser?.uid ?? 'Unknown user'}'),
+              ),
+              Flexible(
+                  child: ListingGrid(stream: userListings)
+              )
+            ],
+          ),
         ));
   }
 }

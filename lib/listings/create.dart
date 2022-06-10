@@ -34,15 +34,30 @@ class _CreateState extends State<Create> {
                         context: context,
                         builder: (context) {
                           return CupertinoAlertDialog(
-                            title: const Text('Empty title'),
-                            content: const Text('Title cannot be empty'),
+                            title: Text(
+                                'Empty title',
+                                style: TextStyle(
+                                    fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                                )
+                            ),
+                            content: Text(
+                                'Title cannot be empty',
+                                style: TextStyle(
+                                    fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                                )
+                            ),
                             actions: <CupertinoDialogAction>[
                               CupertinoDialogAction(
                                 isDefaultAction: true,
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: const Text('Ok'),
+                                child: Text(
+                                    'Ok',
+                                    style: TextStyle(
+                                        fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                                    )
+                                ),
                               )
                             ]
                           );

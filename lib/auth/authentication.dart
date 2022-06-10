@@ -37,7 +37,12 @@ class Authentication {
     showCupertinoDialog<void>(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
-        title: const Text('Error'),
+        title: Text(
+            'Error',
+            style: TextStyle(
+                fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+            )
+        ),
         content: Text(content),
         actions: <CupertinoDialogAction>[
           CupertinoDialogAction(
@@ -45,7 +50,12 @@ class Authentication {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text('Ok'),
+            child: Text(
+                'Ok',
+                style: TextStyle(
+                    fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                )
+            ),
           )
         ],
       ),
@@ -59,8 +69,18 @@ class Authentication {
       builder: (BuildContext context) => WillPopScope(
           onWillPop: () async => false,
           child: CupertinoAlertDialog(
-            title: const Text('Success'),
-            content: Text('Successfully $action'),
+            title: Text(
+                'Success',
+                style: TextStyle(
+                    fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                )
+            ),
+            content: Text(
+                'Successfully $action',
+                style: TextStyle(
+                    fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                )
+            ),
             actions: <CupertinoDialogAction>[
               CupertinoDialogAction(
                 isDefaultAction: true,
@@ -69,7 +89,12 @@ class Authentication {
                       ? Navigator.pushNamedAndRemoveUntil(context, 'login', (Route<dynamic> route) => false)
                       : Navigator.pushNamedAndRemoveUntil(context, 'listings', (Route<dynamic> route) => false);
                 },
-                child: const Text('Ok'),
+                child: Text(
+                    'Ok',
+                    style: TextStyle(
+                        fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                    )
+                ),
               )
             ],
           ))

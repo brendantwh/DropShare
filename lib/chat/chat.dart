@@ -71,24 +71,42 @@ class _ChatState extends State<Chat> {
                     context: context,
                     builder: (context) {
                       return CupertinoAlertDialog(
-                          title: const Text('Report this listing?'),
-                          content: const Text(
-                              'Are you sure you want to report this listing?'),
+                          title: Text(
+                              'Report this listing?',
+                              style: TextStyle(
+                                  fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                              )
+                          ),
+                          content: Text(
+                              'Are you sure you want to report this listing?',
+                              style: TextStyle(
+                                  fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                              ),
+                          ),
                           actions: <CupertinoDialogAction>[
                             CupertinoDialogAction(
                               onPressed: () {
                                 Navigator.pop(context);
                               },
-                              child: const Text('No'),
+                              child: Text(
+                                  'No',
+                                  style: TextStyle(
+                                      fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                                  )
+                              ),
                             ),
                             CupertinoDialogAction(
                                 isDefaultAction: true,
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: const Text('Report',
+                                child: Text('Report',
                                     style: TextStyle(
-                                        color: CupertinoColors.destructiveRed)))
+                                        color: CupertinoColors.destructiveRed,
+                                        fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                                    )
+                                )
+                            )
                           ]);
                     });
               },
@@ -148,11 +166,15 @@ class _ChatState extends State<Chat> {
                                   newDate = false;
                                 }
 
-                                Text dateStamp = Text(dates[index],
-                                    style: const TextStyle(
-                                        color: CupertinoColors.secondaryLabel,
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w600));
+                                Container dateStamp = Container(
+                                    margin: const EdgeInsets.fromLTRB(0, 14, 0, 4),
+                                    child: Text(dates[index],
+                                      style: const TextStyle(
+                                          color: CupertinoColors.secondaryLabel,
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600)
+                                  )
+                                );
 
                                 if (index == snapshot.data!.docs.length - 1 &&
                                     index == 0) {
@@ -169,7 +191,7 @@ class _ChatState extends State<Chat> {
                                   // first chat bubble at the top, always show date stamp
                                   return Column(
                                     children: [
-                                      const SizedBox(height: 72),
+                                      const SizedBox(height: 72 - 14),
                                       dateStamp,
                                       Bubble(msg: msg, isMine: isMine)
                                     ],
