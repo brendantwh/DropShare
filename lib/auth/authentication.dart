@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -30,6 +31,10 @@ class Authentication {
     } on FirebaseAuthException catch (e) {
       return e.message;
     }
+  }
+
+  void createUsername(String username) {
+    FirebaseFirestore.instance.collection('users').doc(user.uid).set({'username': username, 'email': user.email});
   }
 
 

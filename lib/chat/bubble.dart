@@ -16,34 +16,40 @@ class Bubble extends StatefulWidget {
 class _BubbleState extends State<Bubble> {
   @override
   Widget build(BuildContext context) {
-    MainAxisAlignment alignment = MainAxisAlignment.spaceBetween;
-    EdgeInsetsGeometry margin;
-    EdgeInsetsGeometry padding = const EdgeInsets.fromLTRB(10, 6, 10, 6);
+    MainAxisAlignment alignment;  // which side to align bubble to
+    EdgeInsetsGeometry margin;  // space between bubble and timestamp
+    double marginValue = 8;
+    EdgeInsetsGeometry padding = const EdgeInsets.fromLTRB(10, 6, 10, 6);  // inner text padding from bubble walls
     Color bubbleColor;
     Color textColor;
     TextAlign textAlign;
 
     if (widget.isMine) {
       // sent by current user
-      margin = const EdgeInsets.only(left: 15);
+      alignment = MainAxisAlignment.end;
+      margin = EdgeInsets.only(left: marginValue);
       bubbleColor = const Color(0xFF1982FC);
       textColor = CupertinoColors.white;
       textAlign = TextAlign.right;
     } else {
       // sent by other user
-      margin = const EdgeInsets.only(right: 15);
+      alignment = MainAxisAlignment.start;
+      margin = EdgeInsets.only(right: marginValue);
       bubbleColor = CupertinoColors.systemGrey5;
       textColor = CupertinoColors.black;
       textAlign = TextAlign.left;
     }
 
-    Text time = Text(
-        widget.msg.time,
-        style:
-            const TextStyle(
-                color: CupertinoColors.secondaryLabel,
-                fontSize: 12,
-            )
+    Container time = Container(
+        margin: const EdgeInsets.only(bottom: 2),
+        child: Text(
+          widget.msg.time,
+          style:
+          const TextStyle(
+            color: CupertinoColors.secondaryLabel,
+            fontSize: 12,
+          )
+      )
     );
 
     Text message = Text(widget.msg.message,

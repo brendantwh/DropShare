@@ -146,7 +146,7 @@ class _ChatState extends State<Chat> {
 
                           return ListView.separated(
                               separatorBuilder: (context, index) {
-                                return const SizedBox(height: 5);
+                                return const SizedBox(height: 4);
                               },
                               shrinkWrap: true,
                               reverse: true,
@@ -167,7 +167,7 @@ class _ChatState extends State<Chat> {
                                 }
 
                                 Container dateStamp = Container(
-                                    margin: const EdgeInsets.fromLTRB(0, 14, 0, 4),
+                                    margin: const EdgeInsets.fromLTRB(0, 14, 0, 5),
                                     child: Text(dates[index],
                                       style: const TextStyle(
                                           color: CupertinoColors.secondaryLabel,

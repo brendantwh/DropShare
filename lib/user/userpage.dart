@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../auth/authentication.dart';
 import '../listings/listinggrid.dart';
+import 'dsuser.dart';
 
 class Userpage extends StatefulWidget {
   const Userpage({Key? key}) : super(key: key);
@@ -93,7 +94,7 @@ class _UserpageState extends State<Userpage> {
             children: [
               Container(
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
-                child: Text('You are ${FirebaseAuth.instance.currentUser?.uid ?? 'Unknown user'}'),
+                child: const UsernameText('You are ', ''),
               ),
               Flexible(
                   child: ListingGrid(stream: userListings)
