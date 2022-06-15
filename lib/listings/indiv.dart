@@ -13,6 +13,124 @@ class IndivListing extends StatefulWidget {
 }
 
 class _IndivListingState extends State<IndivListing> {
+  void _manageListingActionSheet(BuildContext context, Listing listing) {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        title: const Text('Manage your listing'),
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('Cancel'),
+        ),
+        actions: listing.sold
+            ? <CupertinoActionSheetAction>[
+                CupertinoActionSheetAction(
+                  isDestructiveAction: true,
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _deleteListingAlertDialog(context, listing);
+                  },
+                  child: Wrap(
+                    spacing: 10,
+                    children: const [
+                      Icon(CupertinoIcons.trash, color: CupertinoColors.destructiveRed),
+                      Text('Delete listing')
+                    ],
+                  ),
+                )
+              ]
+            : <CupertinoActionSheetAction>[
+                CupertinoActionSheetAction(
+                  isDestructiveAction: true,
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _deleteListingAlertDialog(context, listing);
+                  },
+                  child: Wrap(
+                    spacing: 10,
+                    children: const [
+                      Icon(CupertinoIcons.trash, color: CupertinoColors.destructiveRed),
+                      Text('Delete listing')
+                    ],
+                  ),
+                ),
+                CupertinoActionSheetAction(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Edit listing')
+                ),
+                CupertinoActionSheetAction(
+                    isDefaultAction: true,
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _sellListingAlertDialog(context, listing);
+                    },
+                    child: const Text('Mark as sold')
+                )
+              ],
+      ),
+    );
+  }
+
+  void _deleteListingAlertDialog(BuildContext context, Listing listing) {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: const Text('Delete listing?'),
+        content: const Text('Are you sure you want to delete this listing?'),
+        actions: <CupertinoDialogAction>[
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('No'),
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pushReplacementNamed(context, 'userpage');
+              listing.hide();
+            },
+            child: const Text('Yes'),
+          )
+        ],
+      ),
+    );
+  }
+
+  void _sellListingAlertDialog(BuildContext context, Listing listing) {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) => CupertinoAlertDialog(
+        title: const Text('Mark as sold?'),
+        content: const Text('Are you sure you want to mark this listing as sold?'),
+        actions: <CupertinoDialogAction>[
+          CupertinoDialogAction(
+            isDefaultAction: true,
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text('No'),
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pushReplacementNamed(context, 'userpage');
+              listing.sell();
+            },
+            child: const Text('Yes'),
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final Listing listing =
@@ -52,32 +170,42 @@ class _IndivListingState extends State<IndivListing> {
                         }
                       });
 
-                      return Align(
-                          alignment: Alignment.centerLeft,
-                          child: SizedBox(
-                              child: CupertinoButton(
-                                  color: const Color(0xffd9e6fa),
-                                  padding:
-                                      const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                                  onPressed: () {
-                                    listing.uid == me.uid
-                                        ? Navigator.pushNamed(
-                                            context, 'chatlist',
-                                            arguments:
-                                                listing) // I am the seller
-                                        : Navigator.pushNamed(context, 'chat',
-                                            arguments: ChatHelper(listing,
-                                                me.uid)); // I am the buyer
-                                  },
-                                  child: Text(
-                                      listing.uid == me.uid
-                                          ? 'View chats'
-                                          : 'Message',
-                                      style: const TextStyle(
-                                          color: CupertinoColors.systemBlue,
-                                          fontWeight: FontWeight.w500))
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CupertinoButton(
+                              color: const Color(0xffd9e6fa),
+                              padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                              onPressed: listing.sold ? null : () {
+                                listing.uid == me.uid
+                                    ? Navigator.pushNamed(context, 'chatlist', arguments: listing) // I am the seller
+                                    : Navigator.pushNamed(context, 'chat', arguments: ChatHelper(listing, me.uid)); // I am the buyer
+                              },
+                              child: Text(
+                                  listing.sold
+                                  ? 'Sold'
+                                  : listing.uid == me.uid
+                                      ? 'View chats'
+                                      : 'Message',
+                                  style: TextStyle(
+                                      color: listing.sold ? CupertinoColors.systemGrey : CupertinoColors.systemBlue,
+                                      fontWeight: FontWeight.w500
+                                  )
                               )
-                          )
+                          ),
+                          listing.uid == me.uid
+                              ? CupertinoButton(
+                              color: const Color(0xfff2f4f5),
+                              padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                              onPressed: () => _manageListingActionSheet(context, listing),
+                              child: const Text(
+                                  'Manage listing',
+                                  style: TextStyle(
+                                      color: CupertinoColors.activeBlue
+                                  )
+                              ))
+                              : Container()
+                        ],
                       );
                     })
                   ],

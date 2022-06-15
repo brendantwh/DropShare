@@ -7,7 +7,9 @@ class Listing {
   final int location;
   final String? description;
   final String uid;
-  String? docId;
+  bool visible;
+  bool sold;
+  String docId;
 
   Listing(
       {required this.title,
@@ -16,7 +18,10 @@ class Listing {
       required this.location,
       this.description,
       required this.uid,
-      this.docId}
+      this.visible = true,
+      this.sold = false,
+      this.docId = ''
+      }
       );
 
   factory Listing.fromFirestore(
@@ -29,7 +34,9 @@ class Listing {
         location: data?['location'].toInt(),
         description: data?['description'] ?? '',
         uid: data?['uid'] ?? 'Unknown',
-        docId: snapshot.id
+        docId: snapshot.id,
+        visible: data?['visible'] ?? false,
+        sold: data?['sold'] ?? false
     );
   }
 
@@ -40,7 +47,37 @@ class Listing {
       'price': price,
       'location': location,
       'description': description,
-      'uid': uid
+      'uid': uid,
+      'visible': visible,
+      'sold': sold
     };
+  }
+
+  void sell() {
+    FirebaseFirestore.instance
+        .collection('listings')
+        .doc(docId)
+        .update({'sold': true});
+  }
+
+  void hide() {
+    FirebaseFirestore.instance
+        .collection('listings')
+        .doc(docId)
+        .update({'visible': false});
+  }
+
+  void show() {
+    FirebaseFirestore.instance
+        .collection('listings')
+        .doc(docId)
+        .update({'visible': true});
+  }
+
+  void delete() {
+    FirebaseFirestore.instance
+        .collection('listings')
+        .doc(docId)
+        .delete();
   }
 }

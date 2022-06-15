@@ -32,12 +32,17 @@ class _ListingGridState extends State<ListingGrid> {
                   .map<Widget>((DocumentSnapshot document) {
                 Listing l = Listing.fromFirestore(document
                 as DocumentSnapshot<Map<String, dynamic>>);
-                return GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, 'indiv',
-                          arguments: l);
-                    },
-                    child: Text(l.title));
+
+                if (l.visible) {
+                  return GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, 'indiv',
+                            arguments: l);
+                      },
+                      child: Text('${l.title} ${l.sold ? '(sold)' : ''}'));
+                } else {
+                  return Container();
+                }
               }).toList());
         });
   }

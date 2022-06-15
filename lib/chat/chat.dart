@@ -304,7 +304,7 @@ class _ChatState extends State<Chat> {
                                                                     .trim(),
                                                             time: '');
                                                         ChatHelper.manageChat(
-                                                            listing.docId!,
+                                                            listing.docId,
                                                             buyerId);
                                                         chat.add(
                                                             msg.toFirestore());
