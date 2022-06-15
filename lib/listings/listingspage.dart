@@ -16,6 +16,7 @@ class _ListingsPageState extends State<ListingsPage> {
       .orderBy('time', descending: true)
       .snapshots();
   final Authentication auth = Authentication();
+  String firestoreid = '';
 
   @override
   Widget build(BuildContext context) {
@@ -97,10 +98,19 @@ class _ListingsPageState extends State<ListingsPage> {
                                 as DocumentSnapshot<Map<String, dynamic>>);
                             return GestureDetector(
                                 onTap: () {
+                                  firestoreid = document.id;
+                                  l.setfirestoredid(firestoreid);
                                   Navigator.pushNamed(context, 'indiv',
-                                      arguments: l);
+                                      arguments: l
+                                    );
                                 },
-                                child: Text(l.title));
+                                child: ListView(
+                                  children: [
+                                    Text(l.title),
+                                    Image.network(l.imageURL, scale: 0.5,)
+                                  ],
+                                )
+                              );
                           }).toList());
                     })
             )
