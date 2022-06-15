@@ -10,6 +10,7 @@ class ListingsPage extends StatefulWidget {
 }
 
 class _ListingsPageState extends State<ListingsPage> {
+  TextEditingController searchController = TextEditingController();
   final items = FirebaseFirestore.instance
       .collection('listings')
       .orderBy('time', descending: true)
@@ -39,7 +40,21 @@ class _ListingsPageState extends State<ListingsPage> {
             ),
             child: SafeArea(
                 minimum: const EdgeInsets.fromLTRB(20.0, 100.0, 20.0, 0),
-                child: ListingGrid(stream: items),
+                child: Column(
+                  children: [
+                    Container(
+                        margin: const EdgeInsets.only(bottom: 20),
+                        child: CupertinoSearchTextField(
+                            controller: searchController,
+                            placeholder: 'Search for listings',
+                            suffixMode: OverlayVisibilityMode.editing,
+                        )
+                    ),
+                    Flexible(
+                        child: ListingGrid(stream: items)
+                    )
+                  ],
+                ),
             )
         )
     );
