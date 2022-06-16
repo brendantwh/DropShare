@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Listing {
-  final String title;
+  String title;
   final DateTime time;
-  final num price;
-  final int location;
-  final String? description;
+  num price;
+  int location;
+  String? description;
   final String uid;
   bool visible;
   bool sold;
@@ -53,11 +53,34 @@ class Listing {
     };
   }
 
+  void update({required String title, required num price, required int location, required String description}) {
+    this.title = title;
+    this.price = price;
+    this.location = location;
+    this.description = description;
+    FirebaseFirestore.instance
+        .collection('listings')
+        .doc(docId)
+        .update({
+      'title': title,
+      'price': price,
+      'location': location,
+      'description': description
+    });
+  }
+
   void sell() {
     FirebaseFirestore.instance
         .collection('listings')
         .doc(docId)
         .update({'sold': true});
+  }
+
+  void unsell() {
+    FirebaseFirestore.instance
+        .collection('listings')
+        .doc(docId)
+        .update({'sold': false});
   }
 
   void hide() {

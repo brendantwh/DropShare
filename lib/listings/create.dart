@@ -16,13 +16,30 @@ class Create extends StatefulWidget {
 
 class _CreateState extends State<Create> {
   final TextEditingController titleController = TextEditingController();
-  double price = 0;
-  String description = '';
+  num price = 0;
+  final TextEditingController descController = TextEditingController();
+
+  @override
+  void deactivate() {
+    titleController.dispose();
+    descController.dispose();
+    _selectedLocation = 0;
+    super.deactivate();
+  }
 
   @override
   Widget build(BuildContext context) {
     CollectionReference items = FirebaseFirestore.instance.collection('listings');
     final String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+
+    var listing = ModalRoute.of(context)?.settings.arguments;
+    if (listing != null) {
+      listing = listing as Listing;
+      titleController.text = listing.title;
+      price = listing.price;
+      descController.text = listing.description ?? '';
+      _selectedLocation = listing.location;
+    }
 
     return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
@@ -64,17 +81,26 @@ class _CreateState extends State<Create> {
                         }
                     );
                   } else {
-                    Listing l = Listing(
-                        title: titleController.text.trim(),
-                        time: DateTime.now(),
-                        price: price,
-                        location: _selectedLocation,
-                        description: description.trim(),
-                        uid: uid
-                    );
-                    items.add(l.toFirestore());
-                    Navigator.pushReplacementNamed(context, 'listings');
-                    _selectedLocation = 0;
+                    if (listing == null) {
+                      Listing l = Listing(
+                          title: titleController.text.trim(),
+                          time: DateTime.now(),
+                          price: price,
+                          location: _selectedLocation,
+                          description: descController.text.trim(),
+                          uid: uid
+                      );
+                      items.add(l.toFirestore());
+                      Navigator.pushReplacementNamed(context, 'listings');
+                    } else {
+                      Listing l = listing as Listing;
+                      l.update(
+                          title: titleController.text.trim(),
+                          price: price,
+                          location: _selectedLocation,
+                          description: descController.text.trim());
+                      Navigator.pushReplacementNamed(context, 'indiv', arguments: l);
+                    }
                   }
                 },
                 child: const Icon(CupertinoIcons.checkmark))),
@@ -96,16 +122,17 @@ class _CreateState extends State<Create> {
               ),
             CupertinoTextFormFieldRow(
                 placeholder: 'Description',
+                controller: descController,
                 keyboardType: TextInputType.multiline,
                 minLines: 2,
                 maxLines: 10,
-                onChanged: (value) {
-                  description = value;
-                },
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const <Widget>[Text('Location: '), LocationPicker()],
+              children: const [
+                Text('Location: '),
+                LocationPicker()
+              ],
             )
           ])
         ]));
@@ -140,7 +167,8 @@ class _LocationPickerState extends State<LocationPicker> {
             top: false,
             child: child,
           ),
-        ));
+        )
+    );
   }
 
   @override
@@ -149,6 +177,7 @@ class _LocationPickerState extends State<LocationPicker> {
       padding: EdgeInsets.zero,
       onPressed: () => _showDialog(
         CupertinoPicker(
+            scrollController: FixedExtentScrollController(initialItem: _selectedLocation),
             magnification: 1.22,
             squeeze: 1.2,
             useMagnifier: true,

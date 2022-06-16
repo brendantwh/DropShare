@@ -33,12 +33,21 @@ class _IndivListingState extends State<IndivListing> {
                     _deleteListingAlertDialog(context, listing);
                   },
                   child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     spacing: 10,
                     children: const [
                       Icon(CupertinoIcons.trash, color: CupertinoColors.destructiveRed),
                       Text('Delete listing')
                     ],
                   ),
+                ),
+                CupertinoActionSheetAction(
+                    isDefaultAction: true,
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _sellStatusAlertDialog(context, listing);
+                    },
+                    child: const Text('Mark as unsold')
                 )
               ]
             : <CupertinoActionSheetAction>[
@@ -49,6 +58,7 @@ class _IndivListingState extends State<IndivListing> {
                     _deleteListingAlertDialog(context, listing);
                   },
                   child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     spacing: 10,
                     children: const [
                       Icon(CupertinoIcons.trash, color: CupertinoColors.destructiveRed),
@@ -59,6 +69,7 @@ class _IndivListingState extends State<IndivListing> {
                 CupertinoActionSheetAction(
                     onPressed: () {
                       Navigator.pop(context);
+                      Navigator.pushNamed(context, 'create', arguments: listing);
                     },
                     child: const Text('Edit listing')
                 ),
@@ -66,7 +77,7 @@ class _IndivListingState extends State<IndivListing> {
                     isDefaultAction: true,
                     onPressed: () {
                       Navigator.pop(context);
-                      _sellListingAlertDialog(context, listing);
+                      _sellStatusAlertDialog(context, listing);
                     },
                     child: const Text('Mark as sold')
                 )
@@ -103,12 +114,12 @@ class _IndivListingState extends State<IndivListing> {
     );
   }
 
-  void _sellListingAlertDialog(BuildContext context, Listing listing) {
+  void _sellStatusAlertDialog(BuildContext context, Listing listing) {
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
-        title: const Text('Mark as sold?'),
-        content: const Text('Are you sure you want to mark this listing as sold?'),
+        title: Text('Mark as ${listing.sold ? 'unsold' : 'sold'}?'),
+        content: Text('Are you sure you want to mark this listing as ${listing.sold ? 'unsold' : 'sold'}?'),
         actions: <CupertinoDialogAction>[
           CupertinoDialogAction(
             isDefaultAction: true,
@@ -121,8 +132,8 @@ class _IndivListingState extends State<IndivListing> {
             isDestructiveAction: true,
             onPressed: () {
               Navigator.pop(context);
+              listing.sold ? listing.unsell() : listing.sell();
               Navigator.pushReplacementNamed(context, 'userpage');
-              listing.sell();
             },
             child: const Text('Yes'),
           )
@@ -170,6 +181,8 @@ class _IndivListingState extends State<IndivListing> {
                         }
                       });
 
+                      bool userIsSeller = listing.uid == me.uid;
+
                       return Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -177,32 +190,54 @@ class _IndivListingState extends State<IndivListing> {
                               color: const Color(0xffd9e6fa),
                               padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
                               onPressed: listing.sold ? null : () {
-                                listing.uid == me.uid
+                                userIsSeller
                                     ? Navigator.pushNamed(context, 'chatlist', arguments: listing) // I am the seller
                                     : Navigator.pushNamed(context, 'chat', arguments: ChatHelper(listing, me.uid)); // I am the buyer
                               },
-                              child: Text(
-                                  listing.sold
-                                  ? 'Sold'
-                                  : listing.uid == me.uid
-                                      ? 'View chats'
-                                      : 'Message',
-                                  style: TextStyle(
-                                      color: listing.sold ? CupertinoColors.systemGrey : CupertinoColors.systemBlue,
-                                      fontWeight: FontWeight.w500
+                              child: listing.sold
+                              ? const Text('Sold', style: TextStyle(color: CupertinoColors.systemGrey))
+                              : userIsSeller
+                              ? Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                spacing: 10,
+                                children: const [
+                                  Icon(CupertinoIcons.chat_bubble_2_fill, color: CupertinoColors.activeBlue),
+                                  Text('View chats',
+                                      style: TextStyle(
+                                          color: CupertinoColors.activeBlue,
+                                          fontWeight: FontWeight.w500)
                                   )
+                                ],
+                              )
+                              : Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                spacing: 10,
+                                children: const [
+                                  Icon(CupertinoIcons.mail_solid, color: CupertinoColors.activeBlue),
+                                  Text('Message',
+                                      style: TextStyle(
+                                          color: CupertinoColors.activeBlue,
+                                          fontWeight: FontWeight.w500)
+                                  )
+                                ],
                               )
                           ),
-                          listing.uid == me.uid
+                          userIsSeller
                               ? CupertinoButton(
                               color: const Color(0xfff2f4f5),
                               padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
                               onPressed: () => _manageListingActionSheet(context, listing),
-                              child: const Text(
+                              child: Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                spacing: 10,
+                                children: const [
+                                  Icon(CupertinoIcons.settings_solid, color: CupertinoColors.activeBlue),
+                                  Text(
                                   'Manage listing',
                                   style: TextStyle(
                                       color: CupertinoColors.activeBlue
-                                  )
+                                  ))
+                                ],
                               ))
                               : Container()
                         ],
