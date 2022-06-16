@@ -10,6 +10,7 @@ class Signup extends StatefulWidget {
 
 class _SignupState extends State<Signup> {
   final Authentication auth = Authentication();
+  TextEditingController usernameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
 
@@ -25,14 +26,23 @@ class _SignupState extends State<Signup> {
             shrinkWrap: true,
             children: <Widget>[
               Container(
-                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
+                child: CupertinoTextField(
+                  controller: usernameController,
+                  placeholder: 'Username',
+                  autocorrect: false,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                 child: CupertinoTextField(
                   controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
                   placeholder: 'Email',
                 ),
               ),
               Container(
-                padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
                 child: CupertinoTextField(
                   obscureText: true,
                   controller: passwordController,
@@ -45,7 +55,9 @@ class _SignupState extends State<Signup> {
                   child: CupertinoButton.filled(
                     child: const Text('Sign up'),
                     onPressed: () async {
-                      if (emailController.text.isEmpty) {
+                      if (usernameController.text.isEmpty) {
+                        Authentication.showErrorDialog(context, 'Username field is empty');
+                      } else if (emailController.text.isEmpty) {
                         Authentication.showErrorDialog(context, 'Email field is empty');
                       } else if (passwordController.text.isEmpty) {
                         Authentication.showErrorDialog(context, 'Password field is empty');
@@ -54,6 +66,7 @@ class _SignupState extends State<Signup> {
                           await auth.signUp(email: emailController.text, password: passwordController.text).then((result) {
                             if (result == null) {
                               Authentication.showSuccessDialog(context, 'registered account');
+                              auth.createUsername(usernameController.text);
                             } else {
                               Authentication.showErrorDialog(context, result);
                             }

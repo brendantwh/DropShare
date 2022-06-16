@@ -1,6 +1,7 @@
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'listing.dart';
@@ -17,9 +18,17 @@ class Create extends StatefulWidget {
 }
 
 class _CreateState extends State<Create> {
-  final TextEditingController _titleController = TextEditingController();
-  double price = 0;
-  String description = '';
+  final TextEditingController titleController = TextEditingController();
+  num price = 0;
+  final TextEditingController descController = TextEditingController();
+
+  @override
+  void deactivate() {
+    titleController.dispose();
+    descController.dispose();
+    _selectedLocation = 0;
+    super.deactivate();
+  }
 
   //For firebase storage of images
   String imageName = '';
@@ -32,26 +41,51 @@ class _CreateState extends State<Create> {
   @override
   Widget build(BuildContext context) {
     CollectionReference items = FirebaseFirestore.instance.collection('listings');
+    final String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+
+    var listing = ModalRoute.of(context)?.settings.arguments;
+    if (listing != null) {
+      listing = listing as Listing;
+      titleController.text = listing.title;
+      price = listing.price;
+      descController.text = listing.description ?? '';
+      _selectedLocation = listing.location;
+    }
 
     return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
             middle: const Text('Create listing'),
             trailing: GestureDetector(
                 onTap: () {
-                  if (_titleController.text.isEmpty) {
+                  if (titleController.text.isEmpty) {
                     showCupertinoDialog(
                         context: context,
                         builder: (context) {
                           return CupertinoAlertDialog(
-                            title: const Text('Empty title'),
-                            content: const Text('Title cannot be empty'),
+                            title: Text(
+                                'Empty title',
+                                style: TextStyle(
+                                    fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                                )
+                            ),
+                            content: Text(
+                                'Title cannot be empty',
+                                style: TextStyle(
+                                    fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                                )
+                            ),
                             actions: <CupertinoDialogAction>[
                               CupertinoDialogAction(
                                 isDefaultAction: true,
                                 onPressed: () {
                                   Navigator.pop(context);
                                 },
-                                child: const Text('Ok'),
+                                child: Text(
+                                    'Ok',
+                                    style: TextStyle(
+                                        fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                                    )
+                                ),
                               )
                             ]
                           );
@@ -59,7 +93,7 @@ class _CreateState extends State<Create> {
                     );
                   } else if (imageName.isEmpty) {
                     showCupertinoDialog(
-                      context: context, 
+                      context: context,
                       builder: (context) {
                         return CupertinoAlertDialog(
                           title: const Text('No image'),
@@ -91,66 +125,83 @@ class _CreateState extends State<Create> {
 
                     uploadTask.whenComplete(() async {
                       var uploadPath = await uploadTask.snapshot.ref.getDownloadURL();
-                      Listing l = Listing(
-                        title: _titleController.text,
-                        time: DateTime.now(),
-                        price: price,
-                        location: _selectedLocation,
-                        description: description,
-                        imageURL: uploadPath,
-                        reported: false);
-                      items.add(l.toFirestore());
-                      setState(() {
-                        _isLoading = false;
-                      });
-                      Navigator.pushReplacementNamed(context, 'listings');
-                      _selectedLocation = 0;
+                      if (listing == null) {
+                        Listing l = Listing(
+                            title: titleController.text.trim(),
+                            time: DateTime.now(),
+                            price: price,
+                            location: _selectedLocation,
+                            description: descController.text.trim(),
+                            uid: uid,
+                            imageURL: uploadPath,
+                            reported: false
+                        );
+                        items.add(l.toFirestore());
+                        setState(() {
+                          _isLoading = false;
+                        });
+                        Navigator.pushReplacementNamed(context, 'listings');
+                      } else {
+                        Listing l = listing as Listing;
+                        l.update(
+                            title: titleController.text.trim(),
+                            price: price,
+                            location: _selectedLocation,
+                            description: descController.text.trim(),
+                            imageURL: uploadPath);
+                        setState(() {
+                          _isLoading = false;
+                        });
+                        Navigator.pushReplacementNamed(context, 'indiv', arguments: l);
+                      }
                       });
                     }
-                },
+                  },
                 child: const Icon(CupertinoIcons.checkmark))),
         child: _isLoading
             ? Center(child: CupertinoActivityIndicator())
-            : ListView(children: [CupertinoFormSection(margin: const EdgeInsets.all(12), children: [
-              CupertinoTextFormFieldRow(
-                placeholder: 'Title',
-                controller: _titleController,
+            : ListView(children: [
+          CupertinoFormSection(margin: const EdgeInsets.all(12), children: [
+            CupertinoTextFormFieldRow(
+              placeholder: 'Title',
+              controller: titleController,
+            ),
+            CupertinoTextFormFieldRow(
+                placeholder: 'Price - empty for free',
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                ],
+                onChanged: (value) {
+                  price = double.parse(value);
+                }
               ),
-              CupertinoTextFormFieldRow(
-                  placeholder: 'Price - empty for free',
-                  keyboardType: TextInputType.number,
-                  inputFormatters: <TextInputFormatter>[
-                    FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-                  ],
-                  onChanged: (value) {
-                    price = double.parse(value);
-                  }
-                ),
-              CupertinoTextFormFieldRow(
-                  placeholder: 'Description',
-                  keyboardType: TextInputType.multiline,
-                  minLines: 2,
-                  maxLines: 10,
-                  onChanged: (value) {
-                    description = value;
-                  },
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const <Widget>[Text('Location: '), LocationPicker()],
-              ),
-              imageName == "" ? Container() : Text("${imageName}"),
-              CupertinoButton(
-                child: const Text('Select image'),
-                onPressed: () {
-                  showCupertinoModalPopup(
-                    context: context, 
-                    builder: buildActionSheet,
-                  );
-                },
-              )
-            ])
-          ]));
+            CupertinoTextFormFieldRow(
+                placeholder: 'Description',
+                controller: descController,
+                keyboardType: TextInputType.multiline,
+                minLines: 2,
+                maxLines: 10,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: const [
+                Text('Location: '),
+                LocationPicker()
+              ],
+            ),
+            imageName == "" ? Container() : Text("${imageName}"),
+            CupertinoButton(
+              child: const Text('Select image'),
+              onPressed: () {
+                showCupertinoModalPopup(
+                  context: context,
+                  builder: buildActionSheet,
+                );
+              },
+            )
+          ])
+        ])
   }
 
   //Gallery and camera pickers
@@ -188,14 +239,14 @@ class _CreateState extends State<Create> {
         onPressed: () {
           cameraPicker();
           Navigator.pop(context, 'Cancel');
-        }, 
+        },
         child: Text('New Photo')
       )
     ],
     cancelButton: CupertinoActionSheetAction(
       onPressed: () {
         Navigator.pop(context, 'Cancel');
-      }, 
+      },
       child: Text('Cancel')
     ),
   );
@@ -229,7 +280,8 @@ class _LocationPickerState extends State<LocationPicker> {
             top: false,
             child: child,
           ),
-        ));
+        )
+    );
   }
 
   @override
@@ -238,6 +290,7 @@ class _LocationPickerState extends State<LocationPicker> {
       padding: EdgeInsets.zero,
       onPressed: () => _showDialog(
         CupertinoPicker(
+            scrollController: FixedExtentScrollController(initialItem: _selectedLocation),
             magnification: 1.22,
             squeeze: 1.2,
             useMagnifier: true,

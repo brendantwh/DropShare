@@ -34,6 +34,7 @@ class _LoginState extends State<Login> {
                   padding: const EdgeInsets.all(10),
                   child: CupertinoTextField(
                     controller: emailController,
+                    keyboardType: TextInputType.emailAddress,
                     placeholder: 'Email',
                   ),
                 ),

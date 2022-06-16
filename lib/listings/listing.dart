@@ -1,11 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Listing {
-  final String title;
+  String title;
   final DateTime time;
-  final num price;
-  final int location;
-  final String? description;
+  num price;
+  int location;
+  String? description;
+  final String uid;
+  bool visible;
+  bool sold;
+  String docId;
   final String imageURL;
   String firestoreid = '';
   bool reported;
@@ -16,6 +20,10 @@ class Listing {
       required this.price,
       required this.location,
       this.description,
+      required this.uid,
+      this.visible = true,
+      this.sold = false,
+      this.docId = '',
       required this.imageURL,
       required this.reported});
 
@@ -28,6 +36,10 @@ class Listing {
         price: data?['price'].toDouble(),
         location: data?['location'].toInt(),
         description: data?['description'] ?? '',
+        uid: data?['uid'] ?? 'Unknown',
+        docId: snapshot.id,
+        visible: data?['visible'] ?? false,
+        sold: data?['sold'] ?? false,
         imageURL: data?['imageURL'] ?? '',
         reported: data?['reported']
     );
@@ -40,11 +52,65 @@ class Listing {
       'price': price,
       'location': location,
       'description': description,
+      'uid': uid,
+      'visible': visible,
+      'sold': sold,
       'imageURL': imageURL,
       'reported': reported
     };
   }
-  
+
+  void update({required String title, required num price, required int location, required String description}) {
+    this.title = title;
+    this.price = price;
+    this.location = location;
+    this.description = description;
+    FirebaseFirestore.instance
+        .collection('listings')
+        .doc(docId)
+        .update({
+      'title': title,
+      'price': price,
+      'location': location,
+      'description': description
+    });
+  }
+
+  void sell() {
+    FirebaseFirestore.instance
+        .collection('listings')
+        .doc(docId)
+        .update({'sold': true});
+  }
+
+  void unsell() {
+    FirebaseFirestore.instance
+        .collection('listings')
+        .doc(docId)
+        .update({'sold': false});
+  }
+
+  void hide() {
+    FirebaseFirestore.instance
+        .collection('listings')
+        .doc(docId)
+        .update({'visible': false});
+  }
+
+  void show() {
+    FirebaseFirestore.instance
+        .collection('listings')
+        .doc(docId)
+        .update({'visible': true});
+  }
+
+  void delete() {
+    FirebaseFirestore.instance
+        .collection('listings')
+        .doc(docId)
+        .delete();
+  }
+
   void setfirestoredid(String id) {
     this.firestoreid = id;
   }

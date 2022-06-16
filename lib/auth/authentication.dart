@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -32,12 +33,21 @@ class Authentication {
     }
   }
 
+  void createUsername(String username) {
+    FirebaseFirestore.instance.collection('users').doc(user.uid).set({'username': username, 'email': user.email});
+  }
+
 
   static void showErrorDialog(BuildContext context, String content) {
     showCupertinoDialog<void>(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
-        title: const Text('Error'),
+        title: Text(
+            'Error',
+            style: TextStyle(
+                fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+            )
+        ),
         content: Text(content),
         actions: <CupertinoDialogAction>[
           CupertinoDialogAction(
@@ -45,7 +55,12 @@ class Authentication {
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text('Ok'),
+            child: Text(
+                'Ok',
+                style: TextStyle(
+                    fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                )
+            ),
           )
         ],
       ),
@@ -54,22 +69,40 @@ class Authentication {
 
   static void showSuccessDialog(BuildContext context, String action) {
     showCupertinoModalPopup<void>(
+      barrierDismissible: false,
       context: context,
-      builder: (BuildContext context) => CupertinoAlertDialog(
-        title: const Text('Success'),
-        content: Text('Successfully $action'),
-        actions: <CupertinoDialogAction>[
-          CupertinoDialogAction(
-            isDefaultAction: true,
-            onPressed: () {
-              Authentication().user == null
-                  ? Navigator.pushNamedAndRemoveUntil(context, 'login', (Route<dynamic> route) => false)
-                  : Navigator.pushNamedAndRemoveUntil(context, 'listings', (Route<dynamic> route) => false);
-            },
-            child: const Text('Ok'),
-          )
-        ],
-      ),
+      builder: (BuildContext context) => WillPopScope(
+          onWillPop: () async => false,
+          child: CupertinoAlertDialog(
+            title: Text(
+                'Success',
+                style: TextStyle(
+                    fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                )
+            ),
+            content: Text(
+                'Successfully $action',
+                style: TextStyle(
+                    fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                )
+            ),
+            actions: <CupertinoDialogAction>[
+              CupertinoDialogAction(
+                isDefaultAction: true,
+                onPressed: () {
+                  Authentication().user == null
+                      ? Navigator.pushNamedAndRemoveUntil(context, 'login', (Route<dynamic> route) => false)
+                      : Navigator.pushNamedAndRemoveUntil(context, 'listings', (Route<dynamic> route) => false);
+                },
+                child: Text(
+                    'Ok',
+                    style: TextStyle(
+                        fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                    )
+                ),
+              )
+            ],
+          ))
     );
   }
 }

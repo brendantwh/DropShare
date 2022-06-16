@@ -1,5 +1,8 @@
 // Cupertino design
+import 'package:dropshare/chat/chatlist.dart';
 import 'package:flutter/cupertino.dart';
+
+import 'dart:io';
 
 // Firebase packages
 import 'package:firebase_core/firebase_core.dart';
@@ -9,9 +12,11 @@ import 'firebase_options.dart';
 // DropShare pages
 import 'auth/login.dart';
 import 'auth/signup.dart';
+import 'chat/chat.dart';
 import 'listings/create.dart';
 import 'listings/indiv.dart';
 import 'listings/listingspage.dart';
+import 'user/userpage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,11 +54,25 @@ class _MyAppState extends State<MyApp> {
               return CupertinoPageRoute(builder: (_) => const Create(), settings: settings);
             case 'indiv':
               return CupertinoPageRoute(builder: (context) => const IndivListing(), settings: settings);
+            case 'chat':
+              return CupertinoPageRoute(builder: (context) => const Chat(), settings: settings);
+            case 'chatlist':
+              return CupertinoPageRoute(builder: (context) => const Chatlist(), settings: settings);
+            case 'userpage':
+              return CupertinoPageRoute(builder: (_) => const Userpage(), settings: settings);
           }
         },
-        theme: const CupertinoThemeData(
-          brightness: Brightness.light  // Force light mode
-        )
+        theme: Platform.isIOS
+            ? const CupertinoThemeData(brightness: Brightness.light) // Force light mode
+            : const CupertinoThemeData(
+                brightness: Brightness.light,  // Force light mode
+                textTheme: CupertinoTextThemeData(
+                  textStyle: TextStyle(
+                      color: CupertinoColors.black,
+                      fontFamily: 'Inter'
+                  )
+                )
+              )
     );
   }
 }
