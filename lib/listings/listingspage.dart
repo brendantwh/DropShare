@@ -14,7 +14,6 @@ class _ListingsPageState extends State<ListingsPage> {
       .collection('listings')
       .orderBy('time', descending: true)
       .snapshots();
-  String firestoreid = '';
 
   @override
   Widget build(BuildContext context) {

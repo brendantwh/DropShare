@@ -11,7 +11,6 @@ class Listing {
   bool sold;
   String docId;
   final String imageURL;
-  String firestoreid = '';
   bool reported;
 
   Listing(
@@ -25,7 +24,7 @@ class Listing {
       this.sold = false,
       this.docId = '',
       required this.imageURL,
-      required this.reported});
+      this.reported = false});
 
   factory Listing.fromFirestore(
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
@@ -41,7 +40,7 @@ class Listing {
         visible: data?['visible'] ?? false,
         sold: data?['sold'] ?? false,
         imageURL: data?['imageURL'] ?? '',
-        reported: data?['reported']
+        reported: data?['reported'] ?? false
     );
   }
 
@@ -60,7 +59,7 @@ class Listing {
     };
   }
 
-  void update({required String title, required num price, required int location, required String description}) {
+  void update({required String title, required num price, required int location, required String description, required String imageURL}) {
     this.title = title;
     this.price = price;
     this.location = location;
@@ -72,8 +71,23 @@ class Listing {
       'title': title,
       'price': price,
       'location': location,
-      'description': description
+      'description': description,
+      'imageURL': imageURL
     });
+  }
+
+  void report() {
+    FirebaseFirestore.instance
+        .collection('listings')
+        .doc(docId)
+        .update({'reported': true});
+  }
+
+  void unreport() {
+    FirebaseFirestore.instance
+        .collection('listings')
+        .doc(docId)
+        .update({'reported': false});
   }
 
   void sell() {
@@ -109,9 +123,5 @@ class Listing {
         .collection('listings')
         .doc(docId)
         .delete();
-  }
-
-  void setfirestoredid(String id) {
-    this.firestoreid = id;
   }
 }

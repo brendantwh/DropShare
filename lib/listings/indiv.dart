@@ -1,5 +1,3 @@
-import 'dart:ffi';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -7,7 +5,6 @@ import '../chat/chathelper.dart';
 import '../user/dsuser.dart';
 import 'listing.dart';
 import '../locations/location.dart';
-import 'listingspage.dart';
 
 class IndivListing extends StatefulWidget {
   const IndivListing({Key? key}) : super(key: key);
@@ -157,8 +154,6 @@ class _IndivListingState extends State<IndivListing> {
         : NumberFormat.currency(locale: 'en_SG', symbol: '\$')
             .format(listing.price);
     DsUser me = DsUser.placeholder;
-    final String imageURL = listing.imageURL;
-    final String firestoreid = listing.firestoreid;
     bool reported = listing.reported;
 
     return CupertinoPageScaffold(
@@ -183,11 +178,7 @@ class _IndivListingState extends State<IndivListing> {
                         ),
                         CupertinoDialogAction(
                           onPressed: () {
-                            final doc = FirebaseFirestore.instance.collection('listings').doc(firestoreid);
-                            doc.update({
-                              'reported': true,
-                            });
-                            listing.reported == true;
+                            listing.report();
                             Navigator.pop(context);
                             showCupertinoDialog(
                               context: context,
@@ -205,13 +196,13 @@ class _IndivListingState extends State<IndivListing> {
                                   ]
                                 );
                               });
-                        },
-                        child: const Text('Report', style: TextStyle(color: CupertinoColors.destructiveRed)),
+                          },
+                          child: const Text('Report', style: TextStyle(color: CupertinoColors.destructiveRed)),
                         )
                       ]);
                   });
               },
-              child: const Icon(CupertinoIcons.flag),
+              child: const Icon(CupertinoIcons.flag, color: CupertinoColors.destructiveRed),
             )
           ])
         ),
@@ -224,7 +215,7 @@ class _IndivListingState extends State<IndivListing> {
                         style: const TextStyle(
                             fontSize: 24, fontWeight: FontWeight.w600)),
                     const SizedBox(height: 24),
-                    Image.network(imageURL),
+                    Image.network(listing.imageURL),
                     const SizedBox(height: 24),
                     Text('Price: $price'),
                     Text('Location: $location'),

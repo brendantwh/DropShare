@@ -22,14 +22,6 @@ class _CreateState extends State<Create> {
   num price = 0;
   final TextEditingController descController = TextEditingController();
 
-  @override
-  void deactivate() {
-    titleController.dispose();
-    descController.dispose();
-    _selectedLocation = 0;
-    super.deactivate();
-  }
-
   //For firebase storage of images
   String imageName = '';
   XFile? imagePath;
@@ -37,6 +29,14 @@ class _CreateState extends State<Create> {
   FirebaseStorage storageRef = FirebaseStorage.instance;
   String collectionName = 'Image';
   bool _isLoading = false;
+
+  @override
+  void deactivate() {
+    titleController.dispose();
+    descController.dispose();
+    _selectedLocation = 0;
+    super.deactivate();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -126,6 +126,7 @@ class _CreateState extends State<Create> {
                     uploadTask.whenComplete(() async {
                       var uploadPath = await uploadTask.snapshot.ref.getDownloadURL();
                       if (listing == null) {
+                        // create a new listing
                         Listing l = Listing(
                             title: titleController.text.trim(),
                             time: DateTime.now(),
@@ -133,15 +134,17 @@ class _CreateState extends State<Create> {
                             location: _selectedLocation,
                             description: descController.text.trim(),
                             uid: uid,
-                            imageURL: uploadPath,
-                            reported: false
+                            imageURL: uploadPath
                         );
                         items.add(l.toFirestore());
                         setState(() {
                           _isLoading = false;
                         });
-                        Navigator.pushReplacementNamed(context, 'listings');
+                        if (mounted) {
+                          Navigator.pushReplacementNamed(context, 'listings');
+                        }
                       } else {
+                        // modify an existing listing
                         Listing l = listing as Listing;
                         l.update(
                             title: titleController.text.trim(),
@@ -152,56 +155,63 @@ class _CreateState extends State<Create> {
                         setState(() {
                           _isLoading = false;
                         });
-                        Navigator.pushReplacementNamed(context, 'indiv', arguments: l);
+                        if (mounted) {
+                          Navigator.pushReplacementNamed(context, 'indiv', arguments: l);
+                        }
                       }
                       });
                     }
                   },
                 child: const Icon(CupertinoIcons.checkmark))),
         child: _isLoading
-            ? Center(child: CupertinoActivityIndicator())
+            ? const Center(child: CupertinoActivityIndicator())
             : ListView(children: [
-          CupertinoFormSection(margin: const EdgeInsets.all(12), children: [
-            CupertinoTextFormFieldRow(
-              placeholder: 'Title',
-              controller: titleController,
-            ),
-            CupertinoTextFormFieldRow(
-                placeholder: 'Price - empty for free',
-                keyboardType: TextInputType.number,
-                inputFormatters: <TextInputFormatter>[
-                  FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-                ],
-                onChanged: (value) {
-                  price = double.parse(value);
-                }
-              ),
-            CupertinoTextFormFieldRow(
-                placeholder: 'Description',
-                controller: descController,
-                keyboardType: TextInputType.multiline,
-                minLines: 2,
-                maxLines: 10,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                Text('Location: '),
-                LocationPicker()
-              ],
-            ),
-            imageName == "" ? Container() : Text("${imageName}"),
-            CupertinoButton(
-              child: const Text('Select image'),
-              onPressed: () {
-                showCupertinoModalPopup(
-                  context: context,
-                  builder: buildActionSheet,
-                );
-              },
-            )
-          ])
+                CupertinoFormSection(
+                    margin: const EdgeInsets.all(12),
+                    children: [
+                      CupertinoTextFormFieldRow(
+                        placeholder: 'Title',
+                        controller: titleController,
+                      ),
+                      CupertinoTextFormFieldRow(
+                        placeholder: 'Price - empty for free',
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                        ],
+                        onChanged: (value) {
+                          price = double.parse(value);
+                        }
+                      ),
+                      CupertinoTextFormFieldRow(
+                        placeholder: 'Description',
+                        controller: descController,
+                        keyboardType: TextInputType.multiline,
+                        minLines: 2,
+                        maxLines: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Text('Location: '),
+                          LocationPicker()
+                        ],
+                      ),
+                      imageName == ""
+                          ? Container()
+                          : Text(imageName),
+                      CupertinoButton(
+                        child: const Text('Select image'),
+                        onPressed: () {
+                          showCupertinoModalPopup(
+                            context: context,
+                            builder: buildActionSheet,
+                          );
+                        }
+                      )
+                ])
         ])
+    );
   }
 
   //Gallery and camera pickers
@@ -233,21 +243,21 @@ class _CreateState extends State<Create> {
           imagePicker();
           Navigator.pop(context, 'Cancel');
         },
-        child: Text('All Photos')
+        child: const Text('Gallery')
       ),
       CupertinoActionSheetAction(
         onPressed: () {
           cameraPicker();
           Navigator.pop(context, 'Cancel');
         },
-        child: Text('New Photo')
+        child: const Text('Take a photo')
       )
     ],
     cancelButton: CupertinoActionSheetAction(
       onPressed: () {
         Navigator.pop(context, 'Cancel');
       },
-      child: Text('Cancel')
+      child: const Text('Cancel')
     ),
   );
 }

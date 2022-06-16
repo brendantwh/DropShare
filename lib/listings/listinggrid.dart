@@ -39,7 +39,13 @@ class _ListingGridState extends State<ListingGrid> {
                         Navigator.pushNamed(context, 'indiv',
                             arguments: l);
                       },
-                      child: Text('${l.title} ${l.sold ? '(sold)' : ''}'));
+                      child: ListView(
+                        children: [
+                          Text('${l.title} ${l.sold ? '(sold)' : ''}'),
+                          Image.network(l.imageURL, scale: 0.5,)
+                        ],
+                      )
+                  );
                 } else {
                   return Container();
                 }
