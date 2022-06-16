@@ -73,7 +73,12 @@ class _ReportState extends State<Report> {
               }
             });
       },
-      child: const Icon(CupertinoIcons.flag, color: CupertinoColors.destructiveRed),
+      child: Icon(
+          widget.listing.reported
+              ? CupertinoIcons.flag_fill
+              : CupertinoIcons.flag,
+          color: CupertinoColors.destructiveRed
+      ),
     );
   }
 }

@@ -167,16 +167,16 @@ class _IndivListingState extends State<IndivListing> {
                 margin: const EdgeInsets.fromLTRB(20, 30, 20, 0),
                 child: ListView(
                   children: [
+                    listing.showImage(square: true),
+                    const SizedBox(height: 24),
                     Text(listing.title,
                         style: const TextStyle(
                             fontSize: 24, fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 24),
-                    Image.network(listing.imageURL),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
                     Text('Price: $price'),
                     Text('Location: $location'),
                     Text('Time: $time'),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
                     Text('Description: ${listing.description}'),
                     UsernameText('Created by: ', '', user: DsUser(listing.uid)),
                     const SizedBox(height: 60),

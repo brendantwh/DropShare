@@ -27,6 +27,8 @@ class _ListingGridState extends State<ListingGrid> {
           }
 
           return GridView.count(
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
               crossAxisCount: 2,
               children: snapshot.data!.docs
                   .map<Widget>((DocumentSnapshot document) {
@@ -39,12 +41,7 @@ class _ListingGridState extends State<ListingGrid> {
                         Navigator.pushNamed(context, 'indiv',
                             arguments: l);
                       },
-                      child: ListView(
-                        children: [
-                          Text('${l.title} ${l.sold ? '(sold)' : ''}'),
-                          Image.network(l.imageURL, scale: 0.5,)
-                        ],
-                      )
+                      child: l.showListing()
                   );
                 } else {
                   return Container();

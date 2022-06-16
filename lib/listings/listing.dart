@@ -1,4 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
+import 'dart:ui' as ui;
+import 'package:optimized_cached_image/optimized_cached_image.dart';
 
 class Listing {
   String title;
@@ -40,8 +43,7 @@ class Listing {
         visible: data?['visible'] ?? false,
         sold: data?['sold'] ?? false,
         imageURL: data?['imageURL'] ?? '',
-        reported: data?['reported'] ?? false
-    );
+        reported: data?['reported'] ?? false);
   }
 
   Map<String, dynamic> toFirestore() {
@@ -59,15 +61,17 @@ class Listing {
     };
   }
 
-  void update({required String title, required num price, required int location, required String description, required String imageURL}) {
+  void update(
+      {required String title,
+      required num price,
+      required int location,
+      required String description,
+      required String imageURL}) {
     this.title = title;
     this.price = price;
     this.location = location;
     this.description = description;
-    FirebaseFirestore.instance
-        .collection('listings')
-        .doc(docId)
-        .update({
+    FirebaseFirestore.instance.collection('listings').doc(docId).update({
       'title': title,
       'price': price,
       'location': location,
@@ -119,9 +123,64 @@ class Listing {
   }
 
   void delete() {
-    FirebaseFirestore.instance
-        .collection('listings')
-        .doc(docId)
-        .delete();
+    FirebaseFirestore.instance.collection('listings').doc(docId).delete();
+  }
+
+  OptimizedCacheImage showImage({required bool square}) {
+    if (square) {
+      return OptimizedCacheImage(
+        imageUrl: imageURL,
+        imageBuilder: (context, image) =>
+            AspectRatio(
+                aspectRatio: 1,
+                child: Container(
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          fit: BoxFit.fitWidth,
+                          image: image
+                      )
+                  ),
+                )
+            ),
+      );
+    } else {
+      return OptimizedCacheImage(
+        imageUrl: imageURL,
+        placeholder: (context, url) => const CupertinoActivityIndicator(),
+        errorWidget: (context, url, error) => Text(error),
+      );
+    }
+  }
+
+  ClipRRect showListing() {
+    return ClipRRect(
+        borderRadius: BorderRadius.circular(14),
+        child: Stack(children: [
+          showImage(square: true),
+          Align(
+              alignment: Alignment.bottomCenter,
+              child: ClipRect(
+                child: BackdropFilter(
+                    filter: ui.ImageFilter.blur(sigmaX: 7.5, sigmaY: 7.5),
+                    child: Container(
+                        width: double.infinity,
+                        height: 32,
+                        padding: const EdgeInsets.fromLTRB(10, 3, 10, 3),
+                        decoration: const BoxDecoration(
+                          color: Color(0x98F2F2F7),
+                        ),
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(title,
+                              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                              overflow: TextOverflow.ellipsis,
+                            )
+                        )
+                    )
+                ),
+              )
+          )
+      ])
+    );
   }
 }

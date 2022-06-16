@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
 
 import '../listings/listing.dart';
+import '../listings/report.dart';
 import 'chathelper.dart';
 import 'message.dart';
 import 'bubble.dart';
@@ -65,60 +66,13 @@ class _ChatState extends State<Chat> {
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-          trailing: GestureDetector(
-              onTap: () {
-                showCupertinoDialog(
-                    context: context,
-                    builder: (context) {
-                      return CupertinoAlertDialog(
-                          title: Text(
-                              'Report this listing?',
-                              style: TextStyle(
-                                  fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
-                              )
-                          ),
-                          content: Text(
-                              'Are you sure you want to report this listing?',
-                              style: TextStyle(
-                                  fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
-                              ),
-                          ),
-                          actions: <CupertinoDialogAction>[
-                            CupertinoDialogAction(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                  'No',
-                                  style: TextStyle(
-                                      fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
-                                  )
-                              ),
-                            ),
-                            CupertinoDialogAction(
-                                isDefaultAction: true,
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text('Report',
-                                    style: TextStyle(
-                                        color: CupertinoColors.destructiveRed,
-                                        fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
-                                    )
-                                )
-                            )
-                          ]);
-                    });
-              },
-              child: const Text(
-                'Report',
-                style: TextStyle(color: CupertinoColors.destructiveRed),
-              ))),
+          trailing: Report(listing: listing)
+      ),
       child: SafeArea(
           child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Flexible(
+            Flexible(
               fit: FlexFit.loose,
               child: Stack(children: [
                 Container(
@@ -253,7 +207,10 @@ class _ChatState extends State<Chat> {
                                           style: const TextStyle(fontSize: 16))
                                     ],
                                   ),
-                                  const SizedBox(child: Text('Picture'))
+                                  Container(
+                                    padding: const EdgeInsets.fromLTRB(0, 7, 0, 7),
+                                    child: listing.showImage(square: true)
+                                  )
                                 ],
                               ))),
                     )),
