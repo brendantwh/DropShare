@@ -16,6 +16,8 @@ class _SignupState extends State<Signup> {
 
   @override
   Widget build(BuildContext context) {
+    bool loading = false;
+
     return CupertinoPageScaffold(
         navigationBar: const CupertinoNavigationBar(
             middle: Text('Sign up')
@@ -39,6 +41,7 @@ class _SignupState extends State<Signup> {
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                   placeholder: 'Email',
+                  autocorrect: false,
                 ),
               ),
               Container(
@@ -52,31 +55,47 @@ class _SignupState extends State<Signup> {
               Container(
                   height: 70,
                   padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
-                  child: CupertinoButton.filled(
-                    child: const Text('Sign up'),
-                    onPressed: () async {
-                      if (usernameController.text.isEmpty) {
-                        Authentication.showErrorDialog(context, 'Username field is empty');
-                      } else if (emailController.text.isEmpty) {
-                        Authentication.showErrorDialog(context, 'Email field is empty');
-                      } else if (passwordController.text.isEmpty) {
-                        Authentication.showErrorDialog(context, 'Password field is empty');
-                      } else {
-                        try {
-                          await auth.signUp(email: emailController.text, password: passwordController.text).then((result) {
-                            if (result == null) {
-                              Authentication.showSuccessDialog(context, 'registered account');
-                              auth.createUsername(usernameController.text);
-                            } else {
-                              Authentication.showErrorDialog(context, result);
-                            }
-                          });
-                        } catch (e) {
-                          print(e);
-                        }
-                      }
+                  child: StatefulBuilder(
+                    builder: (context, innerSetState) {
+                      return CupertinoButton.filled(
+                        disabledColor: CupertinoColors.inactiveGray,
+                        onPressed: loading
+                            ? null
+                            : () async {
+                              if (usernameController.text.isEmpty) {
+                                Authentication.showErrorDialog(context, 'Username field is empty');
+                              } else if (usernameController.text.length > 16) {
+                                Authentication.showErrorDialog(context, 'Username should contain at most 16 characters');
+                              } else if (emailController.text.isEmpty) {
+                                Authentication.showErrorDialog(context, 'Email field is empty');
+                              } else if (passwordController.text.isEmpty) {
+                                Authentication.showErrorDialog(context, 'Password field is empty');
+                              } else {
+                                if (!(emailController.text.trim().toLowerCase().endsWith('nus.edu')) && !(emailController.text.trim().toLowerCase().endsWith('nus.edu.sg'))) {
+                                  Authentication.showErrorDialog(context, 'Use a valid NUS email');
+                                } else {
+                                  try {
+                                    innerSetState(() => loading = true);
+                                    await auth.signUp(username: usernameController.text.trim(), email: emailController.text.trim(), password: passwordController.text).then((result) {
+                                      if (result == null) {
+                                        auth.createUsername(usernameController.text);
+                                        Navigator.pushNamedAndRemoveUntil(context, 'verify', (Route<dynamic> route) => false);
+                                      } else {
+                                        innerSetState(() => loading = false);
+                                        Authentication.showErrorDialog(context, result);
+                                      }
+                                    });
+                                  } catch (e) {
+                                    print(e);
+                                  }
+                                }
+                              }
+                            },
+                        child: loading ? const CupertinoActivityIndicator(color: CupertinoColors.white) : const Text('Sign up'),
+                      );
                     },
-                  ))
+                  )
+              )
             ],
           )
         )

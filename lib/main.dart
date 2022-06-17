@@ -12,6 +12,7 @@ import 'firebase_options.dart';
 // DropShare pages
 import 'auth/login.dart';
 import 'auth/signup.dart';
+import 'auth/verify.dart';
 import 'chat/chat.dart';
 import 'listings/create.dart';
 import 'listings/indiv.dart';
@@ -41,7 +42,11 @@ class _MyAppState extends State<MyApp> {
         title: 'DropShare',
         navigatorKey: _navigatorKey,
         initialRoute:
-            FirebaseAuth.instance.currentUser == null ? 'login' : 'listings',
+            FirebaseAuth.instance.currentUser == null
+                ? 'login'
+                : FirebaseAuth.instance.currentUser!.emailVerified
+                ? 'listings'
+                : 'verify',
         onGenerateRoute: (RouteSettings settings) {
           switch (settings.name) {
             case 'listings':
@@ -50,6 +55,8 @@ class _MyAppState extends State<MyApp> {
               return CupertinoPageRoute(builder: (_) => const Login(), settings: settings);
             case 'signup':
               return CupertinoPageRoute(builder: (_) => const Signup(), settings: settings);
+            case 'verify':
+              return CupertinoPageRoute(builder: (_) => const Verify(), settings: settings);
             case 'create':
               return CupertinoPageRoute(builder: (_) => const Create(), settings: settings);
             case 'indiv':
