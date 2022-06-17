@@ -6,9 +6,14 @@ class Authentication {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   get user => _auth.currentUser;
 
-  Future signUp({required String email, required String password}) async {
+  Future signUp({required String username, required String email, required String password}) async {
     try {
-      await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      await _auth.createUserWithEmailAndPassword(email: email, password: password)
+          .then((res) async {
+            await user!.updateDisplayName(username);
+            user.sendEmailVerification();
+          }
+      );
       return null;
     } on FirebaseAuthException catch (e) {
       return e.message;
@@ -90,9 +95,13 @@ class Authentication {
               CupertinoDialogAction(
                 isDefaultAction: true,
                 onPressed: () {
+                  List<String> testAccts = ['3NjC4BBW9eYvlr0JHVQUqLmKYGc2', 'w10kedwEvJdqpQWaGZQghwvngjE3'];  // to allow test accts through
                   Authentication().user == null
                       ? Navigator.pushNamedAndRemoveUntil(context, 'login', (Route<dynamic> route) => false)
-                      : Navigator.pushNamedAndRemoveUntil(context, 'listings', (Route<dynamic> route) => false);
+                      : Authentication().user!.emailVerified ||
+                      testAccts.contains(Authentication().user.uid)  // to allow test accts through
+                      ? Navigator.pushNamedAndRemoveUntil(context, 'listings', (Route<dynamic> route) => false)
+                      : Navigator.pushNamedAndRemoveUntil(context, 'verify', (Route<dynamic> route) => false);
                 },
                 child: Text(
                     'Ok',

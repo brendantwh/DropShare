@@ -15,6 +15,8 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    bool loading = false;
+
     return WillPopScope(
         onWillPop: () async => false,
         child: CupertinoPageScaffold(
@@ -36,6 +38,7 @@ class _LoginState extends State<Login> {
                     controller: emailController,
                     keyboardType: TextInputType.emailAddress,
                     placeholder: 'Email',
+                    autocorrect: false,
                   ),
                 ),
                 Container(
@@ -49,31 +52,40 @@ class _LoginState extends State<Login> {
                 Container(
                     height: 70,
                     padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
-                    child: CupertinoButton(
-                      color: CupertinoColors.systemGreen,
-                      child: const Text('Login'),
-                      onPressed: () async {
-                        if (emailController.text.isEmpty) {
-                          Authentication.showErrorDialog(context, 'Email field is empty');
-                        } else if (passwordController.text.isEmpty) {
-                          Authentication.showErrorDialog(context, 'Password field is empty');
-                        } else {
-                          try {
-                            await auth.signIn(
-                                email: emailController.text,
-                                password: passwordController.text).then((result) {
-                              if (result == null) {
-                                Authentication.showSuccessDialog(
-                                    context, 'signed in');
-                              } else {
-                                Authentication.showErrorDialog(context, result);
-                              }
-                            });
-                          } catch (e) {
-                            print(e);
-                          }
-                        }
-                      },
+                    child: StatefulBuilder(
+                      builder: ((context, innerSetState) {
+                        return CupertinoButton(
+                          color: CupertinoColors.systemGreen,
+                          disabledColor: CupertinoColors.inactiveGray,
+                          onPressed: loading
+                              ? null
+                              : () async {
+                                if (emailController.text.isEmpty) {
+                                  Authentication.showErrorDialog(context, 'Email field is empty');
+                                } else if (passwordController.text.isEmpty) {
+                                  Authentication.showErrorDialog(context, 'Password field is empty');
+                                } else {
+                                  try {
+                                    innerSetState(() => loading = true);
+                                    await auth.signIn(
+                                        email: emailController.text.trim(),
+                                        password: passwordController.text).then((result) {
+                                          innerSetState(() => loading = false);
+                                          if (result == null) {
+                                            Authentication.showSuccessDialog(
+                                                context, 'signed in');
+                                          } else {
+                                            Authentication.showErrorDialog(context, result);
+                                          }
+                                        });
+                                  } catch (e) {
+                                    print(e);
+                                  }
+                                }
+                          },
+                          child: loading ? const CupertinoActivityIndicator(color: CupertinoColors.white) : const Text('Login'),
+                        );
+                      })
                     )
                 ),
                 Container(
