@@ -46,7 +46,7 @@ class _ListingGridState extends State<ListingGrid> {
                 } else {
                   return Container();
                 }
-              }).toList());
+              }).whereType<GestureDetector>().toList());
         });
   }
 }
