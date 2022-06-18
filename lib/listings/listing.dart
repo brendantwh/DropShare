@@ -136,7 +136,7 @@ class Listing {
                 child: Container(
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                          fit: BoxFit.fitWidth,
+                          fit: BoxFit.cover,
                           image: image
                       )
                   ),

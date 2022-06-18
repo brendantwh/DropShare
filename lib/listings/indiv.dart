@@ -160,99 +160,97 @@ class _IndivListingState extends State<IndivListing> {
     return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
           middle: const Text('Listing'),
-          trailing: Report(listing: listing)
+          trailing: Report(listing: listing),
         ),
-        child: SafeArea(
-            child: Container(
-                margin: const EdgeInsets.fromLTRB(20, 30, 20, 0),
-                child: ListView(
-                  children: [
-                    listing.showImage(square: true),
-                    const SizedBox(height: 24),
-                    Text(listing.title,
-                        style: const TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 20),
-                    Text('Price: $price'),
-                    Text('Location: $location'),
-                    Text('Time: $time'),
-                    const SizedBox(height: 20),
-                    Text('Description: ${listing.description}'),
-                    UsernameText('Created by: ', '', user: DsUser(listing.uid)),
-                    const SizedBox(height: 60),
-                    StatefulBuilder(builder: (context, innerSetState) {
-                      DsUser.getMine().then((DsUser user) {
-                        if (mounted) {
-                          innerSetState(() {
-                            me = user;
-                          });
-                        }
+        child: Container(
+            margin: const EdgeInsets.fromLTRB(20, 20, 20, 34),
+            child: ListView(
+              children: [
+                mounted ? listing.showImage(square: true) : Container(),
+                const SizedBox(height: 24),
+                Text(listing.title,
+                    style: const TextStyle(
+                        fontSize: 24, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 20),
+                Text('Price: $price'),
+                Text('Location: $location'),
+                Text('Time: $time'),
+                const SizedBox(height: 20),
+                Text('Description: ${listing.description}'),
+                UsernameText('Created by: ', '', user: DsUser(listing.uid)),
+                const SizedBox(height: 60),
+                StatefulBuilder(builder: (context, innerSetState) {
+                  DsUser.getMine().then((DsUser user) {
+                    if (mounted) {
+                      innerSetState(() {
+                        me = user;
                       });
+                    }
+                  });
 
-                      bool userIsSeller = listing.uid == me.uid;
+                  bool userIsSeller = listing.uid == me.uid;
 
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          CupertinoButton(
-                              color: const Color(0xffd9e6fa),
-                              padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                              onPressed: listing.sold ? null : () {
-                                userIsSeller
-                                    ? Navigator.pushNamed(context, 'chatlist', arguments: listing) // I am the seller
-                                    : Navigator.pushNamed(context, 'chat', arguments: ChatHelper(listing, me.uid)); // I am the buyer
-                              },
-                              child: listing.sold
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CupertinoButton(
+                          color: const Color(0xffd9e6fa),
+                          padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                          onPressed: listing.sold ? null : () {
+                            userIsSeller
+                                ? Navigator.pushNamed(context, 'chatlist', arguments: listing) // I am the seller
+                                : Navigator.pushNamed(context, 'chat', arguments: ChatHelper(listing, me.uid)); // I am the buyer
+                          },
+                          child: listing.sold
                               ? const Text('Sold', style: TextStyle(color: CupertinoColors.systemGrey))
                               : userIsSeller
                               ? Wrap(
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                spacing: 10,
-                                children: const [
-                                  Icon(CupertinoIcons.chat_bubble_2_fill, color: CupertinoColors.activeBlue),
-                                  Text('View chats',
-                                      style: TextStyle(
-                                          color: CupertinoColors.activeBlue,
-                                          fontWeight: FontWeight.w500)
-                                  )
-                                ],
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 10,
+                            children: const [
+                              Icon(CupertinoIcons.chat_bubble_2_fill, color: CupertinoColors.activeBlue),
+                              Text('View chats',
+                                  style: TextStyle(
+                                      color: CupertinoColors.activeBlue,
+                                      fontWeight: FontWeight.w500)
                               )
+                            ],
+                          )
                               : Wrap(
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                spacing: 10,
-                                children: const [
-                                  Icon(CupertinoIcons.mail_solid, color: CupertinoColors.activeBlue),
-                                  Text('Message',
-                                      style: TextStyle(
-                                          color: CupertinoColors.activeBlue,
-                                          fontWeight: FontWeight.w500)
-                                  )
-                                ],
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 10,
+                            children: const [
+                              Icon(CupertinoIcons.mail_solid, color: CupertinoColors.activeBlue),
+                              Text('Message',
+                                  style: TextStyle(
+                                      color: CupertinoColors.activeBlue,
+                                      fontWeight: FontWeight.w500)
                               )
-                          ),
-                          userIsSeller
-                              ? CupertinoButton(
-                              color: const Color(0xfff2f4f5),
-                              padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                              onPressed: () => _manageListingActionSheet(context, listing),
-                              child: Wrap(
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                spacing: 10,
-                                children: const [
-                                  Icon(CupertinoIcons.settings_solid, color: CupertinoColors.activeBlue),
-                                  Text(
+                            ],
+                          )
+                      ),
+                      userIsSeller
+                          ? CupertinoButton(
+                          color: const Color(0xfff2f4f5),
+                          padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                          onPressed: () => _manageListingActionSheet(context, listing),
+                          child: Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 10,
+                            children: const [
+                              Icon(CupertinoIcons.settings_solid, color: CupertinoColors.activeBlue),
+                              Text(
                                   'Manage listing',
                                   style: TextStyle(
                                       color: CupertinoColors.activeBlue
                                   ))
-                                ],
-                              ))
-                              : Container()
-                        ],
-                      );
-                    })
-                  ],
-                )
+                            ],
+                          ))
+                          : Container()
+                    ],
+                  );
+                })
+              ],
             )
         )
     );

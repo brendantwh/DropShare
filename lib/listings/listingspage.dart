@@ -37,9 +37,9 @@ class _ListingsPageState extends State<ListingsPage> {
                           CupertinoIcons.person_crop_circle))
                 ])
             ),
-            child: SafeArea(
-                minimum: const EdgeInsets.fromLTRB(20.0, 100.0, 20.0, 0),
-                child: ListingGrid(stream: items),
+            child: Container(
+              padding: const EdgeInsets.fromLTRB(20, 15, 20, 34),
+              child: ListingGrid(stream: items)
             )
         )
     );
