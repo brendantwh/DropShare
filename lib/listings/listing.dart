@@ -13,7 +13,7 @@ class Listing {
   bool visible;
   bool sold;
   String docId;
-  final String imageURL;
+  String imageURL;
   bool reported;
 
   Listing(
@@ -66,7 +66,7 @@ class Listing {
       required num price,
       required int location,
       required String description,
-      required String imageURL}) {
+      String? imageURL}) {
     this.title = title;
     this.price = price;
     this.location = location;
@@ -76,7 +76,7 @@ class Listing {
       'price': price,
       'location': location,
       'description': description,
-      'imageURL': imageURL
+      'imageURL': imageURL ?? this.imageURL
     });
   }
 

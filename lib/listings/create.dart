@@ -26,8 +26,7 @@ class _CreateState extends State<Create> {
   String imageName = '';
   XFile? imagePath;
   final ImagePicker _picker = ImagePicker();
-  FirebaseStorage storageRef = FirebaseStorage.instance;
-  String collectionName = 'Image';
+  final Reference storageRef = FirebaseStorage.instance.ref().child('Image');
   bool _isLoading = false;
 
   @override
@@ -35,6 +34,7 @@ class _CreateState extends State<Create> {
     titleController.dispose();
     descController.dispose();
     _selectedLocation = 0;
+    _isLoading = false;
     super.deactivate();
   }
 
@@ -42,6 +42,10 @@ class _CreateState extends State<Create> {
   Widget build(BuildContext context) {
     CollectionReference items = FirebaseFirestore.instance.collection('listings');
     final String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    Widget imageWidget = Container(
+        padding: const EdgeInsets.fromLTRB(0, 40, 0, 40),
+        child: const Text('No image selected')
+    );
 
     var listing = ModalRoute.of(context)?.settings.arguments;
     if (listing != null) {
@@ -50,6 +54,7 @@ class _CreateState extends State<Create> {
       price = listing.price;
       descController.text = listing.description ?? '';
       _selectedLocation = listing.location;
+      imageWidget = listing.showImage(square: false);
     }
 
     return CupertinoPageScaffold(
@@ -91,42 +96,54 @@ class _CreateState extends State<Create> {
                           );
                         }
                     );
-                  } else if (imageName.isEmpty) {
-                    showCupertinoDialog(
-                      context: context,
-                      builder: (context) {
-                        return CupertinoAlertDialog(
-                          title: const Text('No image'),
-                          content: const Text('Please select at least 1 image'),
-                          actions: <CupertinoDialogAction>[
-                            CupertinoDialogAction(
-                              isDefaultAction: true,
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: const Text('Ok'),
-                            )
-                          ],
-                        );
-                      }
-                    );
-                  } else {
-                    //Upload image to storage and get url to upload to firestore
-                    setState(() {
-                      _isLoading = true;
-                    });
-                    String uploadFileName = DateTime.now().millisecondsSinceEpoch.toString() + '.jpg';
-                    Reference reference = storageRef.ref().child(collectionName).child(uploadFileName);
-                    UploadTask uploadTask = reference.putFile(File(imagePath!.path));
+                  } else if (listing == null) {
+                    // new listing
+                    if (imageName.isEmpty) {
+                      // no image uploaded
+                      showCupertinoDialog(
+                          context: context,
+                          builder: (context) {
+                            return CupertinoAlertDialog(
+                              title: Text(
+                                  'No image',
+                                  style: TextStyle(
+                                      fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                                  )
+                              ),
+                              content: Text(
+                                  'Please select at least 1 image',
+                                  style: TextStyle(
+                                      fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                                  )
+                              ),
+                              actions: <CupertinoDialogAction>[
+                                CupertinoDialogAction(
+                                  isDefaultAction: true,
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                      'Ok',
+                                      style: TextStyle(
+                                          fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                                      )
+                                  ),
+                                )
+                              ],
+                            );
+                          }
+                      );
+                    } else {
+                      // image present, create new listing
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      String uploadFileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+                      Reference reference = storageRef.child(uploadFileName);
+                      UploadTask uploadTask = reference.putFile(File(imagePath!.path));
 
-                    uploadTask.snapshotEvents.listen((event) {
-                      print(event.bytesTransferred.toString() + "\t" + event.totalBytes.toString());
-                    });
-
-                    uploadTask.whenComplete(() async {
-                      var uploadPath = await uploadTask.snapshot.ref.getDownloadURL();
-                      if (listing == null) {
-                        // create a new listing
+                      uploadTask.whenComplete(() async {
+                        var uploadPath = await uploadTask.snapshot.ref.getDownloadURL();
                         Listing l = Listing(
                             title: titleController.text.trim(),
                             time: DateTime.now(),
@@ -137,31 +154,65 @@ class _CreateState extends State<Create> {
                             imageURL: uploadPath
                         );
                         items.add(l.toFirestore());
-                        setState(() {
-                          _isLoading = false;
-                        });
                         if (mounted) {
+                          // ok to pushReplacementNamed here since listings doesn't allow popping
                           Navigator.pushReplacementNamed(context, 'listings');
                         }
-                      } else {
-                        // modify an existing listing
+                      });
+                    }
+                  } else {
+                    // modify an existing listing
+                    setState(() {
+                      _isLoading = true;
+                    });
+
+                    if (imageName.isNotEmpty) {
+                      // also update listing image
+                      String uploadFileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+                      Reference reference = storageRef.child(uploadFileName);
+                      UploadTask uploadTask = reference.putFile(File(imagePath!.path));
+
+                      uploadTask.whenComplete(() async {
+                        var uploadPath = await uploadTask.snapshot.ref.getDownloadURL();
                         Listing l = listing as Listing;
                         l.update(
                             title: titleController.text.trim(),
                             price: price,
                             location: _selectedLocation,
                             description: descController.text.trim(),
-                            imageURL: uploadPath);
-                        setState(() {
-                          _isLoading = false;
-                        });
+                            imageURL: uploadPath
+                        );
                         if (mounted) {
-                          Navigator.pushReplacementNamed(context, 'indiv', arguments: l);
+                          // not ok to pushReplacementNamed here as it will allow popping to old listing page with old details
+                          Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              'indiv',
+                              ModalRoute.withName('listings'),
+                              arguments: l
+                          );
                         }
-                      }
                       });
+                    } else {
+                      // no need to update listing image
+                      Listing l = listing as Listing;
+                      l.update(
+                          title: titleController.text.trim(),
+                          price: price,
+                          location: _selectedLocation,
+                          description: descController.text.trim(),
+                      );
+                      if (mounted) {
+                        // not ok to pushReplacementNamed here as it will allow popping to old listing page with old details
+                        Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            'indiv',
+                            ModalRoute.withName('listings'),
+                            arguments: l
+                        );
+                      }
                     }
-                  },
+                  }
+                },
                 child: const Icon(CupertinoIcons.checkmark))),
         child: _isLoading
             ? const Center(child: CupertinoActivityIndicator())
@@ -197,9 +248,9 @@ class _CreateState extends State<Create> {
                           LocationPicker()
                         ],
                       ),
-                      imageName == ""
-                          ? Container()
-                          : Text(imageName),
+                      imageName.isEmpty
+                        ? imageWidget
+                        : Image.file(File(imagePath!.path)),
                       CupertinoButton(
                         child: const Text('Select image'),
                         onPressed: () {
