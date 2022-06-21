@@ -4,11 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pull_down_button/pull_down_button.dart';
 import 'listing.dart';
 import '../locations/location.dart';
 import 'dart:io';
-
-int _selectedLocation = 0;
 
 class Create extends StatefulWidget {
   const Create({Key? key}) : super(key: key);
@@ -21,6 +20,7 @@ class _CreateState extends State<Create> {
   final TextEditingController titleController = TextEditingController();
   num price = 0;
   final TextEditingController descController = TextEditingController();
+  int _selectedLocation = 0;
 
   //For firebase storage of images
   String imageName = '';
@@ -241,12 +241,42 @@ class _CreateState extends State<Create> {
                         minLines: 2,
                         maxLines: 10,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Text('Location: '),
-                          LocationPicker()
-                        ],
+                      Container(
+                        padding: const EdgeInsets.only(left: 26, right: 20),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Text('Location'),
+                            PullDownButton(
+                                position: PullDownMenuPosition.under,
+                                itemBuilder: (context) {
+                                  return Location.values
+                                      .map((loc) => PullDownMenuItem(
+                                      title: loc.locationName,
+                                      onTap: () {
+                                        _selectedLocation = loc.index;
+                                      })
+                                  ).toList();
+                                },
+                                buttonBuilder: (context, showMenu) {
+                                  return Container(
+                                      padding: const EdgeInsets.fromLTRB(0, 6, 0, 6),
+                                      child: CupertinoButton(
+                                        minSize: 32,
+                                        color: CupertinoColors.tertiarySystemFill,
+                                        onPressed: showMenu,
+                                        padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                        child: Text(
+                                            Location.values[_selectedLocation].locationName,
+                                            style: const TextStyle(color: CupertinoColors.black)
+                                        )
+                                    )
+                                  );
+                                }
+                            )
+                          ],
+                        )
                       ),
                       imageName.isEmpty
                         ? imageWidget
@@ -313,59 +343,3 @@ class _CreateState extends State<Create> {
   );
 }
 
-// Temporarily here to pass location info
-class LocationPicker extends StatefulWidget {
-  const LocationPicker({Key? key}) : super(key: key);
-
-  @override
-  State<LocationPicker> createState() => _LocationPickerState();
-}
-
-class _LocationPickerState extends State<LocationPicker> {
-  final double _kItemExtent = 32.0;
-
-  void _showDialog(Widget child) {
-    showCupertinoModalPopup<void>(
-        context: context,
-        builder: (BuildContext context) => Container(
-          height: 250,
-          padding: const EdgeInsets.only(top: 6.0),
-          // The Bottom margin is provided to align the popup above the system navigation bar.
-          margin: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          // Provide a background color for the popup.
-          color: CupertinoColors.systemBackground.resolveFrom(context),
-          // Use a SafeArea widget to avoid system overlaps.
-          child: SafeArea(
-            top: false,
-            child: child,
-          ),
-        )
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return CupertinoButton(
-      padding: EdgeInsets.zero,
-      onPressed: () => _showDialog(
-        CupertinoPicker(
-            scrollController: FixedExtentScrollController(initialItem: _selectedLocation),
-            magnification: 1.22,
-            squeeze: 1.2,
-            useMagnifier: true,
-            itemExtent: _kItemExtent,
-            onSelectedItemChanged: (int location) {
-              setState(() {
-                _selectedLocation = location;
-              });
-            },
-            children: List<Widget>.generate(Location.count, (int index) {
-              return Center(child: Text(Location.values[index].locationName));
-            })),
-      ),
-      child: Text(Location.values[_selectedLocation].locationName),
-    );
-  }
-}

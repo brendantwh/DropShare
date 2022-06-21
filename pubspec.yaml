@@ -43,6 +43,7 @@ dependencies:
   image_picker: ^0.8.5+3
   optimized_cached_image: ^3.0.1
   typesense: ^0.2.0
+  pull_down_button: ^0.1.0-beta.3
 
 dev_dependencies:
   flutter_test:
