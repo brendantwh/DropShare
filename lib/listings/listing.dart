@@ -46,6 +46,22 @@ class Listing {
         reported: data?['reported'] ?? false);
   }
 
+  factory Listing.fromJson(
+      Map<String, dynamic> data) {
+    return Listing(
+        title: data['title'],
+        time: DateTime.fromMillisecondsSinceEpoch(data['time']),
+        price: data['price'].toDouble(),
+        location: data['location'].toInt(),
+        description: data['description'],
+        uid: data['uid'],
+        docId: data['id'],
+        visible: data['visible'],
+        sold: data['sold'],
+        imageURL: data['imageURL'],
+        reported: data['reported']);
+  }
+
   Map<String, dynamic> toFirestore() {
     return {
       'title': title,
@@ -71,7 +87,7 @@ class Listing {
     this.price = price;
     this.location = location;
     this.description = description;
-    FirebaseFirestore.instance.collection('listings').doc(docId).update({
+    FirebaseFirestore.instance.collection('search_listings').doc(docId).update({
       'title': title,
       'price': price,
       'location': location,
@@ -82,48 +98,48 @@ class Listing {
 
   void report() {
     FirebaseFirestore.instance
-        .collection('listings')
+        .collection('search_listings')
         .doc(docId)
         .update({'reported': true});
   }
 
   void unreport() {
     FirebaseFirestore.instance
-        .collection('listings')
+        .collection('search_listings')
         .doc(docId)
         .update({'reported': false});
   }
 
   void sell() {
     FirebaseFirestore.instance
-        .collection('listings')
+        .collection('search_listings')
         .doc(docId)
         .update({'sold': true});
   }
 
   void unsell() {
     FirebaseFirestore.instance
-        .collection('listings')
+        .collection('search_listings')
         .doc(docId)
         .update({'sold': false});
   }
 
   void hide() {
     FirebaseFirestore.instance
-        .collection('listings')
+        .collection('search_listings')
         .doc(docId)
         .update({'visible': false});
   }
 
   void show() {
     FirebaseFirestore.instance
-        .collection('listings')
+        .collection('search_listings')
         .doc(docId)
         .update({'visible': true});
   }
 
   void delete() {
-    FirebaseFirestore.instance.collection('listings').doc(docId).delete();
+    FirebaseFirestore.instance.collection('search_listings').doc(docId).delete();
   }
 
   OptimizedCacheImage showImage({required bool square}) {

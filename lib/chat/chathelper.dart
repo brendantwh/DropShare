@@ -10,7 +10,7 @@ class ChatHelper {
 
   static void manageChat(String listingId, String buyerId) {
     final DocumentReference chat = FirebaseFirestore.instance
-        .collection('listings')
+        .collection('search_listings')
         .doc(listingId)
         .collection('chats')
         .doc(buyerId);

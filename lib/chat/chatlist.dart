@@ -19,7 +19,7 @@ class _ChatlistState extends State<Chatlist> {
     final listingId = listing.docId;
 
     final chats = FirebaseFirestore.instance
-        .collection('listings')
+        .collection('search_listings')
         .doc(listingId)
         .collection('chats')
         .snapshots();

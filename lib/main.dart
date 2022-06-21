@@ -1,5 +1,4 @@
 // Cupertino design
-import 'package:dropshare/chat/chatlist.dart';
 import 'package:flutter/cupertino.dart';
 
 import 'dart:io';
@@ -14,9 +13,12 @@ import 'auth/login.dart';
 import 'auth/signup.dart';
 import 'auth/verify.dart';
 import 'chat/chat.dart';
+import 'chat/chatlist.dart';
 import 'listings/create.dart';
 import 'listings/indiv.dart';
 import 'listings/listingspage.dart';
+import 'search/searchpage.dart';
+import 'search/typesenseConfig.dart';
 import 'user/userpage.dart';
 
 Future<void> main() async {
@@ -67,6 +69,10 @@ class _MyAppState extends State<MyApp> {
               return CupertinoPageRoute(builder: (context) => const Chatlist(), settings: settings);
             case 'userpage':
               return CupertinoPageRoute(builder: (_) => const Userpage(), settings: settings);
+            case 'typesenseConfig':
+              return CupertinoPageRoute(builder: (_) => const TypesenseConfig(), settings: settings);
+            case 'search':
+              return CupertinoPageRoute(builder: (_) => const SearchPage(), settings: settings);
           }
         },
         theme: Platform.isIOS

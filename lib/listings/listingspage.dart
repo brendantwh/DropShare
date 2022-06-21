@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'listinggrid.dart';
+import 'listinggridfs.dart';
 
 class ListingsPage extends StatefulWidget {
   const ListingsPage({Key? key}) : super(key: key);
@@ -12,7 +12,7 @@ class ListingsPage extends StatefulWidget {
 class _ListingsPageState extends State<ListingsPage> {
   TextEditingController searchController = TextEditingController();
   final items = FirebaseFirestore.instance
-      .collection('listings')
+      .collection('search_listings')
       .orderBy('time', descending: true)
       .snapshots();
 
@@ -42,16 +42,14 @@ class _ListingsPageState extends State<ListingsPage> {
                 minimum: const EdgeInsets.fromLTRB(20, 15, 20, 34),
                 child: Column(
                   children: [
-                    Container(
-                        margin: const EdgeInsets.only(bottom: 20),
-                        child: CupertinoSearchTextField(
-                            controller: searchController,
-                            placeholder: 'Search for listings',
-                            suffixMode: OverlayVisibilityMode.editing,
-                        )
+                    CupertinoButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, 'search');
+                        },
+                        child: const Text('Search')
                     ),
                     Flexible(
-                        child: ListingGrid(stream: items)
+                        child: ListingGridFs(stream: items)
                     )
                   ],
                 ),

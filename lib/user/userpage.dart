@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../auth/authentication.dart';
-import '../listings/listinggrid.dart';
+import '../listings/listinggridfs.dart';
 import 'dsuser.dart';
 
 class Userpage extends StatefulWidget {
@@ -15,7 +15,7 @@ class Userpage extends StatefulWidget {
 
 class _UserpageState extends State<Userpage> {
   final userListings = FirebaseFirestore.instance
-      .collection('listings')
+      .collection('search_listings')
       .orderBy('time', descending: true)
       .where('uid', isEqualTo: FirebaseAuth.instance.currentUser?.uid ?? '')
       .snapshots();
@@ -26,67 +26,76 @@ class _UserpageState extends State<Userpage> {
     return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
             middle: const Text('Your account'),
-            trailing: GestureDetector(
-              onTap: () {
-                showCupertinoDialog(
-                    barrierDismissible: true,
-                    context: context,
-                    builder: (context) {
-                      return CupertinoAlertDialog(
-                          title: Text(
-                              'Sign out',
-                              style: TextStyle(
-                                  fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
-                              )
-                          ),
-                          content: Text(
-                              'Are you sure you want to sign out?',
-                              style: TextStyle(
-                                  fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
-                              )
-                          ),
-                          actions: <CupertinoDialogAction>[
-                            CupertinoDialogAction(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              child: Text(
-                                  'No',
+            trailing: Wrap(spacing: 10, children: <Widget>[
+              GestureDetector(
+                  onTap: () {
+                    showCupertinoDialog(
+                        barrierDismissible: true,
+                        context: context,
+                        builder: (context) {
+                          return CupertinoAlertDialog(
+                              title: Text(
+                                  'Sign out',
                                   style: TextStyle(
                                       fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
                                   )
                               ),
-                            ),
-                            CupertinoDialogAction(
-                              isDefaultAction: true,
-                              onPressed: () async {
-                                try {
-                                  await auth.signOut().then((result) {
-                                    if (result == null) {
-                                      Authentication.showSuccessDialog(
-                                          context, 'signed out');
-                                    } else {
-                                      Authentication.showErrorDialog(
-                                          context, result);
+                              content: Text(
+                                  'Are you sure you want to sign out?',
+                                  style: TextStyle(
+                                      fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                                  )
+                              ),
+                              actions: <CupertinoDialogAction>[
+                                CupertinoDialogAction(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: Text(
+                                      'No',
+                                      style: TextStyle(
+                                          fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                                      )
+                                  ),
+                                ),
+                                CupertinoDialogAction(
+                                  isDefaultAction: true,
+                                  onPressed: () async {
+                                    try {
+                                      await auth.signOut().then((result) {
+                                        if (result == null) {
+                                          Authentication.showSuccessDialog(
+                                              context, 'signed out');
+                                        } else {
+                                          Authentication.showErrorDialog(
+                                              context, result);
+                                        }
+                                      });
+                                    } catch (e) {
+                                      print(e);
                                     }
-                                  });
-                                } catch (e) {
-                                  print(e);
-                                }
-                              },
-                              child: Text('Sign out',
-                                  style: TextStyle(
-                                      color: CupertinoColors
-                                          .destructiveRed,
-                                      fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
-                                  )
-                              ),
-                            )
-                          ]);
-                    });
-              },
-              child: const Icon(
-                  CupertinoIcons.person_crop_circle_badge_xmark))
+                                  },
+                                  child: Text('Sign out',
+                                      style: TextStyle(
+                                          color: CupertinoColors
+                                              .destructiveRed,
+                                          fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily
+                                      )
+                                  ),
+                                )
+                              ]);
+                        });
+                  },
+                  child: const Icon(
+                      CupertinoIcons.person_crop_circle_badge_xmark)),
+              // to access Typesense admin client
+              // GestureDetector(
+              //     onTap: () {
+              //       Navigator.pushNamed(context, 'typesenseConfig');
+              //     },
+              //     child: const Icon(
+              //         CupertinoIcons.settings))
+            ])
         ),
         child: SafeArea(
           minimum: const EdgeInsets.fromLTRB(20.0, 100.0, 20.0, 0),
@@ -97,7 +106,7 @@ class _UserpageState extends State<Userpage> {
                 child: const UsernameText('You are ', ''),
               ),
               Flexible(
-                  child: ListingGrid(stream: userListings)
+                  child: ListingGridFs(stream: userListings)
               )
             ],
           ),

@@ -52,7 +52,7 @@ class _ChatState extends State<Chat> {
             .format(listing.price);
 
     final CollectionReference chat = FirebaseFirestore.instance
-        .collection('listings')
+        .collection('search_listings')
         .doc(listing.docId)
         .collection('chats')
         .doc(buyerId)

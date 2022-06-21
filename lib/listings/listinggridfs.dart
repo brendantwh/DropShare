@@ -3,16 +3,16 @@ import 'package:flutter/cupertino.dart';
 
 import 'listing.dart';
 
-class ListingGrid extends StatefulWidget {
-  const ListingGrid({Key? key, required this.stream}) : super(key: key);
+class ListingGridFs extends StatefulWidget {
+  const ListingGridFs({Key? key, required this.stream}) : super(key: key);
 
   final Stream<QuerySnapshot<Map<String, dynamic>>> stream;
 
   @override
-  State<ListingGrid> createState() => _ListingGridState();
+  State<ListingGridFs> createState() => _ListingGridFsState();
 }
 
-class _ListingGridState extends State<ListingGrid> {
+class _ListingGridFsState extends State<ListingGridFs> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(

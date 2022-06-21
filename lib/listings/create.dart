@@ -40,7 +40,7 @@ class _CreateState extends State<Create> {
 
   @override
   Widget build(BuildContext context) {
-    CollectionReference items = FirebaseFirestore.instance.collection('listings');
+    CollectionReference items = FirebaseFirestore.instance.collection('search_listings');
     final String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
     Widget imageWidget = Container(
         padding: const EdgeInsets.fromLTRB(0, 40, 0, 40),
