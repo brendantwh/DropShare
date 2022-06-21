@@ -10,7 +10,6 @@ class ListingsPage extends StatefulWidget {
 }
 
 class _ListingsPageState extends State<ListingsPage> {
-  TextEditingController searchController = TextEditingController();
   final items = FirebaseFirestore.instance
       .collection('search_listings')
       .orderBy('time', descending: true)
