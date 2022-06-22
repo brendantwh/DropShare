@@ -11,6 +11,7 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   TextEditingController searchController = TextEditingController();
+  Widget found = Container();
   List<dynamic> searchRes = [];
   var search = Search.userSearchAllClient.collection('search_listings').documents.search({
     'q': '*',
@@ -34,7 +35,7 @@ class _SearchPageState extends State<SearchPage> {
           child: Column(
             children: [
               Container(
-                  margin: const EdgeInsets.only(top: 15, bottom: 15),
+                  margin: const EdgeInsets.only(top: 15, bottom: 10),
                   child: CupertinoSearchTextField(
                     controller: searchController,
                     placeholder: 'Search for listings',
@@ -50,6 +51,14 @@ class _SearchPageState extends State<SearchPage> {
                             }
                         );
                         search.then((res) {
+                          found = Container(
+                            alignment: Alignment.centerLeft,
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Text(
+                              '${res['found']} ${res['found'] == 1 ? 'listing' : 'listings'} found',
+                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: CupertinoColors.systemGrey),
+                            )
+                          );
                           searchRes = res['hits'];
                           setState(() {});
                         });
@@ -57,6 +66,7 @@ class _SearchPageState extends State<SearchPage> {
                     },
                   )
               ),
+              found,
               Flexible(
                   child: ListingGridSearch(searchResults: searchRes)
               )

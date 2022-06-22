@@ -33,7 +33,7 @@ class _ListingGridSearchState extends State<ListingGridSearch> {
         mainAxisSpacing: 16,
         crossAxisSpacing: 16,
         crossAxisCount: 2,
-        children: list.whereType<GestureDetector>().toList());
-  // });
+        children: list.whereType<GestureDetector>().toList()
+    );
   }
 }
