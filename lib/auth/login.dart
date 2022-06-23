@@ -37,7 +37,7 @@ class _LoginState extends State<Login> {
                   child: CupertinoTextField(
                     controller: emailController,
                     keyboardType: TextInputType.emailAddress,
-                    placeholder: 'Email',
+                    placeholder: 'NUS email',
                     autocorrect: false,
                   ),
                 ),
