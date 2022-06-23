@@ -36,7 +36,7 @@ class _TypesenseConfigState extends State<TypesenseConfig> {
     );
   }
 
-  Future<void> create() async {
+  Future<void> collection() async {
     await Search.adminClient.collections.create(Search.listingSchema);
   }
 

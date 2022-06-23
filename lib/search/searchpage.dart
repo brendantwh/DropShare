@@ -47,7 +47,8 @@ class _SearchPageState extends State<SearchPage> {
                         search = Search.userSearchAllClient.collection('search_listings').documents.search(
                             {
                               'q': val,
-                              'query_by': 'title'
+                              'query_by': 'title',
+                              'sort_by': 'time:desc'
                             }
                         );
                         search.then((res) {

@@ -59,7 +59,7 @@ class Search {
       'search_listings',
       {
         Field('title', Type.string),
-        Field('time', Type.int32),  // time should be int64 but Typesense requires defaultSortingField to be int32 or String
+        Field('time', Type.int64),
         Field('price', Type.float),
         Field('location', Type.int32),
         Field('description', Type.string),
@@ -68,7 +68,6 @@ class Search {
         Field('sold', Type.bool),
         Field('imageURL', Type.string),
         Field('reported', Type.bool)
-      },
-      defaultSortingField: Field('time', Type.int32)
+      }
   );
 }

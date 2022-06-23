@@ -50,7 +50,7 @@ class Listing {
       Map<String, dynamic> data) {
     return Listing(
         title: data['title'],
-        time: DateTime.fromMillisecondsSinceEpoch(data['time']),
+        time: DateTime.fromMillisecondsSinceEpoch(data['time'] * 1000),
         price: data['price'].toDouble(),
         location: data['location'].toInt(),
         description: data['description'],
