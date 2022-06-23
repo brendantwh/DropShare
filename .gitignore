@@ -48,3 +48,7 @@ app.*.map.json
 
 /lib/locations/locationpicker.dart
 /lib/chat/chat.dartbak
+/firebase-data/
+.firebaserc
+firebase.json
+storage.rules
