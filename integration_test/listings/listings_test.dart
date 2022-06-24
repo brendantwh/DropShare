@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropshare/listings/create.dart';
+import 'package:dropshare/listings/indiv.dart';
 import 'package:dropshare/listings/listing.dart';
 import 'package:dropshare/listings/listinggridfs.dart';
 import 'package:dropshare/listings/listingspage.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
+// Remember to firebase emulators:start --import ./firebase-data
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   Widget app = CupertinoApp(
@@ -20,27 +22,30 @@ void main() {
             return CupertinoPageRoute(builder: (_) => const ListingsPage(), settings: settings);
           case 'create':
             return CupertinoPageRoute(builder: (_) => const Create(), settings: settings);
+          case 'indiv':
+            return CupertinoPageRoute(builder: (context) => const IndivListing(), settings: settings);
         }
       }
   );
 
   Listing l = Listing(
-      title: 'Title',
+      title: 'Google Home mini',
       time: DateTime.fromMillisecondsSinceEpoch(1655892770060),
       price: 0,
       location: 0,
       description: 'description',
-      uid: 'uid',
+      uid: 'BSIx3o7X0nXlIjcDVxHw9pGTv7w7',
       visible: true,
       sold: false,
-      imageURL: 'http://127.0.0.1:9199/v0/b/dropshare-b6a08.appspot.com/o/Images%2Fgoogle_home_mini.jpg?alt=media&token=24065415-3a19-47f7-a31c-51af99523734',
+      imageURL: 'http://127.0.0.1:9199/v0/b/dropshare-b6a08.appspot.com/o/Images%2Fgoogle_home_mini.jpg?alt=media&token=6b3a96d4-45be-4ec0-9bc6-c44ea1f2ecbf',
       reported: false);
 
   setUpAll(() async {
     await Firebase.initializeApp();
     FirebaseFirestore.instance.settings = const Settings(host: 'localhost:8080', sslEnabled: false, persistenceEnabled: false);
-    FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
     FirebaseStorage.instance.useStorageEmulator('localhost', 9199);
+    FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+    FirebaseAuth.instance.signInWithEmailAndPassword(email: 'drop@share.com', password: 'dropshare');
   });
 
   group('Listings page shows touch points', () {
@@ -59,11 +64,9 @@ void main() {
     testWidgets('Listings page shows listing', (tester) async {
       await tester.pumpWidget(app);
       await tester.pumpAndSettle();
-      await tester.idle();
-      await tester.pump(Duration.zero);
 
       final listingFinder = find.descendant(of: find.byType(ListingGridFs), matching: find.byType(ClipRRect));
-      expect(listingFinder, findsOneWidget);
+      expect(listingFinder, findsNWidgets(2));
     });
 
     testWidgets('Listings page can access create page', (tester) async {
@@ -79,13 +82,33 @@ void main() {
   group('Listings page shows correct listing details', () {
     testWidgets('Listing has correct title', (tester) async {
       await tester.pumpWidget(app);
-      await tester.pumpAndSettle();
-      await tester.idle();
-      await tester.pump(Duration.zero);
+      await tester.pumpAndSettle(const Duration(milliseconds: 250));
 
       final listingFinder = find.descendant(of: find.byType(ListingGridFs), matching: find.byType(ClipRRect));
       final titleFinder = find.descendant(of: listingFinder, matching: find.text(l.title));
       expect(titleFinder, findsOneWidget);
+    });
+
+    testWidgets('Listing passes correct details to indiv page', (tester) async {
+      await tester.pumpWidget(app);
+      await tester.pumpAndSettle(const Duration(milliseconds: 250));
+
+      final listingsFinder = find.descendant(of: find.byType(ListingGridFs), matching: find.byType(ClipRRect));
+      expect(listingsFinder, findsNWidgets(2));
+      
+      final miniFinder = find.descendant(of: listingsFinder, matching: find.text(l.title));
+      expect(miniFinder, findsOneWidget);
+      await tester.tap(miniFinder);
+      await tester.pumpAndSettle(const Duration(milliseconds: 250));
+
+      final titleFinder = find.text(l.title);
+      final priceFinder = find.text('Price: Free');
+      final descFinder = find.text('Description: description');
+      final userFinder = find.text('Created by: firebase emulator');
+      expect(titleFinder, findsOneWidget);
+      expect(priceFinder, findsOneWidget);
+      expect(descFinder, findsOneWidget);
+      expect(userFinder, findsOneWidget);
     });
   });
 }

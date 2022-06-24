@@ -95,11 +95,11 @@ class Authentication {
               CupertinoDialogAction(
                 isDefaultAction: true,
                 onPressed: () {
-                  List<String> testAccts = ['3NjC4BBW9eYvlr0JHVQUqLmKYGc2', 'w10kedwEvJdqpQWaGZQghwvngjE3'];  // to allow test accts through
+                  List<String> testAccts = ['drop@share.com', 'chat@test.com'];  // to allow test accts through
                   Authentication().user == null
                       ? Navigator.pushNamedAndRemoveUntil(context, 'login', (Route<dynamic> route) => false)
                       : Authentication().user!.emailVerified ||
-                      testAccts.contains(Authentication().user.uid)  // to allow test accts through
+                      testAccts.contains(Authentication().user.email)  // to allow test accts through
                       ? Navigator.pushNamedAndRemoveUntil(context, 'listings', (Route<dynamic> route) => false)
                       : Navigator.pushNamedAndRemoveUntil(context, 'verify', (Route<dynamic> route) => false);
                 },
