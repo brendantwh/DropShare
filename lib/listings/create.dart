@@ -59,7 +59,7 @@ class _CreateState extends State<Create> {
 
     return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
-            middle: const Text('Create listing'),
+            middle: Text('${listing != null ? 'Edit' : 'Create'} listing', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
             trailing: GestureDetector(
                 onTap: () {
                   if (titleController.text.isEmpty) {
@@ -226,6 +226,7 @@ class _CreateState extends State<Create> {
                       ),
                       CupertinoTextFormFieldRow(
                         placeholder: 'Price - empty for free',
+                        initialValue: listing == null ? null : price.toStringAsFixed(2),
                         keyboardType: TextInputType.number,
                         inputFormatters: <TextInputFormatter>[
                           FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
@@ -254,6 +255,10 @@ class _CreateState extends State<Create> {
                                   return Location.values
                                       .map((loc) => PullDownMenuItem(
                                       title: loc.locationName,
+                                      textStyle: TextStyle(
+                                          color: CupertinoColors.black,
+                                          fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily,
+                                      ),
                                       onTap: () {
                                         _selectedLocation = loc.index;
                                       })
@@ -324,21 +329,21 @@ class _CreateState extends State<Create> {
           imagePicker();
           Navigator.pop(context, 'Cancel');
         },
-        child: const Text('Gallery')
+        child: Text('Gallery', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
       ),
       CupertinoActionSheetAction(
         onPressed: () {
           cameraPicker();
           Navigator.pop(context, 'Cancel');
         },
-        child: const Text('Take a photo')
+        child: Text('Take a photo', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
       )
     ],
     cancelButton: CupertinoActionSheetAction(
       onPressed: () {
         Navigator.pop(context, 'Cancel');
       },
-      child: const Text('Cancel')
+      child: Text('Cancel', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
     ),
   );
 }

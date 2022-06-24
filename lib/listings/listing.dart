@@ -188,7 +188,7 @@ class Listing {
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(title,
-                              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15.5),
                               overflow: TextOverflow.ellipsis,
                             )
                         )

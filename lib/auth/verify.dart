@@ -31,7 +31,8 @@ class _VerifyState extends State<Verify> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-        child: Center(
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,

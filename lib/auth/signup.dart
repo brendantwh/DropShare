@@ -19,8 +19,8 @@ class _SignupState extends State<Signup> {
     bool loading = false;
 
     return CupertinoPageScaffold(
-        navigationBar: const CupertinoNavigationBar(
-            middle: Text('Sign up')
+        navigationBar: CupertinoNavigationBar(
+            middle: Text('Sign up', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
         ),
         child: Center(
           child: ListView(

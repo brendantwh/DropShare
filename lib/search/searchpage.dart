@@ -27,8 +27,8 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-        navigationBar: const CupertinoNavigationBar(
-            middle: Text('Search')
+        navigationBar: CupertinoNavigationBar(
+            middle: Text('Search', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
         ),
         child: SafeArea(
           minimum: const EdgeInsets.fromLTRB(20, 15, 20, 34),
@@ -57,7 +57,8 @@ class _SearchPageState extends State<SearchPage> {
                             padding: const EdgeInsets.only(bottom: 10),
                             child: Text(
                               '${res['found']} ${res['found'] == 1 ? 'listing' : 'listings'} found',
-                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: CupertinoColors.systemGrey),
+                              style: const TextStyle(fontWeight: FontWeight.w500, color: CupertinoColors.systemGrey),
+                              textScaleFactor: 0.87,
                             )
                           );
                           searchRes = res['hits'];

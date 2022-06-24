@@ -25,8 +25,8 @@ class _ChatlistState extends State<Chatlist> {
         .snapshots();
 
     return CupertinoPageScaffold(
-        navigationBar: const CupertinoNavigationBar(
-            middle: Text('Chat list')
+        navigationBar: CupertinoNavigationBar(
+            middle: Text('Chat list', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
         ),
         child: SafeArea(
           minimum: const EdgeInsets.fromLTRB(20.0, 100.0, 20.0, 0),
