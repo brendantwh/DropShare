@@ -227,9 +227,9 @@ class _CreateState extends State<Create> {
                       CupertinoTextFormFieldRow(
                         placeholder: 'Price - empty for free',
                         initialValue: listing == null ? null : price.toStringAsFixed(2),
-                        keyboardType: TextInputType.number,
+                        keyboardType: const TextInputType.numberWithOptions(signed: false, decimal: true),
                         inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                          FilteringTextInputFormatter.allow(RegExp(r'^(\d+)?\.?\d{0,2}')),
                         ],
                         onChanged: (value) {
                           price = double.parse(value);
