@@ -35,6 +35,7 @@ class _LoginState extends State<Login> {
                 Container(
                   padding: const EdgeInsets.all(10),
                   child: CupertinoTextField(
+                    key: const Key('login_email'),
                     controller: emailController,
                     keyboardType: TextInputType.emailAddress,
                     placeholder: 'Email',
@@ -44,6 +45,7 @@ class _LoginState extends State<Login> {
                 Container(
                   padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                   child: CupertinoTextField(
+                    key: const Key('login_key'),
                     obscureText: true,
                     controller: passwordController,
                     placeholder: 'Password',
@@ -55,6 +57,7 @@ class _LoginState extends State<Login> {
                     child: StatefulBuilder(
                       builder: ((context, innerSetState) {
                         return CupertinoButton(
+                          key: const Key('login_button'),
                           color: CupertinoColors.systemGreen,
                           disabledColor: CupertinoColors.inactiveGray,
                           onPressed: loading
@@ -92,6 +95,7 @@ class _LoginState extends State<Login> {
                     height: 70,
                     margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                     child: CupertinoButton(
+                      key: const Key('sign up here'),
                       child: const Text('Sign up here'),
                       onPressed: () {
                         Navigator.pushNamed(context, 'signup');

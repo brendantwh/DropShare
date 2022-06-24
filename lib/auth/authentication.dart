@@ -47,6 +47,7 @@ class Authentication {
     showCupertinoDialog<void>(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
+        key: const Key('email empty'),
         title: Text(
             'Error',
             style: TextStyle(
@@ -79,6 +80,7 @@ class Authentication {
       builder: (BuildContext context) => WillPopScope(
           onWillPop: () async => false,
           child: CupertinoAlertDialog(
+            key: const Key('Success'),
             title: Text(
                 'Success',
                 style: TextStyle(
