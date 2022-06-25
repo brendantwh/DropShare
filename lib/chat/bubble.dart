@@ -52,8 +52,12 @@ class _BubbleState extends State<Bubble> {
       )
     );
 
-    Text message = Text(widget.msg.message,
-        textAlign: textAlign, style: TextStyle(color: textColor));
+    Text message = Text(
+      widget.msg.message,
+      textAlign: textAlign,
+      style: TextStyle(color: textColor),
+      textWidthBasis: TextWidthBasis.longestLine
+    );
 
     Flexible bubble = Flexible(
         child: Container(
