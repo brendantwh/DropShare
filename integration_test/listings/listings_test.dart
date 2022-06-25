@@ -11,7 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
-// Remember to firebase emulators:start --import ./firebase-data
+// Remember to firebase emulators:start --import ./firebase-data (--export-on-exit)
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   Widget app = CupertinoApp(
@@ -37,7 +37,7 @@ void main() {
       uid: 'BSIx3o7X0nXlIjcDVxHw9pGTv7w7',
       visible: true,
       sold: false,
-      imageURL: 'http://127.0.0.1:9199/v0/b/dropshare-b6a08.appspot.com/o/Images%2Fgoogle_home_mini.jpg?alt=media&token=6b3a96d4-45be-4ec0-9bc6-c44ea1f2ecbf',
+      imageURL: 'http://127.0.0.1:9199/v0/b/dropshare-b6a08.appspot.com/o/Image%2Fgoogle_home_mini.jpg?alt=media&token=90848b27-9db0-4e6c-94bc-325d974e2d3f',
       reported: false);
 
   setUpAll(() async {
@@ -103,10 +103,12 @@ void main() {
 
       final titleFinder = find.text(l.title);
       final priceFinder = find.text('Price: Free');
+      final locationFinder = find.text('Location: Eusoff');
       final descFinder = find.text('Description: description');
       final userFinder = find.text('Created by: firebase emulator');
       expect(titleFinder, findsOneWidget);
       expect(priceFinder, findsOneWidget);
+      expect(locationFinder, findsOneWidget);
       expect(descFinder, findsOneWidget);
       expect(userFinder, findsOneWidget);
     });

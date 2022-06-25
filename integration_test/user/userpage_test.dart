@@ -9,7 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
-// Remember to firebase emulators:start --import ./firebase-data --export-on-exit
+// Remember to firebase emulators:start --import ./firebase-data (--export-on-exit)
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   Widget app = CupertinoApp(
