@@ -22,6 +22,7 @@ class _ChatlistState extends State<Chatlist> {
         .collection('search_listings')
         .doc(listingId)
         .collection('chats')
+        .orderBy('lastUpdated', descending: true)
         .snapshots();
 
     return CupertinoPageScaffold(
@@ -65,7 +66,10 @@ class _ChatlistState extends State<Chatlist> {
                             }
                             DsUser buyer = snapshot.data as DsUser;
 
-                            return Text('Chat with ${buyer.username}');
+                            return Container(
+                                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                child: Text('Chat with ${buyer.username}')
+                            );
                           }
                       )
                   );

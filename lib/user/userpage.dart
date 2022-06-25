@@ -106,7 +106,7 @@ class _UserpageState extends State<Userpage> {
                 child: const UsernameText('You are ', ''),
               ),
               Flexible(
-                  child: ListingGridFs(stream: userListings)
+                  child: ListingGridFs(stream: userListings, showMySold: true)
               )
             ],
           ),

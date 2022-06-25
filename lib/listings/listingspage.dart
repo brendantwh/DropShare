@@ -48,7 +48,7 @@ class _ListingsPageState extends State<ListingsPage> {
                         child: const Text('Search')
                     ),
                     Flexible(
-                        child: ListingGridFs(stream: items)
+                        child: ListingGridFs(stream: items, showMySold: false)
                     )
                   ],
                 ),

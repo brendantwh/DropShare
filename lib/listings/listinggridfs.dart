@@ -4,9 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'listing.dart';
 
 class ListingGridFs extends StatefulWidget {
-  const ListingGridFs({Key? key, required this.stream}) : super(key: key);
+  const ListingGridFs({Key? key, required this.stream, required this.showMySold}) : super(key: key);
 
   final Stream<QuerySnapshot<Map<String, dynamic>>> stream;
+  final bool showMySold;
 
   @override
   State<ListingGridFs> createState() => _ListingGridFsState();
@@ -35,7 +36,9 @@ class _ListingGridFsState extends State<ListingGridFs> {
                 Listing l = Listing.fromFirestore(document
                 as DocumentSnapshot<Map<String, dynamic>>);
 
-                if (l.visible) {
+                if (!l.visible || (!widget.showMySold && l.sold)) {
+                  return Container();
+                } else {
                   return GestureDetector(
                       onTap: () {
                         Navigator.pushNamed(context, 'indiv',
@@ -43,8 +46,6 @@ class _ListingGridFsState extends State<ListingGridFs> {
                       },
                       child: l.showListing()
                   );
-                } else {
-                  return Container();
                 }
               }).whereType<GestureDetector>().toList());
         });

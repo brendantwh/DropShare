@@ -195,7 +195,30 @@ class Listing {
                     )
                 ),
               )
-          )
+          ),
+          sold
+              ? Align(
+                  alignment: Alignment.center,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: BackdropFilter(
+                        filter: ui.ImageFilter.blur(sigmaX: 7.5, sigmaY: 7.5),
+                        child: Container(
+                            alignment: Alignment.center,
+                            width: 100,
+                            height: 50,
+                            padding: const EdgeInsets.fromLTRB(5, 3, 5, 3),
+                            decoration: const BoxDecoration(
+                              color: Color(0x98F2F2F7),
+                            ),
+                            child: const Text('SOLD',
+                              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 26, color: Color(0xFFFE3126)),
+                            )
+                        )
+                    ),
+                  )
+                )
+              : Container()
       ])
     );
   }

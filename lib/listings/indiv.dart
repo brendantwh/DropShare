@@ -106,8 +106,12 @@ class _IndivListingState extends State<IndivListing> {
             isDestructiveAction: true,
             onPressed: () {
               Navigator.pop(context);
-              Navigator.pushReplacementNamed(context, 'userpage');
               listing.hide();
+              Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  'userpage',
+                  ModalRoute.withName('listings'),
+              );
             },
             child: Text('Yes', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
           )
@@ -135,7 +139,11 @@ class _IndivListingState extends State<IndivListing> {
             onPressed: () {
               Navigator.pop(context);
               listing.sold ? listing.unsell() : listing.sell();
-              Navigator.pushReplacementNamed(context, 'userpage');
+              Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  'userpage',
+                  ModalRoute.withName('listings'),
+              );
             },
             child: Text('Yes', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
           )

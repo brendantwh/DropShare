@@ -48,7 +48,8 @@ class _SearchPageState extends State<SearchPage> {
                             {
                               'q': val,
                               'query_by': 'title',
-                              'sort_by': 'time:desc'
+                              'sort_by': 'time:desc',
+                              'filter_by': 'sold:=false'
                             }
                         );
                         search.then((res) {
