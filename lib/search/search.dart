@@ -1,15 +1,22 @@
+import 'package:dropshare/main.dart';
 import 'package:typesense/typesense.dart';
 
 class Search {
   // Typesense API keys
-  static const String _adminApiKey = 'sRnOqwKCth0R1UAg2rOKov03tnbD3jSc';
-  static const String _allSearchApiKey = '0XDCb1O7bIXC2wwzQz16s7br2em6a6an';
-  static const String _allSearchApiKeyAllCol = 'H9m6gDxOYNe6jPNaQt0agd8hKIV0A7W7';
+  static String _adminApiKey = useEmulator
+      ? 'xyz'  // local typesense
+      : 'sRnOqwKCth0R1UAg2rOKov03tnbD3jSc';
+  static String _allSearchApiKey = useEmulator
+      ? '3v4lJOurZDMMvR2htdcY9YrxFpeIuYca'  // local typesense
+      : '0XDCb1O7bIXC2wwzQz16s7br2em6a6an';
+  static String _allSearchApiKeyAllCol = useEmulator
+      ? 'mLokwjLScPIurwxZu7xx3ds1Lgfo4i3a'  // local typesense
+      : 'H9m6gDxOYNe6jPNaQt0agd8hKIV0A7W7';
 
   // Typesense server
-  static const String _host = 'search.dropshare.tk';
-  static const int _port = 443;
-  static const Protocol _protocol = Protocol.https;
+  static String _host = useEmulator ? 'localhost' : 'search.dropshare.tk';
+  static int _port = useEmulator ? 8108 : 443;
+  static Protocol _protocol = useEmulator ? Protocol.http : Protocol.https;
 
   // Typesense configurations
   static final Configuration _adminConfig = Configuration(
@@ -59,7 +66,7 @@ class Search {
       'search_listings',
       {
         Field('title', Type.string),
-        Field('time', Type.int32),  // time should be int64 but Typesense requires defaultSortingField to be int32 or String
+        Field('time', Type.int64),
         Field('price', Type.float),
         Field('location', Type.int32),
         Field('description', Type.string),
@@ -68,7 +75,6 @@ class Search {
         Field('sold', Type.bool),
         Field('imageURL', Type.string),
         Field('reported', Type.bool)
-      },
-      defaultSortingField: Field('time', Type.int32)
+      }
   );
 }

@@ -22,7 +22,7 @@ class _ListingsPageState extends State<ListingsPage> {
         child: CupertinoPageScaffold(
             navigationBar: CupertinoNavigationBar(
                 automaticallyImplyLeading: false,
-                middle: const Text('DropShare'),
+                middle: Text('DropShare', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
                 trailing: Wrap(spacing: 10, children: <Widget>[
                   GestureDetector(
                       key: const Key('create'),

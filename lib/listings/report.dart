@@ -21,29 +21,29 @@ class _ReportState extends State<Report> {
             builder: (context) {
               if (widget.listing.reported) {
                 return CupertinoAlertDialog(
-                    title: const Text('Listing reported'),
-                    content: const Text('This listing has already been reported.'),
+                    title: Text('Listing reported', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
+                    content: Text('This listing has already been reported.', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
                     actions: <CupertinoDialogAction>[
                       CupertinoDialogAction(
                         isDefaultAction: true,
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: const Text('Ok'),
+                        child: Text('Ok', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
                       )
                     ]
                 );
               } else {
                 return CupertinoAlertDialog(
-                    title: const Text('Report this listing?'),
-                    content: const Text('Are you sure you want to report this listing?'),
+                    title: Text('Report this listing?', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
+                    content: Text('Are you sure you want to report this listing?', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
                     actions: <CupertinoDialogAction>[
                       CupertinoDialogAction(
                         isDefaultAction: true,
                         onPressed: () {
                           Navigator.pop(context);
                         },
-                        child: const Text('Cancel'),
+                        child: Text('Cancel', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
                       ),
                       CupertinoDialogAction(
                         onPressed: () {
@@ -53,20 +53,20 @@ class _ReportState extends State<Report> {
                               context: context,
                               builder: (context) {
                                 return CupertinoAlertDialog(
-                                    title: const Text('Listing reported'),
-                                    content: const Text('This listing has been reported and will be reviewed by the DropShare team.'),
+                                    title: Text('Listing reported', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
+                                    content: Text('This listing has been reported and will be reviewed by the DropShare team.', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
                                     actions: <CupertinoDialogAction>[
                                       CupertinoDialogAction(
                                           isDefaultAction: true,
                                           onPressed: () {
                                             Navigator.pop(context);
                                           },
-                                          child: const Text('Close'))
+                                          child: Text('Close', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)))
                                     ]
                                 );
                               });
                         },
-                        child: const Text('Report', style: TextStyle(color: CupertinoColors.destructiveRed)),
+                        child: Text('Report', style: TextStyle(color: CupertinoColors.destructiveRed, fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
                       )
                     ]
                 );

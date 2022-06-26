@@ -59,7 +59,7 @@ class _CreateState extends State<Create> {
 
     return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
-            middle: const Text('Create listing'),
+            middle: Text('${listing != null ? 'Edit' : 'Create'} listing', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
             trailing: GestureDetector(
                 key: const Key('create button'),
                 onTap: () {
@@ -230,9 +230,10 @@ class _CreateState extends State<Create> {
                       CupertinoTextFormFieldRow(
                         key: const Key('create price'),
                         placeholder: 'Price - empty for free',
-                        keyboardType: TextInputType.number,
+                        initialValue: listing == null ? null : price.toStringAsFixed(2),
+                        keyboardType: const TextInputType.numberWithOptions(signed: false, decimal: true),
                         inputFormatters: <TextInputFormatter>[
-                          FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                          FilteringTextInputFormatter.allow(RegExp(r'^(\d+)?\.?\d{0,2}')),
                         ],
                         onChanged: (value) {
                           price = double.parse(value);
@@ -259,6 +260,10 @@ class _CreateState extends State<Create> {
                                   return Location.values
                                       .map((loc) => PullDownMenuItem(
                                       title: loc.locationName,
+                                      textStyle: TextStyle(
+                                          color: CupertinoColors.black,
+                                          fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily,
+                                      ),
                                       onTap: () {
                                         _selectedLocation = loc.index;
                                       })
@@ -329,21 +334,21 @@ class _CreateState extends State<Create> {
           imagePicker();
           Navigator.pop(context, 'Cancel');
         },
-        child: const Text('Gallery')
+        child: Text('Gallery', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
       ),
       CupertinoActionSheetAction(
         onPressed: () {
           cameraPicker();
           Navigator.pop(context, 'Cancel');
         },
-        child: const Text('Take a photo')
+        child: Text('Take a photo', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
       )
     ],
     cancelButton: CupertinoActionSheetAction(
       onPressed: () {
         Navigator.pop(context, 'Cancel');
       },
-      child: const Text('Cancel')
+      child: Text('Cancel', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
     ),
   );
 }

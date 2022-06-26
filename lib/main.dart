@@ -4,8 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'dart:io';
 
 // Firebase packages
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'firebase_options.dart';
 
 // DropShare pages
@@ -21,10 +23,17 @@ import 'search/searchpage.dart';
 import 'search/typesenseConfig.dart';
 import 'user/userpage.dart';
 
+bool useEmulator = false;
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
       options:DefaultFirebaseOptions.currentPlatform);
+  if (useEmulator) {
+    FirebaseFirestore.instance.settings = const Settings(host: 'localhost:8080', sslEnabled: false, persistenceEnabled: false);
+    FirebaseStorage.instance.useStorageEmulator('localhost', 9199);
+    FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+  }
   runApp(const MyApp());
 }
 

@@ -19,12 +19,12 @@ class _IndivListingState extends State<IndivListing> {
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => CupertinoActionSheet(
-        title: const Text('Manage your listing'),
+        title: Text('Manage your listing', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
         cancelButton: CupertinoActionSheetAction(
           onPressed: () {
             Navigator.pop(context);
           },
-          child: const Text('Cancel'),
+          child: Text('Cancel', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
         ),
         actions: listing.sold
             ? <CupertinoActionSheetAction>[
@@ -37,9 +37,9 @@ class _IndivListingState extends State<IndivListing> {
                   child: Wrap(
                     crossAxisAlignment: WrapCrossAlignment.center,
                     spacing: 10,
-                    children: const [
-                      Icon(CupertinoIcons.trash, color: CupertinoColors.destructiveRed),
-                      Text('Delete listing')
+                    children: [
+                      const Icon(CupertinoIcons.trash, color: CupertinoColors.destructiveRed),
+                      Text('Delete listing', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
                     ],
                   ),
                 ),
@@ -49,7 +49,7 @@ class _IndivListingState extends State<IndivListing> {
                       Navigator.pop(context);
                       _sellStatusAlertDialog(context, listing);
                     },
-                    child: const Text('Mark as unsold')
+                    child: Text('Mark as unsold', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
                 )
               ]
             : <CupertinoActionSheetAction>[
@@ -62,9 +62,9 @@ class _IndivListingState extends State<IndivListing> {
                   child: Wrap(
                     crossAxisAlignment: WrapCrossAlignment.center,
                     spacing: 10,
-                    children: const [
-                      Icon(CupertinoIcons.trash, color: CupertinoColors.destructiveRed),
-                      Text('Delete listing')
+                    children: [
+                      const Icon(CupertinoIcons.trash, color: CupertinoColors.destructiveRed),
+                      Text('Delete listing', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
                     ],
                   ),
                 ),
@@ -73,7 +73,7 @@ class _IndivListingState extends State<IndivListing> {
                       Navigator.pop(context);
                       Navigator.pushNamed(context, 'create', arguments: listing);
                     },
-                    child: const Text('Edit listing')
+                    child: Text('Edit listing', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
                 ),
                 CupertinoActionSheetAction(
                     isDefaultAction: true,
@@ -81,7 +81,7 @@ class _IndivListingState extends State<IndivListing> {
                       Navigator.pop(context);
                       _sellStatusAlertDialog(context, listing);
                     },
-                    child: const Text('Mark as sold')
+                    child: Text('Mark as sold', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
                 )
               ],
       ),
@@ -92,15 +92,15 @@ class _IndivListingState extends State<IndivListing> {
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
-        title: const Text('Delete listing?'),
-        content: const Text('Are you sure you want to delete this listing?'),
+        title: Text('Delete listing?', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
+        content: Text('Are you sure you want to delete this listing?', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
         actions: <CupertinoDialogAction>[
           CupertinoDialogAction(
             isDefaultAction: true,
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text('No'),
+            child: Text('No', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
           ),
           CupertinoDialogAction(
             isDestructiveAction: true,
@@ -109,7 +109,7 @@ class _IndivListingState extends State<IndivListing> {
               Navigator.pushReplacementNamed(context, 'userpage');
               listing.hide();
             },
-            child: const Text('Yes'),
+            child: Text('Yes', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
           )
         ],
       ),
@@ -120,15 +120,15 @@ class _IndivListingState extends State<IndivListing> {
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
-        title: Text('Mark as ${listing.sold ? 'unsold' : 'sold'}?'),
-        content: Text('Are you sure you want to mark this listing as ${listing.sold ? 'unsold' : 'sold'}?'),
+        title: Text('Mark as ${listing.sold ? 'unsold' : 'sold'}?', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
+        content: Text('Are you sure you want to mark this listing as ${listing.sold ? 'unsold' : 'sold'}?', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
         actions: <CupertinoDialogAction>[
           CupertinoDialogAction(
             isDefaultAction: true,
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text('No'),
+            child: Text('No', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
           ),
           CupertinoDialogAction(
             isDestructiveAction: true,
@@ -137,7 +137,7 @@ class _IndivListingState extends State<IndivListing> {
               listing.sold ? listing.unsell() : listing.sell();
               Navigator.pushReplacementNamed(context, 'userpage');
             },
-            child: const Text('Yes'),
+            child: Text('Yes', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
           )
         ],
       ),
@@ -159,7 +159,6 @@ class _IndivListingState extends State<IndivListing> {
 
     return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
-          middle: const Text('Listing'),
           trailing: Report(listing: listing),
         ),
         child: Container(

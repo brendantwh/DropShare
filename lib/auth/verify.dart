@@ -31,16 +31,52 @@ class _VerifyState extends State<Verify> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-        child: Center(
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
-              CupertinoActivityIndicator(),
-              SizedBox(height:20),
-              Text('Please check your NUS email to verify your account before using DropShare.',
+            children: [
+              const CupertinoActivityIndicator(),
+              const SizedBox(height: 40),
+              const Text('Please check your NUS email to verify your account before using DropShare.',
                 style: TextStyle(fontSize: 15),
                 textAlign: TextAlign.center
+              ),
+              const SizedBox(height: 40),
+              CupertinoButton(
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                color: const Color(0xfff2f4f5),
+                onPressed: () async {
+                  timer.cancel();
+                  await auth.signOut().then((result) {
+                    if (result == null) {
+                      Authentication.showSuccessDialog(
+                          context, 'signed out');
+                    } else {
+                      Authentication.showErrorDialog(
+                          context, result);
+                    }
+                  });
+                },
+                child:  Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 10,
+                  children: const [
+                    Icon(
+                        CupertinoIcons.person_crop_circle_badge_xmark,
+                        color: CupertinoColors.activeBlue,
+                        size: 26
+                    ),
+                    Text(
+                        'Sign out',
+                        style: TextStyle(
+                            fontSize: 15.5,
+                            color: CupertinoColors.activeBlue
+                        )
+                    )
+                  ],
+                )
               )
             ],
           )
@@ -50,9 +86,9 @@ class _VerifyState extends State<Verify> {
 
   Future<void> checkEmailVerified() async {
     await auth.user.reload();
-    List<String> testAccts = ['3NjC4BBW9eYvlr0JHVQUqLmKYGc2', 'w10kedwEvJdqpQWaGZQghwvngjE3'];  // to allow test accts through
+    List<String> testAccts = ['drop@share.com', 'chat@test.com'];  // to allow test accts through
     if (auth.user.emailVerified ||
-        testAccts.contains(auth.user.uid)) {  // to allow test accts through
+        testAccts.contains(auth.user.email)) {  // to allow test accts through
       timer.cancel();
       if (mounted) {
         Authentication.showSuccessDialog(context, 'verified account');

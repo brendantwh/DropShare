@@ -50,7 +50,7 @@ class Listing {
       Map<String, dynamic> data) {
     return Listing(
         title: data['title'],
-        time: DateTime.fromMillisecondsSinceEpoch(data['time']),
+        time: DateTime.fromMillisecondsSinceEpoch(data['time'] * 1000),
         price: data['price'].toDouble(),
         location: data['location'].toInt(),
         description: data['description'],
@@ -188,7 +188,7 @@ class Listing {
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: Text(title,
-                              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+                              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 15.5),
                               overflow: TextOverflow.ellipsis,
                             )
                         )

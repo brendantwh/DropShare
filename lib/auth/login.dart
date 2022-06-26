@@ -38,7 +38,7 @@ class _LoginState extends State<Login> {
                     key: const Key('login_email'),
                     controller: emailController,
                     keyboardType: TextInputType.emailAddress,
-                    placeholder: 'Email',
+                    placeholder: 'NUS email',
                     autocorrect: false,
                   ),
                 ),
