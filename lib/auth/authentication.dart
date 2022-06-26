@@ -95,7 +95,7 @@ class Authentication {
               CupertinoDialogAction(
                 isDefaultAction: true,
                 onPressed: () {
-                  List<String> testAccts = ['drop@share.com', 'chat@test.com'];  // to allow test accts through
+                  List<String> testAccts = ['drop@share.com', 'chat@test.com', 'drop2@share.com'];  // to allow test accts through
                   Authentication().user == null
                       ? Navigator.pushNamedAndRemoveUntil(context, 'login', (Route<dynamic> route) => false)
                       : Authentication().user!.emailVerified ||

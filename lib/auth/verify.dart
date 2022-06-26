@@ -86,7 +86,7 @@ class _VerifyState extends State<Verify> {
 
   Future<void> checkEmailVerified() async {
     await auth.user.reload();
-    List<String> testAccts = ['drop@share.com', 'chat@test.com'];  // to allow test accts through
+    List<String> testAccts = ['drop@share.com', 'chat@test.com', 'drop2@share.com'];  // to allow test accts through
     if (auth.user.emailVerified ||
         testAccts.contains(auth.user.email)) {  // to allow test accts through
       timer.cancel();
