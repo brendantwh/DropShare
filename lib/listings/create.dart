@@ -61,6 +61,7 @@ class _CreateState extends State<Create> {
         navigationBar: CupertinoNavigationBar(
             middle: Text('${listing != null ? 'Edit' : 'Create'} listing', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
             trailing: GestureDetector(
+                key: const Key('create button'),
                 onTap: () {
                   if (titleController.text.isEmpty) {
                     showCupertinoDialog(
@@ -81,6 +82,7 @@ class _CreateState extends State<Create> {
                             ),
                             actions: <CupertinoDialogAction>[
                               CupertinoDialogAction(
+                                key: const Key('empty title create'),
                                 isDefaultAction: true,
                                 onPressed: () {
                                   Navigator.pop(context);
@@ -221,10 +223,12 @@ class _CreateState extends State<Create> {
                     margin: const EdgeInsets.all(12),
                     children: [
                       CupertinoTextFormFieldRow(
+                        key: const Key('create title'),
                         placeholder: 'Title',
                         controller: titleController,
                       ),
                       CupertinoTextFormFieldRow(
+                        key: const Key('create price'),
                         placeholder: 'Price - empty for free',
                         initialValue: listing == null ? null : price.toStringAsFixed(2),
                         keyboardType: const TextInputType.numberWithOptions(signed: false, decimal: true),
@@ -236,6 +240,7 @@ class _CreateState extends State<Create> {
                         }
                       ),
                       CupertinoTextFormFieldRow(
+                        key: const Key('create description'),
                         placeholder: 'Description',
                         controller: descController,
                         keyboardType: TextInputType.multiline,

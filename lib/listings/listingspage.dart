@@ -25,11 +25,13 @@ class _ListingsPageState extends State<ListingsPage> {
                 middle: Text('DropShare', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
                 trailing: Wrap(spacing: 10, children: <Widget>[
                   GestureDetector(
+                      key: const Key('create'),
                       onTap: () {
                         Navigator.pushNamed(context, 'create');
                       },
                       child: const Icon(CupertinoIcons.add)),
                   GestureDetector(
+                      key: const Key('userpage'),
                       onTap: () {
                         Navigator.pushNamed(context, 'userpage');
                       },

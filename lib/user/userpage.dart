@@ -28,6 +28,7 @@ class _UserpageState extends State<Userpage> {
             middle: Text('Your account', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
             trailing: Wrap(spacing: 10, children: <Widget>[
               GestureDetector(
+                  key: const Key('sign out button'),
                   onTap: () {
                     showCupertinoDialog(
                         barrierDismissible: true,
@@ -59,6 +60,7 @@ class _UserpageState extends State<Userpage> {
                                   ),
                                 ),
                                 CupertinoDialogAction(
+                                  key: const Key('final sign out'),
                                   isDefaultAction: true,
                                   onPressed: () async {
                                     try {

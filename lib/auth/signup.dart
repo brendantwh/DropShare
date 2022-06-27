@@ -30,6 +30,7 @@ class _SignupState extends State<Signup> {
               Container(
                 padding: const EdgeInsets.fromLTRB(10, 10, 10, 5),
                 child: CupertinoTextField(
+                  key: const Key('username'),
                   controller: usernameController,
                   placeholder: 'Username',
                   autocorrect: false,
@@ -38,6 +39,7 @@ class _SignupState extends State<Signup> {
               Container(
                 padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
                 child: CupertinoTextField(
+                  key: const Key('email signup'),
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                   placeholder: 'NUS email',
@@ -47,6 +49,7 @@ class _SignupState extends State<Signup> {
               Container(
                 padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
                 child: CupertinoTextField(
+                  key: const Key('password signup'),
                   obscureText: true,
                   controller: passwordController,
                   placeholder: 'Password',
@@ -58,6 +61,7 @@ class _SignupState extends State<Signup> {
                   child: StatefulBuilder(
                     builder: (context, innerSetState) {
                       return CupertinoButton.filled(
+                        key: const Key('signupbutton'),
                         disabledColor: CupertinoColors.inactiveGray,
                         onPressed: loading
                             ? null

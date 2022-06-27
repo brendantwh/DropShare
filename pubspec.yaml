@@ -44,14 +44,15 @@ dependencies:
   optimized_cached_image: ^3.0.1
   typesense: ^0.2.0
   pull_down_button: ^0.1.0-beta.3
+  mockito: ^5.2.0
 
 dev_dependencies:
+  integration_test:
+    sdk: flutter
   flutter_test:
     sdk: flutter
   fake_cloud_firestore: ^1.2.2
   firebase_auth_mocks: ^0.8.4
-  integration_test:
-    sdk: flutter
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -59,6 +60,7 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  test: ^1.21.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
