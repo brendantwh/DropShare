@@ -14,7 +14,7 @@ class Search {
       : 'H9m6gDxOYNe6jPNaQt0agd8hKIV0A7W7';
 
   // Typesense server
-  static String _host = useEmulator ? 'localhost' : 'search.dropshare.tk';
+  static String _host = useEmulator ? 'localhost' : 'dropshare.mooo.com';
   static int _port = useEmulator ? 8108 : 443;
   static Protocol _protocol = useEmulator ? Protocol.http : Protocol.https;
 
