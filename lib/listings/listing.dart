@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:ui' as ui;
 import 'package:optimized_cached_image/optimized_cached_image.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
+
 
 class Listing {
   String title;
@@ -13,7 +16,7 @@ class Listing {
   bool visible;
   bool sold;
   String docId;
-  String imageURL;
+  List imageURL;
   bool reported;
 
   Listing(
@@ -82,7 +85,7 @@ class Listing {
       required num price,
       required int location,
       required String description,
-      String? imageURL}) {
+      List? imageURL}) {
     this.title = title;
     this.price = price;
     this.location = location;
@@ -142,10 +145,10 @@ class Listing {
     FirebaseFirestore.instance.collection('search_listings').doc(docId).delete();
   }
 
-  OptimizedCacheImage showImage({required bool square}) {
+  OptimizedCacheImage showImage({required bool square, required int ind}) {
     if (square) {
       return OptimizedCacheImage(
-        imageUrl: imageURL,
+        imageUrl: imageURL[ind],
         imageBuilder: (context, image) =>
             AspectRatio(
                 aspectRatio: 1,
@@ -161,18 +164,34 @@ class Listing {
       );
     } else {
       return OptimizedCacheImage(
-        imageUrl: imageURL,
+        imageUrl: imageURL[ind],
         placeholder: (context, url) => const CupertinoActivityIndicator(),
         errorWidget: (context, url, error) => Text(error),
       );
     }
   }
 
+  Swiper showImageSwiper() {
+    return Swiper(
+      itemCount: imageURL.length,
+      itemBuilder: (context, index) {
+        return showImage(square: true, ind: index);
+      },
+      viewportFraction: 0.8,
+      scale: 0.9,
+      layout: SwiperLayout.DEFAULT,
+      itemHeight: 400,
+      itemWidth: 300,
+      control: const SwiperControl(color: Colors.black, iconNext: null, iconPrevious: null),
+      pagination: const SwiperPagination(builder: SwiperPagination.dots),
+    );
+  }
+
   ClipRRect showListing() {
     return ClipRRect(
         borderRadius: BorderRadius.circular(14),
         child: Stack(children: [
-          showImage(square: true),
+          showImage(square: true, ind: 0),
           Align(
               alignment: Alignment.bottomCenter,
               child: ClipRect(

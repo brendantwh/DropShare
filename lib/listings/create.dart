@@ -8,6 +8,7 @@ import 'package:pull_down_button/pull_down_button.dart';
 import 'listing.dart';
 import '../locations/location.dart';
 import 'dart:io';
+import 'package:flutter/material.dart';
 
 class Create extends StatefulWidget {
   const Create({Key? key}) : super(key: key);
@@ -22,7 +23,14 @@ class _CreateState extends State<Create> {
   final TextEditingController descController = TextEditingController();
   int _selectedLocation = 0;
 
-  //For firebase storage of images
+  //For firebase storage of MULTIPLE images
+  List<String> imageNameArr = ['',''];
+  List imagePathArr = ['','']; 
+  List uploadPathList = []; 
+  final multipicker = ImagePicker();
+  List<XFile> images = [];
+
+  //For firebase storage of SINGLE images
   String imageName = '';
   XFile? imagePath;
   final ImagePicker _picker = ImagePicker();
@@ -54,7 +62,7 @@ class _CreateState extends State<Create> {
       price = listing.price;
       descController.text = listing.description ?? '';
       _selectedLocation = listing.location;
-      imageWidget = listing.showImage(square: false);
+      imageWidget = listing.showImage(square: false, ind: 0);
     }
 
     return CupertinoPageScaffold(
@@ -100,7 +108,7 @@ class _CreateState extends State<Create> {
                     );
                   } else if (listing == null) {
                     // new listing
-                    if (imageName.isEmpty) {
+                    if (images.isEmpty) {
                       // no image uploaded
                       showCupertinoDialog(
                           context: context,
@@ -140,27 +148,31 @@ class _CreateState extends State<Create> {
                       setState(() {
                         _isLoading = true;
                       });
-                      String uploadFileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-                      Reference reference = storageRef.child(uploadFileName);
-                      UploadTask uploadTask = reference.putFile(File(imagePath!.path));
 
-                      uploadTask.whenComplete(() async {
-                        var uploadPath = await uploadTask.snapshot.ref.getDownloadURL();
+                      void completer() async {
+                        var urls = await uploadToStorageGetUrls(images);
+                        print(urls);
+
+                        if (listing == null) {
                         Listing l = Listing(
-                            title: titleController.text.trim(),
-                            time: DateTime.now(),
-                            price: price,
-                            location: _selectedLocation,
-                            description: descController.text.trim(),
-                            uid: uid,
-                            imageURL: uploadPath
+                        title: titleController.text.trim(),
+                        time: DateTime.now(),
+                        price: price,
+                        location: _selectedLocation,
+                        description: descController.text.trim(),
+                        uid: uid,
+                        imageURL: urls
                         );
+
                         items.add(l.toFirestore());
+
                         if (mounted) {
-                          // ok to pushReplacementNamed here since listings doesn't allow popping
-                          Navigator.pushReplacementNamed(context, 'listings');
+                        // ok to pushReplacementNamed here since listings doesn't allow popping
+                        Navigator.pushReplacementNamed(context, 'listings');
                         }
-                      });
+                        }  
+                      }
+                      completer();
                     }
                   } else {
                     // modify an existing listing
@@ -168,32 +180,33 @@ class _CreateState extends State<Create> {
                       _isLoading = true;
                     });
 
-                    if (imageName.isNotEmpty) {
+                    if (images.isNotEmpty) {
                       // also update listing image
-                      String uploadFileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-                      Reference reference = storageRef.child(uploadFileName);
-                      UploadTask uploadTask = reference.putFile(File(imagePath!.path));
+                      void completer() async {
+                      var urls = await uploadToStorageGetUrls(images);
+                      print(urls);
 
-                      uploadTask.whenComplete(() async {
-                        var uploadPath = await uploadTask.snapshot.ref.getDownloadURL();
-                        Listing l = listing as Listing;
-                        l.update(
-                            title: titleController.text.trim(),
-                            price: price,
-                            location: _selectedLocation,
-                            description: descController.text.trim(),
-                            imageURL: uploadPath
+                      Listing l = listing as Listing;
+                      l.update(
+                          title: titleController.text.trim(),
+                          price: price,
+                          location: _selectedLocation,
+                          description: descController.text.trim(),
+                          imageURL: urls
+                      );
+                      if (mounted) {
+                        // not ok to pushReplacementNamed here as it will allow popping to old listing page with old details
+                        Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            'indiv',
+                            ModalRoute.withName('listings'),
+                            arguments: l
                         );
-                        if (mounted) {
-                          // not ok to pushReplacementNamed here as it will allow popping to old listing page with old details
-                          Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              'indiv',
-                              ModalRoute.withName('listings'),
-                              arguments: l
-                          );
-                        }
-                      });
+                      }
+                    }
+
+                    completer(); 
+
                     } else {
                       // no need to update listing image
                       Listing l = listing as Listing;
@@ -288,21 +301,57 @@ class _CreateState extends State<Create> {
                           ],
                         )
                       ),
-                      imageName.isEmpty
-                        ? imageWidget
-                        : Image.file(File(imagePath!.path)),
-                      CupertinoButton(
-                        child: const Text('Select image'),
-                        onPressed: () {
-                          showCupertinoModalPopup(
-                            context: context,
-                            builder: buildActionSheet,
-                          );
-                        }
-                      )
+                      IntrinsicHeight(child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          SizedBox(
+                            width: 100,
+                            height:150,
+                            child: CupertinoButton(
+                              onPressed: () {
+                                getMultiImages();
+                              },
+                              child: images.length >= 1 ? Image.file(File(images[0].path)) : Icon(CupertinoIcons.camera),
+                            )
+                          ),
+                          const VerticalDivider(
+                            color: CupertinoColors.opaqueSeparator,
+                            indent: 10,
+                            endIndent: 10,
+                          ),
+                          SizedBox(
+                            width: 100,
+                            height: 150,
+                            child: images.length >= 2 ? Image.file(File(images[1].path)) : Icon(CupertinoIcons.add, size: 50, color: CupertinoColors.opaqueSeparator)
+                          ),
+                        ],))
                 ])
         ])
     );
+  }
+
+  //Tools for multi imaging
+  Future getMultiImages() async {
+    final List<XFile>? selectedImages = await multipicker.pickMultiImage();
+    setState(() {
+      if (selectedImages!.isNotEmpty) {
+        images = selectedImages.take(2).toList();
+      }
+    });
+  }
+
+  Future<List<String>> uploadToStorageGetUrls(List<XFile> images) async {
+    var imageUrls = await Future.wait(images.map((image) => uploadFile(image)));
+    return imageUrls;
+  }
+
+  Future<String> uploadFile(XFile image) async {
+    String uploadFileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+    Reference reference = storageRef.child(uploadFileName);
+    UploadTask uploadTask = reference.putFile(File(image.path));
+    await uploadTask.whenComplete(() {});
+    return await reference.getDownloadURL();
   }
 
   //Gallery and camera pickers

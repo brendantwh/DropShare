@@ -173,7 +173,7 @@ class _IndivListingState extends State<IndivListing> {
             margin: const EdgeInsets.fromLTRB(20, 20, 20, 34),
             child: ListView(
               children: [
-                mounted ? listing.showImage(square: true) : Container(),
+                mounted ? Container(child: listing.showImageSwiper(), height: 300,) : Container(),
                 const SizedBox(height: 24),
                 Text(listing.title,
                     style: const TextStyle(

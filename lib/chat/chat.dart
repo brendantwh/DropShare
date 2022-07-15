@@ -209,7 +209,7 @@ class _ChatState extends State<Chat> {
                                   ),
                                   Container(
                                     padding: const EdgeInsets.fromLTRB(0, 7, 0, 7),
-                                    child: listing.showImage(square: true)
+                                    child: listing.showImage(square: true, ind: 0)
                                   )
                                 ],
                               ))),
