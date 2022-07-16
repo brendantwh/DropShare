@@ -4,7 +4,7 @@ import 'dart:ui' as ui;
 import 'package:optimized_cached_image/optimized_cached_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-
+import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart'; 
 
 class Listing {
   String title;
@@ -175,7 +175,11 @@ class Listing {
     return Swiper(
       itemCount: imageURL.length,
       itemBuilder: (context, index) {
-        return showImage(square: true, ind: index);
+        return PinchZoomImage(
+          image: showImage(square: true, ind: index), 
+          zoomedBackgroundColor: Color.fromRGBO(240, 240, 240, 1.0),
+          hideStatusBarWhileZooming: true,
+        );
       },
       viewportFraction: 0.8,
       scale: 0.9,
