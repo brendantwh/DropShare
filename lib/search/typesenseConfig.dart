@@ -22,6 +22,10 @@ class _TypesenseConfigState extends State<TypesenseConfig> {
             child: Column(
               children: [
                 CupertinoButton(
+                    child: Text('Update schema'),
+                    onPressed: () => collection()
+                ),
+                CupertinoButton(
                     child: Text('Retrieve all keys'),
                     onPressed: () => retrieveKeys()
                 ),
@@ -37,6 +41,7 @@ class _TypesenseConfigState extends State<TypesenseConfig> {
   }
 
   Future<void> collection() async {
+    await Search.adminClient.collection('search_listings').delete();
     await Search.adminClient.collections.create(Search.listingSchema);
   }
 

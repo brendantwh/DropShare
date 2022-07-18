@@ -69,7 +69,7 @@ class Search {
         Field('time', Type.int64),
         Field('price', Type.float),
         Field('location', Type.int32),
-        Field('description', Type.string),
+        Field('description', Type.stringify, isOptional: true),
         Field('uid', Type.string),
         Field('visible', Type.bool),
         Field('sold', Type.bool),
