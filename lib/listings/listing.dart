@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_swiper_view/flutter_swiper_view.dart';
 import 'dart:ui' as ui;
 import 'package:optimized_cached_image/optimized_cached_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart'; 
 
 class Listing {
@@ -186,7 +186,7 @@ class Listing {
       layout: SwiperLayout.DEFAULT,
       itemHeight: 400,
       itemWidth: 300,
-      control: const SwiperControl(color: Colors.black, iconNext: null, iconPrevious: null),
+      control: const SwiperControl(color: Colors.black, iconNext: CupertinoIcons.chevron_forward, iconPrevious: CupertinoIcons.chevron_back),
       pagination: const SwiperPagination(builder: SwiperPagination.dots),
     );
   }
