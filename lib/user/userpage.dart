@@ -20,6 +20,7 @@ class _UserpageState extends State<Userpage> {
       .where('uid', isEqualTo: FirebaseAuth.instance.currentUser?.uid ?? '')
       .snapshots();
   final Authentication auth = Authentication();
+  bool isAdmin = false;
 
   @override
   Widget build(BuildContext context) {
@@ -90,23 +91,55 @@ class _UserpageState extends State<Userpage> {
                   },
                   child: const Icon(
                       CupertinoIcons.person_crop_circle_badge_xmark)),
-              // to access Typesense admin client
-              // GestureDetector(
-              //     onTap: () {
-              //       Navigator.pushNamed(context, 'typesenseConfig');
-              //     },
-              //     child: const Icon(
-              //         CupertinoIcons.settings))
             ])
         ),
         child: SafeArea(
           minimum: const EdgeInsets.fromLTRB(20, 15, 20, 34),
           child: Column(
             children: [
-              Container(
-                padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
-                child: const UsernameText('You are ', ''),
-              ),
+              // to access admin dashboard
+              StatefulBuilder(builder: (context, innerSetState) {
+                DsUser.getMine().then((DsUser user) {
+                  if (mounted) {
+                    innerSetState(() {
+                      isAdmin = user.admin;
+                    });
+                  }
+                });
+                if (isAdmin) {
+                  return Container(
+                    padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
+                    child: Wrap(
+                      spacing: 10,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        const UsernameText('You are ', ''),
+                        Container(
+                          height: 20,
+                          child: CupertinoButton(
+                              color: const Color(0xfff2f4f5),
+                              padding: const EdgeInsets.fromLTRB(7, 0, 7, 0),
+                              onPressed: () => Navigator.pushNamed(context, 'adminDash'),
+                              child: const Text(
+                                  'Admin Dashboard',
+                                  style: TextStyle(
+                                      color: CupertinoColors.activeBlue,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14
+                                  )
+                              )
+                          )
+                        )
+                      ],
+                    )
+                  );
+                } else {
+                  return Container(
+                    padding: const EdgeInsets.fromLTRB(0, 15, 0, 15),
+                    child: const UsernameText('You are ', ''),
+                  );
+                }
+              }),
               Flexible(
                   child: ListingGridFs(stream: userListings, showMySold: true)
               )

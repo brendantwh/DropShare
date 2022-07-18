@@ -11,6 +11,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'firebase_options.dart';
 
 // DropShare pages
+import 'admin/admindashboard.dart';
+import 'admin/reportlist.dart';
+import 'admin/userlist.dart';
 import 'auth/login.dart';
 import 'auth/signup.dart';
 import 'auth/verify.dart';
@@ -82,6 +85,12 @@ class _MyAppState extends State<MyApp> {
               return CupertinoPageRoute(builder: (_) => const TypesenseConfig(), settings: settings);
             case 'search':
               return CupertinoPageRoute(builder: (_) => const SearchPage(), settings: settings);
+            case 'adminDash':
+              return CupertinoPageRoute(builder: (_) => const AdminDashboard(), settings: settings);
+            case 'userlist':
+              return CupertinoPageRoute(builder: (_) => const UserList(), settings: settings);
+            case 'reportlist':
+              return CupertinoPageRoute(builder: (_) => const ReportList(), settings: settings);
           }
         },
         theme: Platform.isIOS

@@ -3,19 +3,20 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
 class DsUser {
-  static DsUser placeholder = DsUser('Loading', 'Loading', 'Loading');
+  static DsUser placeholder = DsUser('Loading', 'Loading', 'Loading', false);
 
   String username;
   String uid;
   String email;
+  bool admin = false;
 
-  DsUser(this.uid, [this.username = 'Unknown', this.email = 'Unknown']);
+  DsUser(this.uid, [this.username = 'Unknown', this.email = 'Unknown', this.admin = false]);
 
   static Future<DsUser> getMine() async {
     String myUid = FirebaseAuth.instance.currentUser?.uid ?? '';
     DocumentSnapshot<Map<String, dynamic>> data = await FirebaseFirestore.instance.collection('users').doc(myUid).get();
 
-    return DsUser(myUid, data['username'], data['email']);
+    return DsUser(myUid, data['username'], data['email'], data['admin']);
   }
 
   Future<DsUser> getFull() async {
@@ -26,7 +27,7 @@ class DsUser {
       return this;
     }
 
-    return DsUser(uid, data['username'], data['email']);
+    return DsUser(uid, data['username'], data['email'], data['admin']);
   }
 }
 
