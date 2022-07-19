@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../user/dsuser.dart';
 import 'listinggridfs.dart';
 
 class ListingsPage extends StatefulWidget {
@@ -33,7 +34,9 @@ class _ListingsPageState extends State<ListingsPage> {
                   GestureDetector(
                       key: const Key('userpage'),
                       onTap: () {
-                        Navigator.pushNamed(context, 'userpage');
+                        DsUser.getMine().then((user) {
+                          Navigator.pushNamed(context, 'userpage', arguments: user);
+                        });
                       },
                       child: const Icon(
                           CupertinoIcons.person_crop_circle))

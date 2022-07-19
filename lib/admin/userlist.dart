@@ -40,7 +40,7 @@ class _UserListState extends State<UserList> {
                   itemCount: snapshot.data!.size,
                   itemBuilder: (context, index) {
                     DsUser user = DsUser.fromFirestore(snapshot.data!.docs[index] as DocumentSnapshot<Map<String, dynamic>>);
-                    return user.userCard();
+                    return user.smallUserCard();
                   },
 
                 );

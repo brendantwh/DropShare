@@ -179,7 +179,14 @@ class _IndivListingState extends State<IndivListing> {
                 Text('Delete listing', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
               ],
             ),
-          )
+          ),
+          CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, 'create', arguments: listing);
+              },
+              child: Text('Edit listing', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
+          ),
         ]
       ),
     );

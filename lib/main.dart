@@ -25,7 +25,8 @@ import 'listings/indiv.dart';
 import 'listings/listingspage.dart';
 import 'search/searchpage.dart';
 import 'search/typesenseConfig.dart';
-import 'user/userpage.dart';
+import 'user/profile.dart';
+import 'user/modifypage.dart';
 import 'user/usertyperedirect.dart';
 
 bool useEmulator = false;
@@ -80,7 +81,9 @@ class _MyAppState extends State<MyApp> {
             case 'chatlist':
               return CupertinoPageRoute(builder: (context) => const Chatlist(), settings: settings);
             case 'userpage':
-              return CupertinoPageRoute(builder: (_) => const Userpage(), settings: settings);
+              return CupertinoPageRoute(builder: (context) => const Profile(), settings: settings);
+            case 'modifypage':
+              return CupertinoPageRoute(builder: (context) => const ModifyPage(), settings: settings);
             case 'typesenseConfig':
               return CupertinoPageRoute(builder: (_) => const TypesenseConfig(), settings: settings);
             case 'search':
