@@ -82,7 +82,7 @@ class _MyAppState extends State<MyApp> {
             case 'typesenseConfig':
               return CupertinoPageRoute(builder: (_) => const TypesenseConfig(), settings: settings);
             case 'search':
-              return CupertinoPageRoute(builder: (_) => const SearchPage(), settings: settings);
+              return CupertinoPageRoute(builder: (context) => const SearchPage(), settings: settings);
             case 'filter':
               return CupertinoPageRoute(builder: (_) => const FilterPage(), settings: settings);
           }

@@ -1,6 +1,7 @@
 import '../listings/listinggridsearch.dart';
 import 'search.dart';
 import 'package:flutter/cupertino.dart';
+import 'filterpage.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -26,6 +27,14 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    //Variables for filtering
+    var lst;
+    var data = ModalRoute.of(context)?.settings.arguments;
+
+    if (data is List) {
+      lst = data;
+    }
+
     return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
             middle: Text('Search', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
@@ -49,14 +58,27 @@ class _SearchPageState extends State<SearchPage> {
                       if (val.isEmpty) {
 
                       } else {
-                        search = Search.userSearchAllClient.collection('search_listings').documents.search(
+
+                        if (lst != null) {
+                          search = Search.userSearchAllClient.collection('search_listings').documents.search(
+                              {
+                                'q': val,
+                                'query_by': 'title',
+                                'sort_by': 'time:desc',
+                                'filter_by': 'sold:=false && location:=${lst[0]} && price:[${lst[1].start}..${lst[1].end}]',
+                              }
+                          );
+                        } else {
+                          search = Search.userSearchAllClient.collection('search_listings').documents.search(
                             {
                               'q': val,
                               'query_by': 'title',
                               'sort_by': 'time:desc',
-                              'filter_by': 'sold:=false'
+                              'filter_by': 'sold:=false',
                             }
-                        );
+                          );
+                        }
+
                         search.then((res) {
                           found = Container(
                             alignment: Alignment.centerLeft,

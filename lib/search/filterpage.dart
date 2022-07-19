@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../locations/location.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:pull_down_button/pull_down_button.dart';
@@ -13,9 +12,7 @@ class FilterPage extends StatefulWidget {
 
 class _FilterPageState extends State<FilterPage> {
 
-  //Store 
-
-  int _selectedLocation = 0;
+  int _selectedLocation = 0; 
 
   RangeValues values = RangeValues(0,500);
   RangeLabels labels = RangeLabels('0', '500');
@@ -31,12 +28,26 @@ class _FilterPageState extends State<FilterPage> {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
             middle: Text('Filter', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
-            trailing: GestureDetector(
-              onTap: () {
-
-              },
-              child: const Icon(CupertinoIcons.checkmark),
-            ),
+            trailing: Wrap(spacing: 10, children: <Widget>[
+              GestureDetector(
+                onTap: () {
+                  showCupertinoDialog(context: context, builder: (context) {
+                    return CupertinoAlertDialog(
+                      title: const Text('Filter applied'),
+                      content: const Text('Filters will be applied to your searched listings from now on'),
+                      actions: <CupertinoDialogAction>[
+                        CupertinoDialogAction(
+                          isDefaultAction: true,
+                          onPressed: () {
+                            Navigator.pushNamedAndRemoveUntil(context, 'search', arguments: [_selectedLocation, values], ModalRoute.withName('listings'));
+                          },
+                          child: Text('Ok', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
+                    )]);
+                  });
+                },
+                child: const Icon(CupertinoIcons.checkmark),
+              ), 
+            ]),
       ),
       child: ListView(
         children: [
@@ -108,7 +119,28 @@ class _FilterPageState extends State<FilterPage> {
                       }))
                 ],))
               ),
-          ])
+          ]),
+          Container(
+            padding: const EdgeInsets.only(left: 26, right: 20),
+            child: CupertinoButton(
+              child: const Text('Remove Filter', style: TextStyle(color: CupertinoColors.destructiveRed),), 
+              onPressed: () {
+                showCupertinoDialog(context: context, builder: (context) {
+                    return CupertinoAlertDialog(
+                      title: const Text('Filter removed'),
+                      content: const Text('Filters will not be applied to your searched listings from now on.'),
+                      actions: <CupertinoDialogAction>[
+                        CupertinoDialogAction(
+                          isDefaultAction: true,
+                          onPressed: () {
+                            Navigator.pushNamedAndRemoveUntil(context, 'search', ModalRoute.withName('listings'));
+                          },
+                          child: Text('Ok', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
+                    )]);
+                  });
+              }
+            )
+          )
         ],
       )
     );
