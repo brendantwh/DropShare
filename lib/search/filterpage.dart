@@ -34,7 +34,7 @@ class _FilterPageState extends State<FilterPage> {
                   showCupertinoDialog(context: context, builder: (context) {
                     return CupertinoAlertDialog(
                       title: const Text('Filter applied'),
-                      content: const Text('Filters will be applied to your searched listings from now on'),
+                      content: const Text('Filters will be applied to your searched listings from now on.'),
                       actions: <CupertinoDialogAction>[
                         CupertinoDialogAction(
                           isDefaultAction: true,
