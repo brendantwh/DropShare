@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import '../listings/listinggridfs.dart';
 
 class ReportList extends StatefulWidget {
   const ReportList({Key? key}) : super(key: key);
@@ -8,6 +10,12 @@ class ReportList extends StatefulWidget {
 }
 
 class _ReportListState extends State<ReportList> {
+  final reportedListings = FirebaseFirestore.instance
+      .collection('search_listings')
+      .orderBy('time', descending: true)
+      .where('reported', isEqualTo: true)
+      .snapshots();
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -15,14 +23,9 @@ class _ReportListState extends State<ReportList> {
             middle: Text('Reported listings')
         ),
         child: SafeArea(
-            minimum: const EdgeInsets.fromLTRB(20, 15, 20, 34),
-            child: Center(
-              child: Column(
-                children: [
-                  Text('Reported listings here')
-                ],
-              ),
-            )
+          top: false,
+          minimum: const EdgeInsets.fromLTRB(20, 15, 20, 34),
+          child: ListingGridFs(stream: reportedListings, showMySold: true)
         )
     );
   }

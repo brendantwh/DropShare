@@ -31,6 +31,14 @@ class _AdminPageState extends State<AdminDashboard> {
                       child: const Text('View all reported listings'),
                       onPressed: () => Navigator.pushNamed(context, 'reportlist')
                   ),
+                  CupertinoButton(
+                      child: const Text('Swap to normal user view'),
+                      onPressed: () => Navigator.pushReplacementNamed(context, 'listings')
+                  ),
+                  CupertinoButton(
+                      child: const Text('Swap to admin view'),
+                      onPressed: () => Navigator.pushReplacementNamed(context, 'adminHome')
+                  ),
                 ],
               ),
             )

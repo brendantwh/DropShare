@@ -39,7 +39,11 @@ class Authentication {
   }
 
   void createUsername(String username) {
-    FirebaseFirestore.instance.collection('users').doc(user.uid).set({'username': username, 'email': user.email});
+    FirebaseFirestore.instance.collection('users').doc(user.uid).set({'username': username, 'email': user.email, 'admin': false, 'emailVerified': false});
+  }
+
+  void updateEmailVerification(bool verified) {
+    FirebaseFirestore.instance.collection('users').doc(user.uid).update({'emailVerified': verified});
   }
 
 

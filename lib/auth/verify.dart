@@ -91,6 +91,7 @@ class _VerifyState extends State<Verify> {
         testAccts.contains(auth.user.email)) {  // to allow test accts through
       timer.cancel();
       if (mounted) {
+        auth.updateEmailVerification(auth.user.emailVerified);
         Authentication.showSuccessDialog(context, 'verified account');
       }
     }

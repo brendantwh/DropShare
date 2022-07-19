@@ -60,6 +60,8 @@ class _ReportState extends State<Report> {
                                           isDefaultAction: true,
                                           onPressed: () {
                                             Navigator.pop(context);
+                                            widget.listing.reported = true;
+                                            Navigator.pushReplacementNamed(context, 'indiv', arguments: widget.listing);
                                           },
                                           child: Text('Close', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)))
                                     ]

@@ -8,9 +8,22 @@ class DsUser {
   String username;
   String uid;
   String email;
-  bool admin = false;
+  bool admin;
+  bool emailVerified;
 
-  DsUser(this.uid, [this.username = 'Unknown', this.email = 'Unknown', this.admin = false]);
+  DsUser(this.uid, [this.username = 'Unknown', this.email = 'Unknown', this.admin = false, this.emailVerified = false]);
+
+  factory DsUser.fromFirestore(
+      DocumentSnapshot<Map<String, dynamic>> snapshot) {
+    final data = snapshot.data()!;
+    return DsUser(
+      snapshot.id,
+      data['username'],
+      data['email'],
+      data['admin'],
+      data['emailVerified']
+    );
+  }
 
   static Future<DsUser> getMine() async {
     String myUid = FirebaseAuth.instance.currentUser?.uid ?? '';
@@ -28,6 +41,45 @@ class DsUser {
     }
 
     return DsUser(uid, data['username'], data['email'], data['admin']);
+  }
+
+  Container userCard() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        color: CupertinoColors.quaternarySystemFill
+      ),
+      margin: const EdgeInsets.fromLTRB(0, 6, 0, 0),
+      padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
+      child: GestureDetector(
+          onTap: () {},
+          child: Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Wrap(
+                direction: Axis.vertical,
+                spacing: 3,
+                children: [
+                  Text(username, style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16)),
+                  Wrap(
+                    direction: Axis.horizontal,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 6,
+                    children: [
+                      Text(email, style: const TextStyle(fontSize: 16, color: CupertinoColors.systemGrey)),
+                      emailVerified
+                          ? const Icon(CupertinoIcons.check_mark_circled_solid, size: 18, color: CupertinoColors.systemGrey)
+                          : const Icon(CupertinoIcons.xmark_circle_fill, size: 18, color: CupertinoColors.systemRed)
+                    ],
+                  )
+                ]
+              ),
+              Text(admin ? 'Admin' : '', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: CupertinoColors.systemBlue))
+            ],
+          )
+      ),
+    );
   }
 }
 

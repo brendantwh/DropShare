@@ -12,6 +12,7 @@ import 'firebase_options.dart';
 
 // DropShare pages
 import 'admin/admindashboard.dart';
+import 'admin/adminhome.dart';
 import 'admin/reportlist.dart';
 import 'admin/userlist.dart';
 import 'auth/login.dart';
@@ -25,6 +26,7 @@ import 'listings/listingspage.dart';
 import 'search/searchpage.dart';
 import 'search/typesenseConfig.dart';
 import 'user/userpage.dart';
+import 'user/usertyperedirect.dart';
 
 bool useEmulator = false;
 
@@ -58,9 +60,7 @@ class _MyAppState extends State<MyApp> {
         initialRoute:
             FirebaseAuth.instance.currentUser == null
                 ? 'login'
-                : FirebaseAuth.instance.currentUser!.emailVerified
-                ? 'listings'
-                : 'verify',
+                : 'userTypeRedirect',
         onGenerateRoute: (RouteSettings settings) {
           switch (settings.name) {
             case 'listings':
@@ -91,6 +91,10 @@ class _MyAppState extends State<MyApp> {
               return CupertinoPageRoute(builder: (_) => const UserList(), settings: settings);
             case 'reportlist':
               return CupertinoPageRoute(builder: (_) => const ReportList(), settings: settings);
+            case 'userTypeRedirect':
+              return CupertinoPageRoute(builder: (_) => const UserTypeRedirect(), settings: settings);
+            case 'adminHome':
+              return CupertinoPageRoute(builder: (_) => const AdminHome(), settings: settings);
           }
         },
         theme: Platform.isIOS
