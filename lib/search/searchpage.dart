@@ -28,7 +28,12 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
-            middle: Text('Search', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
+            middle: Text('Search', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
+            trailing: GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, 'filter');
+              },
+              child: const Icon(CupertinoIcons.slider_horizontal_3)),
         ),
         child: SafeArea(
           minimum: const EdgeInsets.fromLTRB(20, 15, 20, 34),
