@@ -52,7 +52,7 @@ class _SearchPageState extends State<SearchPage> {
                   margin: const EdgeInsets.only(top: 15, bottom: 10),
                   child: CupertinoSearchTextField(
                     controller: searchController,
-                    placeholder: 'Search for listings',
+                    placeholder: data == null ? 'Search for listings' : 'Search for listings with filter',
                     suffixMode: OverlayVisibilityMode.editing,
                     onSubmitted: (val) {
                       if (val.isEmpty) {

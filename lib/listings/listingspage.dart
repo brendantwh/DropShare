@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'listinggridfs.dart';
 
 class ListingsPage extends StatefulWidget {
@@ -14,6 +15,13 @@ class _ListingsPageState extends State<ListingsPage> {
       .collection('search_listings')
       .orderBy('time', descending: true)
       .snapshots();
+  
+  final freeItems = FirebaseFirestore.instance
+      .collection('search_listings')
+      .where('price', isEqualTo: 0)
+      .snapshots();
+
+  int index = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -40,20 +48,68 @@ class _ListingsPageState extends State<ListingsPage> {
                 ])
             ),
             child: SafeArea(
-                minimum: const EdgeInsets.fromLTRB(20, 15, 20, 34),
-                child: Column(
-                  children: [
-                    CupertinoButton(
+              minimum: const EdgeInsets.fromLTRB(20, 15, 20, 34),
+              child: Column(
+                children: [
+                  CupertinoButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, 'search');
+                      },
+                      child: const Text('Search')
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      OutlinedButton(
+                        style: ButtonStyle(side: MaterialStateProperty.all(const BorderSide(color: CupertinoColors.activeBlue, style: BorderStyle.solid))),
                         onPressed: () {
-                          Navigator.pushNamed(context, 'search');
-                        },
-                        child: const Text('Search')
-                    ),
-                    Flexible(
-                        child: ListingGridFs(stream: items, showMySold: false)
-                    )
-                  ],
-                ),
+                          setState(() {
+                            index = 0;
+                          });
+                        }, 
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Align(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 12.0),
+                              ),
+                            ),
+                            Text('All listings')
+                          ]),
+                      ),
+                      OutlinedButton(
+                        style: ButtonStyle(side: MaterialStateProperty.all(const BorderSide(color: CupertinoColors.activeBlue, style: BorderStyle.solid))),
+                        onPressed: () {
+                          setState(() {
+                            index = 1;
+                          });
+                        }, 
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            Align(
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 12.0),
+                              ),
+                            ),
+                            Text('Free Listings')
+                          ]),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 25,),
+                  index == 0 ?
+                  Flexible(
+                      child: ListingGridFs(stream: items, showMySold: false)
+                  ) 
+                  : 
+                  Flexible(
+                      child: ListingGridFs(stream: freeItems, showMySold: false)
+                  ) ,
+                ],
+              ),
             )
         )
     );
