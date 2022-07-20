@@ -27,6 +27,20 @@ class _ListingGridFsState extends State<ListingGridFs> {
             return const Text("Loading");
           }
 
+          if (snapshot.data!.size == 0) {
+            return const Center(
+                child: Text(
+                    'There\'s nothing here!',
+                    style: TextStyle(
+                        color: CupertinoDynamicColor.withBrightness(
+                            color: CupertinoColors.secondaryLabel,
+                            darkColor: CupertinoColors.systemGrey2)
+                    ),
+                    textScaleFactor: 0.87
+                )
+            );
+          }
+
           return GridView.count(
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
