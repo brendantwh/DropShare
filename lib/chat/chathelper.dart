@@ -47,7 +47,7 @@ class ChatHelper {
     return meetLocation;
   }
 
-  void manageChat() {
+  void manageChat(String msg) {
     final DocumentReference chat = FirebaseFirestore.instance
         .collection('search_listings')
         .doc(listing.docId)
@@ -56,9 +56,15 @@ class ChatHelper {
 
     chat.get().then((docSnapshot) {
       if (docSnapshot.exists) {
-        chat.update({'lastUpdated': Timestamp.fromDate(DateTime.now())});
+        chat.update({
+          'lastUpdated': Timestamp.fromDate(DateTime.now()),
+          'latestMsg': msg
+        });
       } else {
-        chat.set({'lastUpdated': Timestamp.fromDate(DateTime.now())});
+        chat.set({
+          'lastUpdated': Timestamp.fromDate(DateTime.now()),
+          'latestMsg': msg
+        });
       }
     });
   }

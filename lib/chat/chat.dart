@@ -10,6 +10,7 @@ import '../listings/listing.dart';
 import '../listings/report.dart';
 import '../locations/location.dart';
 import 'chathelper.dart';
+import 'chatimage.dart';
 import 'message.dart';
 import 'bubble.dart';
 
@@ -84,6 +85,7 @@ class _ChatState extends State<Chat> {
             Flexible(
               fit: FlexFit.loose,
               child: Stack(children: [
+                // bottom Container for chat messages
                 Container(
                     height: double.infinity,
                     padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
@@ -182,6 +184,7 @@ class _ChatState extends State<Chat> {
                                 }
                               });
                         })),
+                // top Align for listing and meetup details
                 Align(
                     alignment: Alignment.topCenter,
                     child: Column(
@@ -370,6 +373,7 @@ class _ChatState extends State<Chat> {
                       ],
                     )
                 ),
+                // bottom Align for message entry field
                 Align(
                     alignment: Alignment.bottomCenter,
                     child: ClipRect(
@@ -380,56 +384,68 @@ class _ChatState extends State<Chat> {
                                     color: Color(0xEBFFFFFF)),
                                 padding:
                                     const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                                child: CupertinoTextField(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: CupertinoColors.opaqueSeparator),
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                  controller: messageController,
-                                  onChanged: (text) {
-                                    // see TextEditingController listener for problem
-                                    // setState(() { });
-                                  },
-                                  placeholder: 'Message',
-                                  padding:
-                                      const EdgeInsets.fromLTRB(10, 5, 5, 5),
-                                  minLines: 1,
-                                  maxLines: 5,
-                                  textAlignVertical: TextAlignVertical.bottom,
-                                  suffix: SizedBox(
-                                      height: 32,
-                                      width: 32,
-                                      child: CupertinoButton(
-                                          padding: const EdgeInsets.all(0),
-                                          onPressed: // enableSend
-                                              true
-                                                  ? () {
-                                                      if (messageController
-                                                          .text.isEmpty) {
-                                                        print('No');
-                                                      } else {
-                                                        Message msg = Message(
-                                                            sentBy: currentUid,
-                                                            message:
-                                                                messageController
-                                                                    .text
-                                                                    .trim(),
-                                                            time: '');
-                                                        helper.manageChat();
-                                                        chat.add(
-                                                            msg.toFirestore());
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    ChatImage(helper: helper, currentUid: currentUid),
+                                    Flexible(
+                                      child: CupertinoTextField(
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: CupertinoColors.opaqueSeparator),
+                                          borderRadius: BorderRadius.circular(20.0),
+                                        ),
+                                        controller: messageController,
+                                        onChanged: (text) {
+                                          // see TextEditingController listener for problem
+                                          // setState(() { });
+                                        },
+                                        placeholder: 'Message',
+                                        padding:
+                                        const EdgeInsets.fromLTRB(10, 5, 5, 5),
+                                        minLines: 1,
+                                        maxLines: 5,
+                                        textAlignVertical: TextAlignVertical.bottom,
+                                        suffix: SizedBox(
+                                            height: 32,
+                                            width: 32,
+                                            child: CupertinoButton(
+                                                padding: const EdgeInsets.all(0),
+                                                onPressed: // enableSend
+                                                true
+                                                    ? () {
+                                                  if (messageController
+                                                      .text.isEmpty) {
+                                                    print('No');
+                                                  } else {
+                                                    Message msg = Message(
+                                                        sentBy: currentUid,
+                                                        message:
                                                         messageController
-                                                            .clear();
-                                                      }
-                                                    }
-                                                  : null,
-                                          child: const Icon(
-                                              CupertinoIcons
-                                                  .arrow_up_circle_fill,
-                                              size: 32))),
-                                  suffixMode: OverlayVisibilityMode.always,
-                                )))))
+                                                            .text
+                                                            .trim(),
+                                                        time: '');
+                                                    helper.manageChat(messageController.text);
+                                                    chat.add(
+                                                        msg.msgToFirestore());
+                                                    messageController
+                                                        .clear();
+                                                  }
+                                                }
+                                                    : null,
+                                                child: const Icon(
+                                                    CupertinoIcons
+                                                        .arrow_up_circle_fill,
+                                                    size: 32))),
+                                        suffixMode: OverlayVisibilityMode.always,
+                                      ),
+                                    )
+                                  ],
+                                )
+                            )
+                        )
+                    )
+                )
               ])),
         ],
       )),

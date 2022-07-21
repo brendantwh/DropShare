@@ -66,9 +66,72 @@ class _ChatlistState extends State<Chatlist> {
                             }
                             DsUser buyer = snapshot.data as DsUser;
 
+                            final doc = document as DocumentSnapshot<Map<String, dynamic>>;
+                            String latestMsg = doc.data()!['latestMsg'];
+                            Widget subheader;
+                            TextStyle subStyle = const TextStyle(
+                                fontSize: 16,
+                                color: CupertinoColors.secondaryLabel,
+                                fontWeight: FontWeight.w500
+                            );
+
+                            if (latestMsg.isEmpty || latestMsg == 'image') {
+                              subheader = Wrap(
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                spacing: 6,
+                                children: [
+                                  const Icon(
+                                      CupertinoIcons.photo_fill,
+                                      size: 20,
+                                      color: CupertinoColors.secondaryLabel
+                                  ),
+                                  Text(
+                                      'Image',
+                                      style: subStyle
+                                  )
+                                ],
+                              );
+                            } else {
+                              subheader = Text(
+                                  latestMsg,
+                                  style: subStyle
+                              );
+                            }
+
                             return Container(
-                                padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                                child: Text('Chat with ${buyer.username}')
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(12),
+                                  color: CupertinoColors.quaternarySystemFill),
+                              margin: const EdgeInsets.fromLTRB(0, 6, 0, 0),
+                              padding: const EdgeInsets.fromLTRB(14, 10, 6, 10),
+                              child: Wrap(
+                                direction: Axis.horizontal,
+                                alignment: WrapAlignment.spaceBetween,
+                                crossAxisAlignment: WrapCrossAlignment.start,
+                                children: [
+                                  Wrap(
+                                    direction: Axis.horizontal,
+                                    crossAxisAlignment: WrapCrossAlignment.center,
+                                    spacing: 8,
+                                    children: [
+                                      const Icon(CupertinoIcons.person_alt_circle, size: 40),
+                                      Wrap(
+                                          direction: Axis.vertical,
+                                          spacing: 6,
+                                          children: [
+                                            Text(buyer.username,
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 18
+                                                )),
+                                            subheader
+                                          ]
+                                      )
+                                    ],
+                                  ),
+                                  const Icon(CupertinoIcons.chevron_right, size: 20, color: CupertinoColors.secondaryLabel)
+                                ],
+                              )
                             );
                           }
                       )

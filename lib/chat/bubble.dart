@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:optimized_cached_image/optimized_cached_image.dart';
 
 import 'message.dart';
 
@@ -52,21 +53,56 @@ class _BubbleState extends State<Bubble> {
       )
     );
 
-    Text message = Text(
-      widget.msg.message,
-      textAlign: textAlign,
-      style: TextStyle(color: textColor),
-      textWidthBasis: TextWidthBasis.longestLine
-    );
+    Flexible bubble;
 
-    Flexible bubble = Flexible(
-        child: Container(
-            margin: margin,
-            padding: padding,
-            decoration: BoxDecoration(
+    if (widget.msg.imageUrl!.isEmpty) {
+      // regular message
+
+      Text message = Text(
+          widget.msg.message,
+          textAlign: textAlign,
+          style: TextStyle(color: textColor),
+          textWidthBasis: TextWidthBasis.longestLine
+      );
+
+      bubble = Flexible(
+          child: Container(
+              margin: margin,
+              padding: padding,
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(13),
+                  color: bubbleColor),
+              child: message));
+    } else {
+      // image
+
+      bubble = Flexible(
+          child: Container(
+              margin: margin,
+              padding: const EdgeInsets.fromLTRB(0, 4, 0, 4),
+              height: 248,
+              width: 240,
+              child: ClipRRect(
                 borderRadius: BorderRadius.circular(13),
-                color: bubbleColor),
-            child: message));
+                child: OptimizedCacheImage(
+                  imageUrl: widget.msg.imageUrl!,
+                  imageBuilder: (context, image) =>
+                      AspectRatio(
+                          aspectRatio: 1,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    fit: BoxFit.cover,
+                                    image: image
+                                )
+                            ),
+                          )
+                      ),
+                ),
+              )
+          )
+      );
+    }
 
     List<Widget> children;
     if (widget.isMine) {
