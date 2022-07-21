@@ -1,6 +1,7 @@
 import '../listings/listinggridsearch.dart';
 import 'search.dart';
 import 'package:flutter/cupertino.dart';
+import 'filterpage.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -26,9 +27,22 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    //Variables for filtering
+    var lst;
+    var data = ModalRoute.of(context)?.settings.arguments;
+
+    if (data is List) {
+      lst = data;
+    }
+
     return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
-            middle: Text('Search', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
+            middle: Text('Search', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
+            trailing: GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, 'filter');
+              },
+              child: const Icon(CupertinoIcons.slider_horizontal_3)),
         ),
         child: SafeArea(
           minimum: const EdgeInsets.fromLTRB(20, 15, 20, 34),
@@ -38,20 +52,33 @@ class _SearchPageState extends State<SearchPage> {
                   margin: const EdgeInsets.only(top: 15, bottom: 10),
                   child: CupertinoSearchTextField(
                     controller: searchController,
-                    placeholder: 'Search for listings',
+                    placeholder: data == null ? 'Search for listings' : 'Search for listings with filter',
                     suffixMode: OverlayVisibilityMode.editing,
                     onSubmitted: (val) {
                       if (val.isEmpty) {
 
                       } else {
-                        search = Search.userSearchAllClient.collection('search_listings').documents.search(
+
+                        if (lst != null) {
+                          search = Search.userSearchAllClient.collection('search_listings').documents.search(
+                              {
+                                'q': val,
+                                'query_by': 'title',
+                                'sort_by': 'time:desc',
+                                'filter_by': 'sold:=false && location:=${lst[0]} && price:[${lst[1].start}..${lst[1].end}]',
+                              }
+                          );
+                        } else {
+                          search = Search.userSearchAllClient.collection('search_listings').documents.search(
                             {
                               'q': val,
                               'query_by': 'title',
                               'sort_by': 'time:desc',
-                              'filter_by': 'sold:=false'
+                              'filter_by': 'sold:=false',
                             }
-                        );
+                          );
+                        }
+
                         search.then((res) {
                           found = Container(
                             alignment: Alignment.centerLeft,

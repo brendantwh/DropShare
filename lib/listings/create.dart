@@ -151,7 +151,6 @@ class _CreateState extends State<Create> {
 
                       void completer() async {
                         var urls = await uploadToStorageGetUrls(images);
-                        print(urls);
 
                         if (listing == null) {
                         Listing l = Listing(
@@ -184,7 +183,6 @@ class _CreateState extends State<Create> {
                       // also update listing image
                       void completer() async {
                       var urls = await uploadToStorageGetUrls(images);
-                      print(urls);
 
                       Listing l = listing as Listing;
                       l.update(
