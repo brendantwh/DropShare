@@ -23,6 +23,7 @@ import 'chat/chatlist.dart';
 import 'listings/create.dart';
 import 'listings/indiv.dart';
 import 'listings/listingspage.dart';
+import 'home/homepage.dart';
 import 'search/searchpage.dart';
 import 'search/typesenseConfig.dart';
 import 'search/filterpage.dart';
@@ -65,6 +66,8 @@ class _MyAppState extends State<MyApp> {
                 : 'userTypeRedirect',
         onGenerateRoute: (RouteSettings settings) {
           switch (settings.name) {
+            case 'home':
+              return CupertinoPageRoute(builder: (context) => const Homepage(), settings: settings);
             case 'listings':
               return CupertinoPageRoute(builder: (_) => const ListingsPage(), settings: settings);
             case 'login':

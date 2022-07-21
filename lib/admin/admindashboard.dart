@@ -93,7 +93,7 @@ class _AdminPageState extends State<AdminDashboard> {
                                 if (adminView) {
                                   Navigator.pushReplacementNamed(context, 'adminHome');
                                 } else {
-                                  Navigator.pushReplacementNamed(context, 'listings');
+                                  Navigator.pushReplacementNamed(context, 'home');
                                 }
                               });
                             });

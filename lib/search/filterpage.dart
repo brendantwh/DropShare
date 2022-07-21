@@ -39,7 +39,7 @@ class _FilterPageState extends State<FilterPage> {
                         CupertinoDialogAction(
                           isDefaultAction: true,
                           onPressed: () {
-                            Navigator.pushNamedAndRemoveUntil(context, 'search', arguments: [_selectedLocation, values], ModalRoute.withName('listings'));
+                            Navigator.pushNamedAndRemoveUntil(context, 'search', arguments: [_selectedLocation, values], ModalRoute.withName('home'));
                           },
                           child: Text('Ok', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
                     )]);
@@ -133,7 +133,7 @@ class _FilterPageState extends State<FilterPage> {
                         CupertinoDialogAction(
                           isDefaultAction: true,
                           onPressed: () {
-                            Navigator.pushNamedAndRemoveUntil(context, 'search', ModalRoute.withName('listings'));
+                            Navigator.pushNamedAndRemoveUntil(context, 'search', ModalRoute.withName('home'));
                           },
                           child: Text('Ok', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
                     )]);

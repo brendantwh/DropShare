@@ -106,7 +106,7 @@ class Authentication {
                       ? Navigator.pushNamedAndRemoveUntil(context, 'login', (Route<dynamic> route) => false)
                       : Authentication().user!.emailVerified ||
                       testAccts.contains(Authentication().user.email)  // to allow test accts through
-                      ? Navigator.pushNamedAndRemoveUntil(context, 'listings', (Route<dynamic> route) => false)
+                      ? Navigator.pushNamedAndRemoveUntil(context, 'home', (Route<dynamic> route) => false)
                       : Navigator.pushNamedAndRemoveUntil(context, 'verify', (Route<dynamic> route) => false);
                 },
                 child: Text(

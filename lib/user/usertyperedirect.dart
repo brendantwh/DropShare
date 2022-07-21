@@ -13,13 +13,13 @@ class _UserTypeRedirectState extends State<UserTypeRedirect> {
   @override
   void initState() {
     DsUser.getMine().then((user) {
-      if (user.admin) {
+      if (user.admin && user.adminView) {
         Future.delayed(const Duration(milliseconds: 300), () {
           Navigator.pushNamedAndRemoveUntil(context, 'adminHome', (Route<dynamic> route) => false);
         });
       } else if (user.emailVerified) {
         Future.delayed(const Duration(milliseconds: 500), () {
-          Navigator.pushNamedAndRemoveUntil(context, 'listings', (Route<dynamic> route) => false);
+          Navigator.pushNamedAndRemoveUntil(context, 'home', (Route<dynamic> route) => false, arguments: user);
         });
       } else {
         Future.delayed(const Duration(milliseconds: 500), () {

@@ -31,12 +31,14 @@ class _ModifyPageState extends State<ModifyPage> {
                 Authentication.showErrorDialog(context, 'Username should contain at most 16 characters');
               } else {
                 user.update(usernameController.text, _selectedLocation);
-                Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    'userpage',
-                    ModalRoute.withName('listings'),
-                    arguments: user
-                );
+                // Navigator.pushNamedAndRemoveUntil(
+                //     context,
+                //     'userpage',
+                //     ModalRoute.withName('userpage'),
+                //     arguments: user
+                // );
+                Navigator.pop(context);
+                Navigator.pushReplacementNamed(context, 'userpage', arguments: user);
               }
             },
             child: const Icon(CupertinoIcons.checkmark)
@@ -44,8 +46,8 @@ class _ModifyPageState extends State<ModifyPage> {
         ),
         child: SafeArea(
           minimum: const EdgeInsets.fromLTRB(0, 15, 0, 34),
-          child: CupertinoFormSection(
-              header: const Text('Your profile'),
+          child: CupertinoFormSection.insetGrouped(
+              header: Text('Your profile'.toUpperCase()),
               children: [
                 CupertinoFormRow(
                   prefix: const Text('Username'),

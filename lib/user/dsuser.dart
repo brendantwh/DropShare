@@ -145,8 +145,22 @@ class DsUser {
                             overflow: TextOverflow.ellipsis),
                       ],
                     ),
-                    Text(Location.values[location].locationName,
-                        style: const TextStyle(fontSize: 16)),
+                    Wrap(
+                      direction: Axis.horizontal,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 6,
+                      children: [
+                        Icon(
+                          location >= 0 && location <= 5
+                              ? CupertinoIcons.house_fill
+                              : CupertinoIcons.building_2_fill,
+                          size: 16,
+                          color: CupertinoColors.secondaryLabel,
+                        ),
+                        Text(Location.values[location].locationName,
+                            style: const TextStyle(fontSize: 16)),
+                      ],
+                    )
                   ],
                 ),
               ],

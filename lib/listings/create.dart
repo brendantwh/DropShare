@@ -66,6 +66,7 @@ class _CreateState extends State<Create> {
     }
 
     return CupertinoPageScaffold(
+        backgroundColor: CupertinoColors.systemGroupedBackground,
         navigationBar: CupertinoNavigationBar(
             middle: Text('${listing != null ? 'Edit' : 'Create'} listing', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
             trailing: GestureDetector(
@@ -230,8 +231,38 @@ class _CreateState extends State<Create> {
         child: _isLoading
             ? const Center(child: CupertinoActivityIndicator())
             : ListView(children: [
-                CupertinoFormSection(
-                    margin: const EdgeInsets.all(12),
+                CupertinoFormSection.insetGrouped(
+                    header: Text('Pictures'.toUpperCase()),
+                    children: [
+                      IntrinsicHeight(child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          SizedBox(
+                              width: 100,
+                              height:150,
+                              child: CupertinoButton(
+                                onPressed: () {
+                                  getMultiImages();
+                                },
+                                child: images.length >= 1 ? Image.file(File(images[0].path)) : Icon(CupertinoIcons.camera),
+                              )
+                          ),
+                          const VerticalDivider(
+                            color: CupertinoColors.opaqueSeparator,
+                            indent: 10,
+                            endIndent: 10,
+                          ),
+                          SizedBox(
+                              width: 100,
+                              height: 150,
+                              child: images.length >= 2 ? Image.file(File(images[1].path)) : Icon(CupertinoIcons.add, size: 50, color: CupertinoColors.opaqueSeparator)
+                          ),
+                        ],))
+                    ]
+                ),
+                CupertinoFormSection.insetGrouped(
+                    header: Text('Details'.toUpperCase()),
                     children: [
                       CupertinoTextFormFieldRow(
                         key: const Key('create title'),
@@ -298,32 +329,7 @@ class _CreateState extends State<Create> {
                             )
                           ],
                         )
-                      ),
-                      IntrinsicHeight(child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(
-                            width: 100,
-                            height:150,
-                            child: CupertinoButton(
-                              onPressed: () {
-                                getMultiImages();
-                              },
-                              child: images.length >= 1 ? Image.file(File(images[0].path)) : Icon(CupertinoIcons.camera),
-                            )
-                          ),
-                          const VerticalDivider(
-                            color: CupertinoColors.opaqueSeparator,
-                            indent: 10,
-                            endIndent: 10,
-                          ),
-                          SizedBox(
-                            width: 100,
-                            height: 150,
-                            child: images.length >= 2 ? Image.file(File(images[1].path)) : Icon(CupertinoIcons.add, size: 50, color: CupertinoColors.opaqueSeparator)
-                          ),
-                        ],))
+                      )
                 ])
         ])
     );
