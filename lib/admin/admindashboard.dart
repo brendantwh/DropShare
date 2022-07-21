@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
+import '../user/dsuser.dart';
+
 class AdminDashboard extends StatefulWidget {
   const AdminDashboard({Key? key}) : super(key: key);
 
@@ -10,120 +12,97 @@ class AdminDashboard extends StatefulWidget {
 class _AdminPageState extends State<AdminDashboard> {
   @override
   Widget build(BuildContext context) {
+    final DsUser user = ModalRoute.of(context)?.settings.arguments as DsUser;
+
     return CupertinoPageScaffold(
         navigationBar: const CupertinoNavigationBar(
             middle: Text('Admin Dashboard')
         ),
+        backgroundColor: CupertinoColors.systemGroupedBackground,
         child: SafeArea(
-            top: false,
-            minimum: const EdgeInsets.fromLTRB(20, 15, 20, 34),
-            child: GridView.count(
-              crossAxisCount: 2,
-              childAspectRatio: 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              physics: NeverScrollableScrollPhysics(),
+            // top: false,
+            minimum: const EdgeInsets.fromLTRB(0, 15, 0, 34),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Container(
-                    alignment: Alignment.bottomLeft,
-                    padding: const EdgeInsets.only(left: 6),
-                    child: Text(
-                      'Management'.toUpperCase(),
-                      style: const TextStyle(fontWeight: FontWeight.w500, color: CupertinoColors.systemGrey),
-                      textScaleFactor: 0.87,
-                    )
+                CupertinoFormSection.insetGrouped(
+                    header: Text('Management'.toUpperCase()),
+                    children: [
+                      GestureDetector(
+                          onTap: () => Navigator.pushNamed(context, 'typesenseConfig'),
+                          child: CupertinoFormRow(
+                            padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+                            prefix: Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              spacing: 12,
+                              children: const [
+                                Icon(CupertinoIcons.search_circle, size: 30),
+                                Text('Typesense')
+                              ],
+                            ),
+                            child: Icon(CupertinoIcons.chevron_forward, size: 18, color: CupertinoColors.secondaryLabel),
+                          )
+                      ),
+                      GestureDetector(
+                          onTap: () => Navigator.pushNamed(context, 'userlist'),
+                          child: CupertinoFormRow(
+                            padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+                            prefix: Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              spacing: 12,
+                              children: const [
+                                Icon(CupertinoIcons.person_3_fill, size: 30),
+                                Text('View all users')
+                              ],
+                            ),
+                            child: Icon(CupertinoIcons.chevron_forward, size: 18, color: CupertinoColors.secondaryLabel),
+                          )
+                      ),
+                      GestureDetector(
+                          onTap: () => Navigator.pushNamed(context, 'reportlist'),
+                          child: CupertinoFormRow(
+                            padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+                            prefix: Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              spacing: 12,
+                              children: const [
+                                Icon(CupertinoIcons.flag_circle, size: 30),
+                                Text('Reported listings')
+                              ],
+                            ),
+                            child: Icon(CupertinoIcons.chevron_forward, size: 18, color: CupertinoColors.secondaryLabel),
+                          )
+                      ),
+                    ]
                 ),
-                Container(),
-                GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, 'typesenseConfig'),
-                    child: Container(
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: CupertinoColors.secondarySystemFill),
-                        padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
-                        child: Wrap(
-                          direction: Axis.vertical,
-                          alignment: WrapAlignment.center,
-                          spacing: 6,
-                          children: const [
-                            Icon(CupertinoIcons.search_circle, size: 26),
-                            const Text('Typesense', style: TextStyle(fontWeight: FontWeight.w500))
-                          ],
+                CupertinoFormSection.insetGrouped(
+                  header: Text('View'.toUpperCase()),
+                  children: [
+                    CupertinoFormRow(
+                        prefix: Text('Toggle admin view'),
+                        child: CupertinoSwitch(
+                          onChanged: (bool adminView) {
+                            setState(() {
+                              user.swapView(adminView);
+                              showCupertinoDialog(
+                                  context: context,
+                                  builder: (context) => Center(child: CupertinoActivityIndicator())
+                              );
+                              Future.delayed(const Duration(milliseconds: 300), () {
+                                if (adminView) {
+                                  Navigator.pushReplacementNamed(context, 'adminHome');
+                                } else {
+                                  Navigator.pushReplacementNamed(context, 'listings');
+                                }
+                              });
+                            });
+                          },
+                          value: user.adminView,
                         )
-                    )
-                ),
-                GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, 'userlist'),
-                    child: Container(
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: CupertinoColors.secondarySystemFill),
-                        padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
-                        child: Wrap(
-                          direction: Axis.vertical,
-                          alignment: WrapAlignment.center,
-                          spacing: 6,
-                          children: const [
-                            Icon(CupertinoIcons.person_3_fill, size: 26),
-                            const Text('View all users', style: TextStyle(fontWeight: FontWeight.w500))
-                          ],
-                        )
-                    )
-                ),
-                GestureDetector(
-                    onTap: () => Navigator.pushNamed(context, 'reportlist'),
-                    child: Container(
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: CupertinoColors.secondarySystemFill),
-                        padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
-                        child: Wrap(
-                          direction: Axis.vertical,
-                          alignment: WrapAlignment.center,
-                          spacing: 6,
-                          children: const [
-                            Icon(CupertinoIcons.flag_circle, size: 26),
-                            const Text('Reported listings', style: TextStyle(fontWeight: FontWeight.w500))
-                          ],
-                        )
-                    )
-                ),
-                Container(),
-                Container(
-                    alignment: Alignment.bottomLeft,
-                    padding: const EdgeInsets.only(left: 6),
-                    child: Text(
-                      'Swap Views'.toUpperCase(),
-                      style: const TextStyle(fontWeight: FontWeight.w500, color: CupertinoColors.systemGrey),
-                      textScaleFactor: 0.87,
-                    )
-                ),
-                Container(),
-                GestureDetector(
-                    onTap: () => Navigator.pushReplacementNamed(context, 'listings'),
-                    child: Container(
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: CupertinoColors.secondarySystemFill),
-                        padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
-                        child: Wrap(
-                          direction: Axis.vertical,
-                          alignment: WrapAlignment.center,
-                          spacing: 6,
-                          children: const [
-                            Icon(CupertinoIcons.arrow_right_arrow_left_circle, size: 26),
-                            const Text('Normal view', style: TextStyle(fontWeight: FontWeight.w500))
-                          ],
-                        )
-                    )
-                ),
-                GestureDetector(
-                    onTap: () => Navigator.pushReplacementNamed(context, 'adminHome'),
-                    child: Container(
-                        decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), color: CupertinoColors.secondarySystemFill),
-                        padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
-                        child: Wrap(
-                          direction: Axis.vertical,
-                          alignment: WrapAlignment.center,
-                          spacing: 6,
-                          children: const [
-                            Icon(CupertinoIcons.arrow_right_arrow_left_circle, size: 26),
-                            const Text('Admin view', style: TextStyle(fontWeight: FontWeight.w500))
-                          ],
-                        )
-                    )
+                    ),
+
+                  ],
                 )
               ],
             )
@@ -131,3 +110,22 @@ class _AdminPageState extends State<AdminDashboard> {
     );
   }
 }
+//
+// Container(),
+// Container(
+// alignment: Alignment.bottomLeft,
+// padding: const EdgeInsets.only(left: 6),
+// child: Text(
+// 'Swap Views'.toUpperCase(),
+// style: const TextStyle(fontWeight: FontWeight.w500, color: CupertinoColors.systemGrey),
+// textScaleFactor: 0.87,
+// )
+// ),
+// Container(),
+// Container(
+// alignment: Alignment.topLeft,
+// child: Text('Swap views')
+// ),
+// Container(
+// alignment: Alignment.topRight,
+// child:

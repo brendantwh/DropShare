@@ -10,6 +10,7 @@ class DsUser {
   String uid;
   String email;
   bool admin;
+  bool adminView;
   bool emailVerified;
   int location;
 
@@ -17,6 +18,7 @@ class DsUser {
       [this.username = 'Unknown',
       this.email = 'Unknown',
       this.admin = false,
+      this.adminView = false,
       this.emailVerified = false,
       this.location = 0]);
 
@@ -24,7 +26,7 @@ class DsUser {
       DocumentSnapshot<Map<String, dynamic>> snapshot) {
     final data = snapshot.data()!;
     return DsUser(snapshot.id, data['username'], data['email'], data['admin'],
-        data['emailVerified'], data['location']);
+        data['adminView'], data['emailVerified'], data['location']);
   }
 
   static Future<DsUser> getMine() async {
@@ -33,7 +35,7 @@ class DsUser {
         await FirebaseFirestore.instance.collection('users').doc(myUid).get();
 
     return DsUser(myUid, data['username'], data['email'], data['admin'],
-        data['emailVerified'], data['location']);
+        data['adminView'], data['emailVerified'], data['location']);
   }
 
   Future<DsUser> getFull() async {
@@ -45,7 +47,7 @@ class DsUser {
     }
 
     return DsUser(uid, data['username'], data['email'], data['admin'],
-        data['emailVerified'], data['location']);
+        data['adminView'], data['emailVerified'], data['location']);
   }
 
   void update(String username, int location) {
@@ -55,6 +57,14 @@ class DsUser {
         .collection('users')
         .doc(uid)
         .update({'username': username, 'location': location});
+  }
+
+  void swapView(bool adminView) {
+    this.adminView = adminView;
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .update({'adminView': adminView});
   }
 
   Container smallUserCard() {
@@ -156,7 +166,7 @@ class DsUser {
                         color: CupertinoColors.systemBlue,
                         padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                         onPressed: () =>
-                            Navigator.pushNamed(context, 'adminDash'),
+                            Navigator.pushNamed(context, 'adminDash', arguments: this),
                         child: const Text('Admin Dashboard',
                             style: TextStyle(
                                 color: CupertinoColors.white,

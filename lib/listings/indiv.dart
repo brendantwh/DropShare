@@ -240,8 +240,9 @@ class _IndivListingState extends State<IndivListing> {
 
                   bool userIsSeller = listing.uid == me.uid;
                   bool userIsAdmin = me.admin;
+                  bool adminView = me.adminView;
 
-                  if (userIsAdmin) {
+                  if (userIsAdmin && adminView) {
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [

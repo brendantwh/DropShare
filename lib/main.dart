@@ -89,7 +89,7 @@ class _MyAppState extends State<MyApp> {
             case 'search':
               return CupertinoPageRoute(builder: (_) => const SearchPage(), settings: settings);
             case 'adminDash':
-              return CupertinoPageRoute(builder: (_) => const AdminDashboard(), settings: settings);
+              return CupertinoPageRoute(builder: (context) => const AdminDashboard(), settings: settings);
             case 'userlist':
               return CupertinoPageRoute(builder: (_) => const UserList(), settings: settings);
             case 'reportlist':

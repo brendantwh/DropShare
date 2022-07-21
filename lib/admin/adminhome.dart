@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../listings/listinggridfs.dart';
+import '../user/dsuser.dart';
 
 class AdminHome extends StatefulWidget {
   const AdminHome({Key? key}) : super(key: key);
@@ -27,7 +28,7 @@ class _AdminHomeState extends State<AdminHome> {
                   GestureDetector(
                       key: const Key('adminDash'),
                       onTap: () {
-                        Navigator.pushNamed(context, 'adminDash');
+                        DsUser.getMine().then((user) => Navigator.pushNamed(context, 'adminDash', arguments: user));
                       },
                       child: const Icon(
                           CupertinoIcons.settings))
