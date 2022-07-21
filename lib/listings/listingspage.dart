@@ -11,17 +11,37 @@ class ListingsPage extends StatefulWidget {
 }
 
 class _ListingsPageState extends State<ListingsPage> {
-  final items = FirebaseFirestore.instance
+  final items = FirebaseFirestore.instance //index 0
       .collection('search_listings')
       .orderBy('time', descending: true)
       .snapshots();
   
-  final freeItems = FirebaseFirestore.instance
+  final freeItems = FirebaseFirestore.instance //index 1
       .collection('search_listings')
       .where('price', isEqualTo: 0)
+      .snapshots(); 
+  
+  final hallsItems = FirebaseFirestore.instance
+      .collection('search_listings')
+      .where('location', whereIn: [0,1,2,3,4,5])
+      .snapshots();
+  
+  final rcItems = FirebaseFirestore.instance
+      .collection('search_listings')
+      .where('location', whereIn: [7,8,9,10,11])
       .snapshots();
 
-  int index = 0;
+  final utrItems = FirebaseFirestore.instance
+      .collection('search_listings')
+      .where('location', isEqualTo: 12)
+      .snapshots();
+  
+  final pgpItems = FirebaseFirestore.instance
+      .collection('search_listings')
+      .where('location', isEqualTo: 6)
+      .snapshots();
+
+  int index = 0; //0 set as default for all items, as inkwells tapped, index changes to reflect categorized items
 
   @override
   Widget build(BuildContext context) {
@@ -57,57 +77,162 @@ class _ListingsPageState extends State<ListingsPage> {
                       },
                       child: const Text('Search')
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: CupertinoColors.opaqueSeparator)
+                    ),
+                    height: 50,
+                    child: Material(child: ListView(
+                    scrollDirection: Axis.horizontal,
                     children: [
-                      OutlinedButton(
-                        style: ButtonStyle(side: MaterialStateProperty.all(const BorderSide(color: CupertinoColors.activeBlue, style: BorderStyle.solid))),
-                        onPressed: () {
-                          setState(() {
-                            index = 0;
-                          });
-                        }, 
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Align(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 12.0),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                index = 0;
+                              });
+                            },
+                            child: Container(
+                              width: 100,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10), 
+                                color: index == 0 ? 
+                                CupertinoColors.opaqueSeparator : 
+                                CupertinoColors.lightBackgroundGray
                               ),
+                              child: const Center(child: Text('All listings'),),
                             ),
-                            Text('All listings')
-                          ]),
-                      ),
-                      OutlinedButton(
-                        style: ButtonStyle(side: MaterialStateProperty.all(const BorderSide(color: CupertinoColors.activeBlue, style: BorderStyle.solid))),
-                        onPressed: () {
-                          setState(() {
-                            index = 1;
-                          });
-                        }, 
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
-                            Align(
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 12.0),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                index = 1;
+                              });
+                            },
+                            child: Container(
+                              width: 108,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10), 
+                                color: index == 1 ?
+                                CupertinoColors.opaqueSeparator :
+                                CupertinoColors.lightBackgroundGray
                               ),
+                              child: const Center(child: Text('Free listings'),),
                             ),
-                            Text('Free Listings')
-                          ]),
-                      ),
-                    ],
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                index = 2;
+                              });
+                            },
+                            child: Container(
+                              width: 60,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10), 
+                                color: index == 2 ?
+                                CupertinoColors.opaqueSeparator :
+                                CupertinoColors.lightBackgroundGray
+                              ),
+                              child: const Center(child: Text('Halls'),),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                index = 3;
+                              });
+                            },
+                            child: Container(
+                              width: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10), 
+                                color: index == 3 ?
+                                CupertinoColors.opaqueSeparator :
+                                CupertinoColors.lightBackgroundGray
+                              ),
+                              child: const Center(child: Text('RCs'),),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                index = 4;
+                              });
+                            },
+                            child: Container(
+                              width: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10), 
+                                color: index == 4 ?
+                                CupertinoColors.opaqueSeparator :
+                                CupertinoColors.lightBackgroundGray
+                              ),
+                              child: const Center(child: Text('UTR'),),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              setState(() {
+                                index = 5;
+                              });
+                            },
+                            child: Container(
+                              width: 50,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10), 
+                                color: index == 5 ?
+                                CupertinoColors.opaqueSeparator :
+                                CupertinoColors.lightBackgroundGray
+                              ),
+                              child: const Center(child: Text('PGP'),),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )),
                   ),
-                  const SizedBox(height: 25,),
+                  const SizedBox(height: 20,),
                   index == 0 ?
                   Flexible(
                       child: ListingGridFs(stream: items, showMySold: false)
-                  ) 
-                  : 
+                  )
+                  : index == 1 ?
                   Flexible(
                       child: ListingGridFs(stream: freeItems, showMySold: false)
-                  ) ,
+                  ) 
+                  : index == 2 ?
+                  Flexible(
+                    child: ListingGridFs(stream: hallsItems, showMySold: false)
+                  )
+                  : index == 3 ?
+                  Flexible(
+                    child: ListingGridFs(stream: rcItems, showMySold: false)
+                  )
+                  : index == 4 ?                 
+                  Flexible(
+                    child: ListingGridFs(stream: utrItems, showMySold: false)
+                  )
+                  :                  
+                  Flexible(
+                    child: ListingGridFs(stream: pgpItems, showMySold: false)
+                  )
                 ],
               ),
             )
