@@ -45,6 +45,7 @@ class _ListingGridFsState extends State<ListingGridFs> {
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
               crossAxisCount: 2,
+              childAspectRatio: 0.78,
               children: snapshot.data!.docs
                   .map<Widget>((DocumentSnapshot document) {
                 Listing l = Listing.fromFirestore(document
@@ -58,7 +59,7 @@ class _ListingGridFsState extends State<ListingGridFs> {
                         Navigator.pushNamed(context, 'indiv',
                             arguments: l);
                       },
-                      child: l.showListing()
+                      child: l.showListingFull()
                   );
                 }
               }).whereType<GestureDetector>().toList());

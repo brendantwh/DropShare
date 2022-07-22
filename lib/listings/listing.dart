@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_swiper_view/flutter_swiper_view.dart';
+import 'package:intl/intl.dart';
 import 'dart:ui' as ui;
 import 'package:optimized_cached_image/optimized_cached_image.dart';
-import 'package:flutter/material.dart';
-import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart'; 
+import 'package:pinch_zoom_image_last/pinch_zoom_image_last.dart';
+import '../locations/location.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class Listing {
   String title;
@@ -186,7 +188,7 @@ class Listing {
       layout: SwiperLayout.DEFAULT,
       itemHeight: 400,
       itemWidth: 300,
-      control: const SwiperControl(color: Colors.black, iconNext: CupertinoIcons.chevron_forward, iconPrevious: CupertinoIcons.chevron_back),
+      control: const SwiperControl(color: CupertinoColors.black, iconNext: CupertinoIcons.chevron_forward, iconPrevious: CupertinoIcons.chevron_back),
       pagination: const SwiperPagination(builder: SwiperPagination.dots),
     );
   }
@@ -243,6 +245,104 @@ class Listing {
                 )
               : Container()
       ])
+    );
+  }
+
+  Container showListingFull() {
+    final String priceString = price == 0
+        ? 'Free'
+        : NumberFormat.currency(locale: 'en_SG', symbol: '\$')
+        .format(price);
+
+    return Container(
+      child: Column(
+        children: [
+          AspectRatio(aspectRatio: 1, child: showListing()),
+          SizedBox(height: 7),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(priceString, style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w500)),
+                  Text('${timeago.format(time)}', style: TextStyle(fontSize: 12, color: CupertinoColors.systemGrey, fontWeight: FontWeight.w500)),
+                ],
+              ),
+              SizedBox(height: 1),
+              Wrap(
+                direction: Axis.horizontal,
+                children: [
+                  Text('at ', style: TextStyle(fontSize: 12, color: CupertinoColors.systemGrey)),
+                  Container(
+                    padding: const EdgeInsets.only(bottom: 2),
+                    child: Icon(
+                      location >= 0 && location <= 5
+                          ? CupertinoIcons.house_fill
+                          : CupertinoIcons.building_2_fill,
+                      size: 14,
+                      color: CupertinoColors.secondaryLabel,
+                    ),
+                  ),
+                  Text(' ${Location.values[location].locationName}', style: TextStyle(fontSize: 12, color: CupertinoColors.systemGrey, fontWeight: FontWeight.w500))
+                ],
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  Container showListingFullSmall() {
+    final String priceString = price == 0
+        ? 'Free'
+        : NumberFormat.currency(locale: 'en_SG', symbol: '\$')
+        .format(price);
+
+    return Container(
+        width: 140,
+        margin: const EdgeInsets.fromLTRB(0, 0, 16, 0),
+        child: Column(
+          children: [
+            AspectRatio(aspectRatio: 1, child: showListing()),
+            const SizedBox(height: 7),
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(priceString, style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w500)),
+                      Text('${timeago.format(time)}', style: TextStyle(fontSize: 12, color: CupertinoColors.systemGrey, fontWeight: FontWeight.w500)),
+                    ],
+                  ),
+                  SizedBox(height: 1),
+                  Wrap(
+                    direction: Axis.horizontal,
+                    children: [
+                      Text('at ', style: TextStyle(fontSize: 12, color: CupertinoColors.systemGrey)),
+                      Container(
+                        padding: const EdgeInsets.only(bottom: 2),
+                        child: Icon(
+                          location >= 0 && location <= 5
+                              ? CupertinoIcons.house_fill
+                              : CupertinoIcons.building_2_fill,
+                          size: 14,
+                          color: CupertinoColors.secondaryLabel,
+                        ),
+                      ),
+                      Text(' ${Location.values[location].locationName}', style: TextStyle(fontSize: 12, color: CupertinoColors.systemGrey, fontWeight: FontWeight.w500))
+                    ],
+                  )
+                ],
+              ),
+            )
+          ],
+        )
     );
   }
 }
