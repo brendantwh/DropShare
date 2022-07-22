@@ -93,7 +93,7 @@ class _AdminPageState extends State<AdminDashboard> {
                                 if (adminView) {
                                   Navigator.pushReplacementNamed(context, 'adminHome');
                                 } else {
-                                  Navigator.pushReplacementNamed(context, 'home');
+                                  Navigator.pushReplacementNamed(context, 'home', arguments: user);
                                 }
                               });
                             });
@@ -110,22 +110,3 @@ class _AdminPageState extends State<AdminDashboard> {
     );
   }
 }
-//
-// Container(),
-// Container(
-// alignment: Alignment.bottomLeft,
-// padding: const EdgeInsets.only(left: 6),
-// child: Text(
-// 'Swap Views'.toUpperCase(),
-// style: const TextStyle(fontWeight: FontWeight.w500, color: CupertinoColors.systemGrey),
-// textScaleFactor: 0.87,
-// )
-// ),
-// Container(),
-// Container(
-// alignment: Alignment.topLeft,
-// child: Text('Swap views')
-// ),
-// Container(
-// alignment: Alignment.topRight,
-// child:

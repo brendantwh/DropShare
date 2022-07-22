@@ -1,3 +1,4 @@
+import 'listinghelper.dart';
 import 'unreport.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import '../user/dsuser.dart';
 import 'listing.dart';
 import 'report.dart';
 import '../locations/location.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class IndivListing extends StatefulWidget {
   const IndivListing({Key? key}) : super(key: key);
@@ -197,139 +199,184 @@ class _IndivListingState extends State<IndivListing> {
 
   @override
   Widget build(BuildContext context) {
-    final Listing listing =
-        ModalRoute.of(context)?.settings.arguments as Listing;
-    final String time = DateFormat('hh:mm a, dd MMM yyyy').format(listing.time);
+    final helper = ModalRoute.of(context)?.settings.arguments as ListingHelper;
+
+    final Listing listing = helper.listing;
+    final DsUser me = helper.me;
+    final DsUser seller = helper.seller;
+
+    // final String time = DateFormat('hh:mm a, dd MMM yyyy').format(listing.time);
+    final String relativeTime = timeago.format(listing.time);
     final String location = Location.values[listing.location].locationName;
     final String price = listing.price == 0
         ? 'Free'
         : NumberFormat.currency(locale: 'en_SG', symbol: '\$')
             .format(listing.price);
-    DsUser me = DsUser.placeholder;
-    bool reported = listing.reported;
+
+    bool userIsAdmin = me.admin;
+    bool adminView = me.adminView;
+    bool userIsSeller = listing.uid == me.uid;
+
+    Widget actions;
+    if (userIsAdmin && adminView) {
+      actions = Wrap(
+        direction: Axis.vertical,
+        crossAxisAlignment: WrapCrossAlignment.end,
+        spacing: 10,
+        children: [
+          Unreport(listing: listing),
+          CupertinoButton(
+              color: const Color(0xfff2f4f5),
+              padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+              onPressed: () => _adminActionSheet(context, listing),
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 10,
+                children: const [
+                  Icon(CupertinoIcons.settings_solid, color: CupertinoColors.activeBlue),
+                  Text(
+                      'Admin actions',
+                      style: TextStyle(
+                          color: CupertinoColors.activeBlue
+                      ))
+                ],
+              )
+          )
+        ],
+      );
+    } else {
+      actions = CupertinoButton(
+          color: const Color(0xffd9e6fa),
+          padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+          onPressed: listing.sold ? null : () {
+            userIsSeller
+                ? Navigator.pushNamed(context, 'chatlist', arguments: listing) // I am the seller
+                : Navigator.pushNamed(context, 'chat', arguments: ChatHelper(listing, me.uid)); // I am the buyer
+          },
+          child: listing.sold
+              ? const Text('Sold', style: TextStyle(color: CupertinoColors.systemGrey))
+              : userIsSeller
+              ? Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 10,
+            children: const [
+              Icon(CupertinoIcons.chat_bubble_2_fill, color: CupertinoColors.activeBlue),
+              Text('View chats',
+                  style: TextStyle(
+                      color: CupertinoColors.activeBlue,
+                      fontWeight: FontWeight.w500)
+              )
+            ],
+          )
+              : Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 10,
+            children: const [
+              Icon(CupertinoIcons.mail_solid, color: CupertinoColors.activeBlue),
+              Text('Message',
+                  style: TextStyle(
+                      color: CupertinoColors.activeBlue,
+                      fontWeight: FontWeight.w500)
+              )
+            ],
+          )
+      );
+    }
 
     return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
-          trailing: Report(listing: listing),
+          trailing: (userIsAdmin && adminView)
+              ? Unreport(listing: listing)
+              : userIsSeller
+              ? GestureDetector(
+                  onTap: () => _manageListingActionSheet(context, listing),
+                  child: Icon(CupertinoIcons.settings_solid) ,
+                )
+              : Report(listing: listing),
         ),
-        child: Container(
-            margin: const EdgeInsets.fromLTRB(20, 20, 20, 34),
-            child: ListView(
-              children: [
-                mounted ? Container(child: listing.showImageSwiper(), height: 300,) : Container(),
-                const SizedBox(height: 24),
-                Text(listing.title,
-                    style: const TextStyle(
-                        fontSize: 24, fontWeight: FontWeight.w600)),
-                const SizedBox(height: 20),
-                Text('Price: $price'),
-                Text('Location: $location'),
-                Text('Time: $time'),
-                const SizedBox(height: 20),
-                Text('Description: ${listing.description}'),
-                UsernameText('Created by: ', '', user: DsUser(listing.uid)),
-                const SizedBox(height: 60),
-                StatefulBuilder(builder: (context, innerSetState) {
-                  DsUser.getMine().then((DsUser user) {
-                    if (mounted) {
-                      innerSetState(() {
-                        me = user;
-                      });
-                    }
-                  });
-
-                  bool userIsSeller = listing.uid == me.uid;
-                  bool userIsAdmin = me.admin;
-                  bool adminView = me.adminView;
-
-                  if (userIsAdmin && adminView) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Unreport(listing: listing),
-                        CupertinoButton(
-                            color: const Color(0xfff2f4f5),
-                            padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                            onPressed: () => _adminActionSheet(context, listing),
-                            child: Wrap(
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              spacing: 10,
-                              children: const [
-                                Icon(CupertinoIcons.settings_solid, color: CupertinoColors.activeBlue),
-                                Text(
-                                    'Admin actions',
-                                    style: TextStyle(
-                                        color: CupertinoColors.activeBlue
-                                    ))
-                              ],
-                            )
-                        )
-                      ],
-                    );
-                  } else {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        CupertinoButton(
-                            color: const Color(0xffd9e6fa),
-                            padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                            onPressed: listing.sold ? null : () {
-                              userIsSeller
-                                  ? Navigator.pushNamed(context, 'chatlist', arguments: listing) // I am the seller
-                                  : Navigator.pushNamed(context, 'chat', arguments: ChatHelper(listing, me.uid)); // I am the buyer
-                            },
-                            child: listing.sold
-                                ? const Text('Sold', style: TextStyle(color: CupertinoColors.systemGrey))
-                                : userIsSeller
-                                ? Wrap(
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              spacing: 10,
-                              children: const [
-                                Icon(CupertinoIcons.chat_bubble_2_fill, color: CupertinoColors.activeBlue),
-                                Text('View chats',
-                                    style: TextStyle(
-                                        color: CupertinoColors.activeBlue,
-                                        fontWeight: FontWeight.w500)
-                                )
-                              ],
-                            )
-                                : Wrap(
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              spacing: 10,
-                              children: const [
-                                Icon(CupertinoIcons.mail_solid, color: CupertinoColors.activeBlue),
-                                Text('Message',
-                                    style: TextStyle(
-                                        color: CupertinoColors.activeBlue,
-                                        fontWeight: FontWeight.w500)
-                                )
-                              ],
-                            )
-                        ),
-                        userIsSeller
-                            ? CupertinoButton(
-                            color: const Color(0xfff2f4f5),
-                            padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                            onPressed: () => _manageListingActionSheet(context, listing),
-                            child: Wrap(
-                              crossAxisAlignment: WrapCrossAlignment.center,
-                              spacing: 10,
-                              children: const [
-                                Icon(CupertinoIcons.settings_solid, color: CupertinoColors.activeBlue),
-                                Text(
-                                    'Manage listing',
-                                    style: TextStyle(
-                                        color: CupertinoColors.activeBlue
-                                    ))
-                              ],
-                            ))
-                            : Container()
-                      ],
-                    );
-                  }
-                })
-              ],
+        child: ListView(
+          children: [
+            mounted
+                ? Container(
+              child: AspectRatio(aspectRatio: 1, child: listing.showImageSwiper()),
             )
+                : Container(),
+            Container(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 34),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(listing.title,
+                          style: const TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.w600)),
+                      Container(
+                          padding: const EdgeInsets.only(bottom: 2),
+                          child: Text(relativeTime, style: TextStyle(fontSize: 15))
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Wrap(
+                        direction: Axis.vertical,
+                        spacing: 18,
+                        children: [
+                          Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 10,
+                            children: [
+                              const Icon(CupertinoIcons.money_dollar_circle_fill, size: 20, color: Color(0xFF86888C)),
+                              Text(price, style: TextStyle(fontWeight: FontWeight.w600)),
+                            ],
+                          ),
+                          Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 10,
+                            children: [
+                              Container(
+                                  padding: const EdgeInsets.only(bottom: 2),
+                                  child: Icon(
+                                    listing.location >= 0 && listing.location <= 5
+                                        ? CupertinoIcons.house_fill
+                                        : CupertinoIcons.building_2_fill,
+                                    size: 20,
+                                    color: CupertinoColors.secondaryLabel,
+                                  )
+                              ),
+                              Text(location),
+                            ],
+                          ),
+                          Wrap(
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 10,
+                            children: [
+                              Icon(CupertinoIcons.person_crop_circle_fill, size: 20, color: Color(0xFF86888C)),
+                              Text(seller.username)
+                            ],
+                          )
+                        ],
+                      ),
+                      actions
+                    ],
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(top: 18, bottom: 18),
+                    decoration: BoxDecoration(
+                        border: Border(top: BorderSide(color: CupertinoColors.separator))
+                    ),
+                  ),
+                  Text(listing.description!)
+                ],
+              ),
+            )
+          ],
         )
     );
   }

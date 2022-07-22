@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../user/dsuser.dart';
 import 'listing.dart';
+import 'listinghelper.dart';
 
 class ListingGridFs extends StatefulWidget {
   const ListingGridFs({Key? key, required this.stream, required this.showMySold}) : super(key: key);
@@ -56,8 +58,12 @@ class _ListingGridFsState extends State<ListingGridFs> {
                 } else {
                   return GestureDetector(
                       onTap: () {
-                        Navigator.pushNamed(context, 'indiv',
-                            arguments: l);
+                        DsUser.getMine().then((me) {
+                          DsUser(l.uid).getFull().then((seller) {
+                            Navigator.pushNamed(context, 'indiv',
+                                arguments: ListingHelper(l, me, seller));
+                          });
+                        });
                       },
                       child: l.showListingFull()
                   );

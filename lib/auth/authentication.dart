@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../user/dsuser.dart';
+
 class Authentication {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   get user => _auth.currentUser;
@@ -106,7 +108,7 @@ class Authentication {
                       ? Navigator.pushNamedAndRemoveUntil(context, 'login', (Route<dynamic> route) => false)
                       : Authentication().user!.emailVerified ||
                       testAccts.contains(Authentication().user.email)  // to allow test accts through
-                      ? Navigator.pushNamedAndRemoveUntil(context, 'home', (Route<dynamic> route) => false)
+                      ? DsUser.getMine().then((user) => Navigator.pushNamedAndRemoveUntil(context, 'home', (Route<dynamic> route) => false, arguments: user))
                       : Navigator.pushNamedAndRemoveUntil(context, 'verify', (Route<dynamic> route) => false);
                 },
                 child: Text(

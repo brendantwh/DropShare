@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
 import '../listings/listing.dart';
+import '../listings/listinghelper.dart';
 import '../locations/location.dart';
 import '../user/dsuser.dart';
 
@@ -36,12 +37,6 @@ class _HomepageState extends State<Homepage> {
                 CupertinoSliverNavigationBar(
                     automaticallyImplyLeading: false,
                     largeTitle: Text('Home'),
-                    // middle: Text('DropShare',
-                    //     style: TextStyle(
-                    //         fontFamily: CupertinoTheme.of(context)
-                    //             .textTheme
-                    //             .textStyle
-                    //             .fontFamily)),
                     trailing: GestureDetector(
                         key: const Key('create'),
                         onTap: () {
@@ -208,7 +203,12 @@ class _HomepageState extends State<Homepage> {
                                         Listing l = Listing.fromFirestore(snapshot.data!.docs[index] as DocumentSnapshot<Map<String, dynamic>>);
                                         return GestureDetector(
                                             onTap: () {
-                                              Navigator.pushNamed(context, 'indiv', arguments: l);
+                                              DsUser.getMine().then((me) {
+                                                DsUser(l.uid).getFull().then((seller) {
+                                                  Navigator.pushNamed(context, 'indiv',
+                                                      arguments: ListingHelper(l, me, seller));
+                                                });
+                                              });
                                             },
                                             child: l.showListingFullSmall()
                                         );
@@ -288,7 +288,12 @@ class _HomepageState extends State<Homepage> {
                                         Listing l = Listing.fromFirestore(snapshot.data!.docs[index] as DocumentSnapshot<Map<String, dynamic>>);
                                         return GestureDetector(
                                             onTap: () {
-                                              Navigator.pushNamed(context, 'indiv', arguments: l);
+                                              DsUser.getMine().then((me) {
+                                                DsUser(l.uid).getFull().then((seller) {
+                                                  Navigator.pushNamed(context, 'indiv',
+                                                      arguments: ListingHelper(l, me, seller));
+                                                });
+                                              });
                                             },
                                             child: l.showListingFullSmall()
                                         );

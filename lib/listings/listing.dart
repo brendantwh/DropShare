@@ -183,12 +183,13 @@ class Listing {
           hideStatusBarWhileZooming: true,
         );
       },
-      viewportFraction: 0.8,
-      scale: 0.9,
-      layout: SwiperLayout.DEFAULT,
-      itemHeight: 400,
-      itemWidth: 300,
-      control: const SwiperControl(color: CupertinoColors.black, iconNext: CupertinoIcons.chevron_forward, iconPrevious: CupertinoIcons.chevron_back),
+      loop: false,
+      control: const SwiperControl(
+          padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+          color: CupertinoColors.systemTeal,
+          iconNext: CupertinoIcons.chevron_right_circle_fill,
+          iconPrevious: CupertinoIcons.chevron_left_circle_fill
+      ),
       pagination: const SwiperPagination(builder: SwiperPagination.dots),
     );
   }

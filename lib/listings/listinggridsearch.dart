@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 
+import '../user/dsuser.dart';
 import 'listing.dart';
+import 'listinghelper.dart';
 
 class ListingGridSearch extends StatefulWidget {
   const ListingGridSearch({Key? key, required this.searchResults}) : super(key: key);
@@ -19,8 +21,12 @@ class _ListingGridSearchState extends State<ListingGridSearch> {
       if (l.visible) {
         return GestureDetector(
             onTap: () {
-              Navigator.pushNamed(context, 'indiv',
-                  arguments: l);
+              DsUser.getMine().then((me) {
+                DsUser(l.uid).getFull().then((seller) {
+                  Navigator.pushNamed(context, 'indiv',
+                      arguments: ListingHelper(l, me, seller));
+                });
+              });
             },
             child: l.showListing()
         );
