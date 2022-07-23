@@ -42,7 +42,9 @@ class _HomepageState extends State<Homepage> {
                           fontFamily: CupertinoTheme.of(context)
                               .textTheme
                               .textStyle
-                              .fontFamily)
+                              .fontFamily,
+                          letterSpacing: -0.7,
+                      )
                     ),
                     trailing: GestureDetector(
                         key: const Key('create'),

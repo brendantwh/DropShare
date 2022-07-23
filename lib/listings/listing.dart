@@ -92,6 +92,7 @@ class Listing {
     this.price = price;
     this.location = location;
     this.description = description;
+    this.imageURL = imageURL ?? this.imageURL;
     FirebaseFirestore.instance.collection('search_listings').doc(docId).update({
       'title': title,
       'price': price,
@@ -274,8 +275,8 @@ class Listing {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Flexible(child: Text(priceString, style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis)),
-                  Text('${timeago.format(time)}', style: TextStyle(fontSize: 12, color: CupertinoColors.systemGrey, fontWeight: FontWeight.w500)),
+                  Text(priceString, style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w500)),
+                  Flexible(child: Text('${timeago.format(time)}', style: TextStyle(fontSize: 12, color: CupertinoColors.systemGrey, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis)),
                 ],
               ),
               SizedBox(height: 1),
@@ -324,8 +325,9 @@ class Listing {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Flexible(child: Text(priceString, style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis,)),
-                      Text('${timeago.format(time)}', style: TextStyle(fontSize: 12, color: CupertinoColors.systemGrey, fontWeight: FontWeight.w500)),
+                      Text(priceString, style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w500)),
+                      SizedBox(width: 3),
+                      Flexible(child: Text('${timeago.format(time)}', style: TextStyle(fontSize: 12, color: CupertinoColors.systemGrey, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis,)),
                     ],
                   ),
                   SizedBox(height: 1),

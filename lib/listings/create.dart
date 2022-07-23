@@ -8,7 +8,8 @@ import 'package:pull_down_button/pull_down_button.dart';
 import 'listing.dart';
 import '../locations/location.dart';
 import 'dart:io';
-import 'package:flutter/material.dart';
+
+import 'listinghelper.dart';
 
 class Create extends StatefulWidget {
   const Create({Key? key}) : super(key: key);
@@ -22,6 +23,7 @@ class _CreateState extends State<Create> {
   num price = 0;
   final TextEditingController descController = TextEditingController();
   int _selectedLocation = 0;
+  bool setStateCalled = false;
 
   //For firebase storage of MULTIPLE images
   List<String> imageNameArr = ['',''];
@@ -31,9 +33,8 @@ class _CreateState extends State<Create> {
   List<XFile> images = [];
 
   //For firebase storage of SINGLE images
-  String imageName = '';
-  XFile? imagePath;
-  final ImagePicker _picker = ImagePicker();
+  // String imageName = '';
+  // XFile? imagePath;
   final Reference storageRef = FirebaseStorage.instance.ref().child('Image');
   bool _isLoading = false;
 
@@ -50,19 +51,20 @@ class _CreateState extends State<Create> {
   Widget build(BuildContext context) {
     CollectionReference items = FirebaseFirestore.instance.collection('search_listings');
     final String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
-    Widget imageWidget = Container(
-        padding: const EdgeInsets.fromLTRB(0, 40, 0, 40),
-        child: const Text('No image selected')
-    );
 
-    var listing = ModalRoute.of(context)?.settings.arguments;
-    if (listing != null) {
-      listing = listing as Listing;
-      titleController.text = listing.title;
-      price = listing.price;
-      descController.text = listing.description ?? '';
-      _selectedLocation = listing.location;
-      imageWidget = listing.showImage(square: false, ind: 0);
+    var lHelper = ModalRoute.of(context)?.settings.arguments;
+    Listing? listing;
+    if (lHelper != null) {
+      final helper = lHelper as ListingHelper;
+      listing = helper.listing;
+
+      if (!setStateCalled) {
+        setStateCalled = true;
+        titleController.text = listing.title;
+        price = listing.price;
+        descController.text = listing.description ?? '';
+        _selectedLocation = listing.location;
+      }
     }
 
     return CupertinoPageScaffold(
@@ -154,21 +156,21 @@ class _CreateState extends State<Create> {
                         var urls = await uploadToStorageGetUrls(images);
 
                         if (listing == null) {
-                        Listing l = Listing(
-                        title: titleController.text.trim(),
-                        time: DateTime.now(),
-                        price: price,
-                        location: _selectedLocation,
-                        description: descController.text.trim(),
-                        uid: uid,
-                        imageURL: urls
+                          Listing l = Listing(
+                          title: titleController.text.trim(),
+                          time: DateTime.now(),
+                          price: price,
+                          location: _selectedLocation,
+                          description: descController.text.trim(),
+                          uid: uid,
+                          imageURL: urls
                         );
 
                         items.add(l.toFirestore());
 
                         if (mounted) {
-                        // ok to pushReplacementNamed here since listings doesn't allow popping
-                        Navigator.pushReplacementNamed(context, 'listings');
+                          // ok to pushReplacementNamed here since listings doesn't allow popping
+                          Navigator.pushReplacementNamed(context, 'listings');
                         }
                         }  
                       }
@@ -182,34 +184,29 @@ class _CreateState extends State<Create> {
 
                     if (images.isNotEmpty) {
                       // also update listing image
-                      void completer() async {
-                      var urls = await uploadToStorageGetUrls(images);
-
-                      Listing l = listing as Listing;
-                      l.update(
-                          title: titleController.text.trim(),
-                          price: price,
-                          location: _selectedLocation,
-                          description: descController.text.trim(),
-                          imageURL: urls
-                      );
-                      if (mounted) {
-                        // not ok to pushReplacementNamed here as it will allow popping to old listing page with old details
-                        Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            'indiv',
-                            ModalRoute.withName('listings'),
-                            arguments: l
+                      uploadToStorageGetUrls(images).then((urls) {
+                        Listing l = listing as Listing;
+                        l.update(
+                            title: titleController.text.trim(),
+                            price: price,
+                            location: _selectedLocation,
+                            description: descController.text.trim(),
+                            imageURL: urls
                         );
-                      }
-                    }
-
-                    completer(); 
-
+                        if (mounted) {
+                          // not ok to pushReplacementNamed here as it will allow popping to old listing page with old details
+                          Navigator.pushNamedAndRemoveUntil(
+                              context,
+                              'indiv',
+                              ModalRoute.withName('home'),
+                              arguments: lHelper
+                          );
+                        }
+                      });
                     } else {
                       // no need to update listing image
-                      Listing l = listing as Listing;
-                      l.update(
+                      lHelper as ListingHelper;
+                      lHelper.listing.update(
                           title: titleController.text.trim(),
                           price: price,
                           location: _selectedLocation,
@@ -220,8 +217,8 @@ class _CreateState extends State<Create> {
                         Navigator.pushNamedAndRemoveUntil(
                             context,
                             'indiv',
-                            ModalRoute.withName('listings'),
-                            arguments: l
+                            ModalRoute.withName('home'),
+                            arguments: lHelper
                         );
                       }
                     }
@@ -230,35 +227,63 @@ class _CreateState extends State<Create> {
                 child: const Icon(CupertinoIcons.checkmark))),
         child: _isLoading
             ? const Center(child: CupertinoActivityIndicator())
-            : ListView(children: [
+            : ListView(
+            children: [
                 CupertinoFormSection.insetGrouped(
-                    header: Text('Pictures'.toUpperCase()),
+                    header: Text('Images'.toUpperCase()),
+                    footer: Wrap(
+                        spacing: 4,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          const Icon(CupertinoIcons.info, size: 16, color:CupertinoColors.secondaryLabel),
+                          Container(
+                            padding: const EdgeInsets.only(top: 2),
+                            child: images.length == 2 || (lHelper != null && listing!.imageURL.length == 2) ? const Text('Tap on the second picture to select again.') : const Text('Select up to 2 images.'),
+                          )
+                        ]
+                    ),
                     children: [
-                      IntrinsicHeight(child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          SizedBox(
-                              width: 100,
-                              height:150,
-                              child: CupertinoButton(
-                                onPressed: () {
-                                  getMultiImages();
-                                },
-                                child: images.length >= 1 ? Image.file(File(images[0].path)) : Icon(CupertinoIcons.camera),
+                        children: [
+                          Flexible(
+                            child: AspectRatio(
+                              aspectRatio: 1,
+                              child: Container(
+                                  decoration: const BoxDecoration(border: Border(right: BorderSide(width: 0.3, color: CupertinoColors.separator))),
+                                  child: images.isNotEmpty
+                                      ? AspectRatio(aspectRatio: 1, child: Image.file(File(images[0].path)))
+                                      : lHelper != null
+                                      ? listing!.showImage(square: false, ind: 0)
+                                      : CupertinoButton(
+                                          onPressed: () {
+                                            getMultiImages();
+                                          },
+                                          child: const Icon(CupertinoIcons.add),
+                                        ),
+                              ),
+                            ),
+                          ),
+                          Flexible(
+                              child: AspectRatio(
+                                aspectRatio: 1,
+                                child: images.isEmpty && lHelper == null
+                                  ? Container()
+                                  : CupertinoButton(
+                                      onPressed: () {
+                                        getMultiImages();
+                                      },
+                                      child: images.length == 2
+                                          ? Image.file(File(images[1].path))
+                                          : images.length == 1 || (lHelper != null && listing!.imageURL.length == 1)
+                                          ? const Icon(CupertinoIcons.add)
+                                          : listing!.showImage(square: false, ind: 1)
+                                )
                               )
-                          ),
-                          const VerticalDivider(
-                            color: CupertinoColors.opaqueSeparator,
-                            indent: 10,
-                            endIndent: 10,
-                          ),
-                          SizedBox(
-                              width: 100,
-                              height: 150,
-                              child: images.length >= 2 ? Image.file(File(images[1].path)) : Icon(CupertinoIcons.add, size: 50, color: CupertinoColors.opaqueSeparator)
-                          ),
-                        ],))
+                          )
+                        ],
+                      )
                     ]
                 ),
                 CupertinoFormSection.insetGrouped(
@@ -339,7 +364,7 @@ class _CreateState extends State<Create> {
   Future getMultiImages() async {
     final List<XFile>? selectedImages = await multipicker.pickMultiImage();
     setState(() {
-      if (selectedImages!.isNotEmpty) {
+      if (selectedImages != null && selectedImages.isNotEmpty) {
         images = selectedImages.take(2).toList();
       }
     });
@@ -358,51 +383,51 @@ class _CreateState extends State<Create> {
     return await reference.getDownloadURL();
   }
 
-  //Gallery and camera pickers
-  imagePicker () async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if(image != null) {
-      setState(() {
-        imagePath = image;
-        imageName = image.name.toString();
-      });
-    }
-  }
+  // //Gallery and camera pickers
+  // imagePicker () async {
+  //   final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+  //   if(image != null) {
+  //     setState(() {
+  //       imagePath = image;
+  //       imageName = image.name.toString();
+  //     });
+  //   }
+  // }
+  //
+  // cameraPicker () async {
+  //   final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+  //   if(image != null) {
+  //     setState(() {
+  //       imagePath = image;
+  //       imageName = image.name.toString();
+  //     });
+  //   }
+  // }
 
-  cameraPicker () async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.camera);
-    if(image != null) {
-      setState(() {
-        imagePath = image;
-        imageName = image.name.toString();
-      });
-    }
-  }
-
-  //Widget for selection of camera/ upload from gallery
-  Widget buildActionSheet(BuildContext context) => CupertinoActionSheet(
-    actions: [
-      CupertinoActionSheetAction(
-        onPressed: () {
-          imagePicker();
-          Navigator.pop(context, 'Cancel');
-        },
-        child: Text('Gallery', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
-      ),
-      CupertinoActionSheetAction(
-        onPressed: () {
-          cameraPicker();
-          Navigator.pop(context, 'Cancel');
-        },
-        child: Text('Take a photo', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
-      )
-    ],
-    cancelButton: CupertinoActionSheetAction(
-      onPressed: () {
-        Navigator.pop(context, 'Cancel');
-      },
-      child: Text('Cancel', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
-    ),
-  );
+  // //Widget for selection of camera/ upload from gallery
+  // Widget buildActionSheet(BuildContext context) => CupertinoActionSheet(
+  //   actions: [
+  //     CupertinoActionSheetAction(
+  //       onPressed: () {
+  //         imagePicker();
+  //         Navigator.pop(context, 'Cancel');
+  //       },
+  //       child: Text('Gallery', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
+  //     ),
+  //     CupertinoActionSheetAction(
+  //       onPressed: () {
+  //         cameraPicker();
+  //         Navigator.pop(context, 'Cancel');
+  //       },
+  //       child: Text('Take a photo', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
+  //     )
+  //   ],
+  //   cancelButton: CupertinoActionSheetAction(
+  //     onPressed: () {
+  //       Navigator.pop(context, 'Cancel');
+  //     },
+  //     child: Text('Cancel', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
+  //   ),
+  // );
 }
 
