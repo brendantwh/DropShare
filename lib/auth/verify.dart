@@ -51,8 +51,7 @@ class _VerifyState extends State<Verify> {
                   timer.cancel();
                   await auth.signOut().then((result) {
                     if (result == null) {
-                      Authentication.showSuccessDialog(
-                          context, 'signed out');
+                      Authentication.authRedirect(context);
                     } else {
                       Authentication.showErrorDialog(
                           context, result);

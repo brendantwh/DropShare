@@ -304,6 +304,7 @@ class _IndivListingState extends State<IndivListing> {
             Container(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 34),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -368,7 +369,7 @@ class _IndivListingState extends State<IndivListing> {
                   ),
                   Container(
                     margin: const EdgeInsets.only(top: 18, bottom: 18),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                         border: Border(top: BorderSide(color: CupertinoColors.separator))
                     ),
                   ),

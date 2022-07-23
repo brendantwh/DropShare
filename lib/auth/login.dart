@@ -20,49 +20,94 @@ class _LoginState extends State<Login> {
     return WillPopScope(
         onWillPop: () async => false,
         child: CupertinoPageScaffold(
-          child: Center(
-            child: ListView(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              children: <Widget>[
+          child: SafeArea(
+            minimum: const EdgeInsets.fromLTRB(20, 0, 20, 34),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
                 Container(
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.fromLTRB(10, 100, 10, 10),
-                    child: const Text(
-                      'Sign in',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                    )),
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  child: CupertinoTextField(
-                    key: const Key('login_email'),
-                    controller: emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    placeholder: 'NUS email',
-                    autocorrect: false,
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                  child: Wrap(
+                    direction: Axis.vertical,
+                    crossAxisAlignment: WrapCrossAlignment.start,
+                    spacing: 10,
+                    children: const [
+                      Text('👋', style: TextStyle(fontSize: 28)),
+                      Text(
+                        'Welcome to DropShare',
+                        style: TextStyle(fontSize: 26, fontWeight: FontWeight.w700),
+                      )
+                    ],
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                  child: CupertinoTextField(
-                    key: const Key('login_key'),
-                    obscureText: true,
-                    controller: passwordController,
-                    placeholder: 'Password',
-                  ),
-                ),
-                Container(
-                    height: 70,
-                    padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
-                    child: StatefulBuilder(
-                      builder: ((context, innerSetState) {
-                        return CupertinoButton(
-                          key: const Key('login_button'),
-                          color: CupertinoColors.systemGreen,
-                          disabledColor: CupertinoColors.inactiveGray,
-                          onPressed: loading
-                              ? null
-                              : () async {
+                StatefulBuilder(
+                  builder: (context, innerSetState) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.fromLTRB(0, 40, 0, 5),
+                          child: CupertinoTextField(
+                            textInputAction: TextInputAction.next,
+                            clearButtonMode: OverlayVisibilityMode.editing,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: CupertinoColors.separator)
+                            ),
+                            padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+                            key: const Key('login_email'),
+                            controller: emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            placeholder: 'NUS email',
+                            autocorrect: false,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.fromLTRB(0, 5, 0, 10),
+                          child: CupertinoTextField(
+                            clearButtonMode: OverlayVisibilityMode.editing,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(color: CupertinoColors.separator)
+                            ),
+                            padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+                            onSubmitted: (_) {
+                              if (emailController.text.isEmpty) {
+                                Authentication.showErrorDialog(context, 'Email field is empty');
+                              } else if (passwordController.text.isEmpty) {
+                                Authentication.showErrorDialog(context, 'Password field is empty');
+                              } else {
+                                try {
+                                  innerSetState(() => loading = true);
+                                  auth.signIn(
+                                      email: emailController.text.trim(),
+                                      password: passwordController.text).then((result) {
+                                    innerSetState(() => loading = false);
+                                    if (result == null) {
+                                      Authentication.authRedirect(context);
+                                    } else {
+                                      Authentication.showErrorDialog(context, result);
+                                    }
+                                  });
+                                } catch (e) {
+                                  print(e);
+                                }
+                              }
+                            },
+                            key: const Key('login_key'),
+                            obscureText: true,
+                            controller: passwordController,
+                            placeholder: 'Password',
+                          ),
+                        ),
+                        Container(
+                            padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+                            child: CupertinoButton(
+                              key: const Key('login_button'),
+                              color: CupertinoColors.systemGreen,
+                              disabledColor: CupertinoColors.inactiveGray,
+                              onPressed: loading ? null : ()  {
                                 if (emailController.text.isEmpty) {
                                   Authentication.showErrorDialog(context, 'Email field is empty');
                                 } else if (passwordController.text.isEmpty) {
@@ -70,39 +115,44 @@ class _LoginState extends State<Login> {
                                 } else {
                                   try {
                                     innerSetState(() => loading = true);
-                                    await auth.signIn(
+                                    auth.signIn(
                                         email: emailController.text.trim(),
                                         password: passwordController.text).then((result) {
-                                          innerSetState(() => loading = false);
-                                          if (result == null) {
-                                            Authentication.showSuccessDialog(
-                                                context, 'signed in');
-                                          } else {
-                                            Authentication.showErrorDialog(context, result);
-                                          }
-                                        });
+                                      innerSetState(() => loading = false);
+                                      if (result == null) {
+                                        Authentication.authRedirect(context);
+                                      } else {
+                                        Authentication.showErrorDialog(context, result);
+                                      }
+                                    });
                                   } catch (e) {
                                     print(e);
                                   }
                                 }
-                          },
-                          child: loading ? const CupertinoActivityIndicator(color: CupertinoColors.white) : const Text('Login'),
-                        );
-                      })
-                    )
+                              },
+                              child: loading ? const CupertinoActivityIndicator(color: CupertinoColors.white) : const Text('Login', style: TextStyle(fontWeight: FontWeight.w600)),
+                            )
+                        )
+                      ],
+                    );
+                  },
                 ),
                 Container(
-                    height: 70,
-                    margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                    child: CupertinoButton(
-                      key: const Key('sign up here'),
-                      child: const Text('Sign up here'),
-                      onPressed: () {
-                        Navigator.pushNamed(context, 'signup');
-                      },
-                    ))
+                    margin: const EdgeInsets.fromLTRB(0, 25, 0, 0),
+                    child: Wrap(
+                      alignment: WrapAlignment.center,
+                      children: [
+                        Text('or ', style: TextStyle(fontSize: 16, color: CupertinoColors.secondaryLabel)),
+                        GestureDetector(
+                          key: const Key('sign up here'),
+                          child: const Text('sign up', style: TextStyle(fontSize: 16, color: CupertinoColors.activeBlue, fontWeight: FontWeight.w600)),
+                          onTap: () => Navigator.pushNamed(context, 'signup'),
+                        )
+                      ],
+                    )
+                )
               ],
-            )
+            ),
           )
         )
     );

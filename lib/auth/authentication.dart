@@ -122,4 +122,15 @@ class Authentication {
           ))
     );
   }
+
+  static void authRedirect(BuildContext context) {
+    List<String> testAccts = ['drop@share.com', 'chat@test.com', 'drop2@share.com'];
+
+    Authentication().user == null
+        ? Navigator.pushNamedAndRemoveUntil(context, 'login', (Route<dynamic> route) => false)
+        : Authentication().user!.emailVerified ||
+        testAccts.contains(Authentication().user.email)  // to allow test accts through
+        ? DsUser.getMine().then((user) => Navigator.pushNamedAndRemoveUntil(context, 'home', (Route<dynamic> route) => false, arguments: user))
+        : Navigator.pushNamedAndRemoveUntil(context, 'verify', (Route<dynamic> route) => false);
+  }
 }
