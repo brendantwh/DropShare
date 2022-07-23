@@ -1,7 +1,7 @@
 import '../listings/listinggridsearch.dart';
 import 'search.dart';
 import 'package:flutter/cupertino.dart';
-import 'filterpage.dart';
+import 'dart:ui' as ui;
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -12,7 +12,15 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   TextEditingController searchController = TextEditingController();
-  Widget found = Container();
+  Widget found = Container(
+      alignment: Alignment.centerLeft,
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+      child: const Text(
+        'Enter search query',
+        style: const TextStyle(fontWeight: FontWeight.w500, color: CupertinoColors.systemGrey),
+        textScaleFactor: 0.87,
+      )
+  );
   List<dynamic> searchRes = [];
   var search = Search.userSearchAllClient.collection('search_listings').documents.search({
     'q': '*',
@@ -45,64 +53,88 @@ class _SearchPageState extends State<SearchPage> {
               child: const Icon(CupertinoIcons.slider_horizontal_3)),
         ),
         child: SafeArea(
-          minimum: const EdgeInsets.fromLTRB(20, 15, 20, 34),
-          child: Column(
+          top: false,
+          minimum: const EdgeInsets.fromLTRB(0, 0, 0, 34),
+          child: Stack(
             children: [
               Container(
-                  margin: const EdgeInsets.only(top: 15, bottom: 10),
-                  child: CupertinoSearchTextField(
-                    autofocus: true,
-                    controller: searchController,
-                    placeholder: data == null ? 'Search for listings' : 'Search for listings with filter',
-                    suffixMode: OverlayVisibilityMode.editing,
-                    onSubmitted: (val) {
-                      if (val.isEmpty) {
-
-                      } else {
-
-                        if (lst != null) {
-                          search = Search.userSearchAllClient.collection('search_listings').documents.search(
-                              {
-                                'q': val,
-                                'query_by': 'title',
-                                'sort_by': 'time:desc',
-                                'filter_by': 'sold:=false && location:=${lst[0]} && price:[${lst[1].start}..${lst[1].end}]',
-                              }
-                          );
-                        } else {
-                          search = Search.userSearchAllClient.collection('search_listings').documents.search(
-                            {
-                              'q': val,
-                              'query_by': 'title',
-                              'sort_by': 'time:desc',
-                              'filter_by': 'sold:=false',
-                            }
-                          );
-                        }
-
-                        search.then((res) {
-                          found = Container(
-                            alignment: Alignment.centerLeft,
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Text(
-                              '${res['found']} ${res['found'] == 1 ? 'listing' : 'listings'} found',
-                              style: const TextStyle(fontWeight: FontWeight.w500, color: CupertinoColors.systemGrey),
-                              textScaleFactor: 0.87,
-                            )
-                          );
-                          searchRes = res['hits'];
-                          setState(() {});
-                        });
-                      }
-                    },
-                  )
+                  margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  child: ListingGridSearch(searchResults: searchRes, padding: const EdgeInsets.only(top: 90 + 105))
               ),
-              found,
-              Flexible(
-                  child: ListingGridSearch(searchResults: searchRes)
+              ClipRect(
+                child: BackdropFilter(
+                    filter: ui.ImageFilter.blur(sigmaX: 7.5, sigmaY: 7.5),
+                    child: Container(
+                        width: double.infinity,
+                        height: 90,
+                        margin: const EdgeInsets.fromLTRB(0, 90, 0, 0),
+                        decoration: const BoxDecoration(
+                            color: Color(0xF7FFFFFF),
+                            border: Border(
+                                bottom: BorderSide(
+                                    width: 0,
+                                    color: CupertinoColors.opaqueSeparator)
+                            )
+                        ),
+                        child: Column(
+                          children: [
+                            Container(
+                                margin: const EdgeInsets.fromLTRB(20, 10, 20, 15),
+                                child: CupertinoSearchTextField(
+                                  autofocus: true,
+                                  controller: searchController,
+                                  placeholder: data == null ? 'Search for listings' : 'Search for listings with filter',
+                                  suffixMode: OverlayVisibilityMode.editing,
+                                  onSubmitted: (val) {
+                                    if (val.isEmpty) {
+
+                                    } else {
+
+                                      if (lst != null) {
+                                        search = Search.userSearchAllClient.collection('search_listings').documents.search(
+                                            {
+                                              'q': val,
+                                              'query_by': 'title',
+                                              'sort_by': 'time:desc',
+                                              'filter_by': 'sold:=false && location:=${lst[0]} && price:[${lst[1].start}..${lst[1].end}]',
+                                            }
+                                        );
+                                      } else {
+                                        search = Search.userSearchAllClient.collection('search_listings').documents.search(
+                                            {
+                                              'q': val,
+                                              'query_by': 'title',
+                                              'sort_by': 'time:desc',
+                                              'filter_by': 'sold:=false',
+                                            }
+                                        );
+                                      }
+
+                                      search.then((res) {
+                                        found = Container(
+                                            alignment: Alignment.centerLeft,
+                                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                                            child: Text(
+                                              '${res['found']} ${res['found'] == 1 ? 'listing' : 'listings'} found',
+                                              style: const TextStyle(fontWeight: FontWeight.w500, color: CupertinoColors.systemGrey),
+                                              textScaleFactor: 0.87,
+                                            )
+                                        );
+                                        searchRes = res['hits'];
+                                        setState(() {});
+                                      });
+                                    }
+                                  },
+                                )
+                            ),
+                            found
+                          ],
+                        )
+                    )
+                ),
               )
             ],
-          ),
+          )
         )
     );
   }

@@ -228,7 +228,7 @@ class _ChatState extends State<Chat> {
                                               const SizedBox(width: 30),
                                               const Icon(CupertinoIcons.house_fill, size: 20, color: Color(0xFF86888C)),
                                               const SizedBox(width: 6),
-                                              Text(Location.values[location].locationName,
+                                              Text(Location.values[location].shortName,
                                                   textScaleFactor: 0.90)
                                             ],
                                           )
@@ -278,7 +278,7 @@ class _ChatState extends State<Chat> {
                                                   itemBuilder: (context) {
                                                     return Location.values
                                                         .map((loc) => PullDownMenuItem(
-                                                        title: loc.locationName,
+                                                        title: loc.fullName,
                                                         textStyle: TextStyle(
                                                           color: CupertinoColors.black,
                                                           fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily,
@@ -296,7 +296,7 @@ class _ChatState extends State<Chat> {
                                                       child: CupertinoButton(
                                                           padding: const EdgeInsets.fromLTRB(6, 0, 6, 0),
                                                           onPressed: showMenu,
-                                                          child: Text(Location.values[meetLocation].locationName, style: const TextStyle(fontSize: 14.5),)
+                                                          child: Text(Location.values[meetLocation].fullName, style: const TextStyle(fontSize: 14.5),)
                                                       ),
                                                     );
                                                   }

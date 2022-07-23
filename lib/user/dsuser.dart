@@ -157,7 +157,7 @@ class DsUser {
                           size: 16,
                           color: CupertinoColors.secondaryLabel,
                         ),
-                        Text(Location.values[location].locationName,
+                        Text(Location.values[location].fullName,
                             style: const TextStyle(fontSize: 16)),
                       ],
                     )

@@ -26,6 +26,7 @@ class _FilterPageState extends State<FilterPage> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
+      backgroundColor: CupertinoColors.systemGroupedBackground,
       navigationBar: CupertinoNavigationBar(
             middle: Text('Filter', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
             trailing: Wrap(spacing: 10, children: <Widget>[
@@ -34,7 +35,7 @@ class _FilterPageState extends State<FilterPage> {
                   showCupertinoDialog(context: context, builder: (context) {
                     return CupertinoAlertDialog(
                       title: const Text('Filter applied'),
-                      content: const Text('Filters will be applied to your searched listings from now on.'),
+                      content: const Text('Filters will be applied to your searches.'),
                       actions: <CupertinoDialogAction>[
                         CupertinoDialogAction(
                           isDefaultAction: true,
@@ -51,10 +52,10 @@ class _FilterPageState extends State<FilterPage> {
       ),
       child: ListView(
         children: [
-          CupertinoFormSection(
-            margin: const EdgeInsets.all(12),
+          CupertinoFormSection.insetGrouped(
+            // margin: const EdgeInsets.all(12),
+            header: Text('Filter options'.toUpperCase()),
             children: [
-
               Container(
                 padding: const EdgeInsets.only(left: 26, right: 20),
                 child: Row(
@@ -67,7 +68,7 @@ class _FilterPageState extends State<FilterPage> {
                         itemBuilder: (context) {
                           return Location.values
                               .map((loc) => PullDownMenuItem(
-                              title: loc.locationName,
+                              title: loc.fullName,
                               textStyle: TextStyle(
                                   color: CupertinoColors.black,
                                   fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily,
@@ -86,7 +87,7 @@ class _FilterPageState extends State<FilterPage> {
                                 onPressed: showMenu,
                                 padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                 child: Text(
-                                    Location.values[_selectedLocation].locationName,
+                                    Location.values[_selectedLocation].fullName,
                                     style: const TextStyle(color: CupertinoColors.black)
                                 )
                             )
@@ -109,7 +110,7 @@ class _FilterPageState extends State<FilterPage> {
                       min: 0,
                       max: 500,
                       values: values,
-                      divisions: 50,
+                      divisions: 500,
                       labels: labels,
                       onChanged: (value) {
                         setState(() {
@@ -123,12 +124,12 @@ class _FilterPageState extends State<FilterPage> {
           Container(
             padding: const EdgeInsets.only(left: 26, right: 20),
             child: CupertinoButton(
-              child: const Text('Remove Filter', style: TextStyle(color: CupertinoColors.destructiveRed),), 
+              child: const Text('Remove Filter', style: TextStyle(color: CupertinoColors.destructiveRed),),
               onPressed: () {
                 showCupertinoDialog(context: context, builder: (context) {
                     return CupertinoAlertDialog(
-                      title: const Text('Filter removed'),
-                      content: const Text('Filters will not be applied to your searched listings from now on.'),
+                      title: const Text('Filters removed'),
+                      content: const Text('Filters have been removed from your searches.'),
                       actions: <CupertinoDialogAction>[
                         CupertinoDialogAction(
                           isDefaultAction: true,

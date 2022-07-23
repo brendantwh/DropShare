@@ -43,7 +43,17 @@ class _ChatlistState extends State<Chatlist> {
               }
 
               if (snapshot.data!.size == 0) {
-                return const Text('No chats');
+                return const Center(
+                    child: Text(
+                        'No chats to display',
+                        style: TextStyle(
+                            color: CupertinoDynamicColor.withBrightness(
+                                color: CupertinoColors.secondaryLabel,
+                                darkColor: CupertinoColors.systemGrey2)
+                        ),
+                        textScaleFactor: 0.87
+                    )
+                );
               }
 
               return ListView(

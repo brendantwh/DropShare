@@ -301,7 +301,7 @@ class _CreateState extends State<Create> {
                                 itemBuilder: (context) {
                                   return Location.values
                                       .map((loc) => PullDownMenuItem(
-                                      title: loc.locationName,
+                                      title: loc.fullName,
                                       textStyle: TextStyle(
                                           color: CupertinoColors.black,
                                           fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily,
@@ -320,7 +320,7 @@ class _CreateState extends State<Create> {
                                         onPressed: showMenu,
                                         padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                         child: Text(
-                                            Location.values[_selectedLocation].locationName,
+                                            Location.values[_selectedLocation].fullName,
                                             style: const TextStyle(color: CupertinoColors.black)
                                         )
                                     )

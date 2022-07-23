@@ -117,7 +117,7 @@ class _HomepageState extends State<Homepage> {
                                                 size: 16,
                                                 color: CupertinoColors.secondaryLabel,
                                               ),
-                                              Text(Location.values[user.location].locationName,
+                                              Text(Location.values[user.location].fullName,
                                                   style: const TextStyle(fontSize: 16)),
                                             ],
                                           )
@@ -133,14 +133,13 @@ class _HomepageState extends State<Homepage> {
                         Container(
                           alignment: Alignment.bottomLeft,
                           padding: const EdgeInsets.fromLTRB(0, 25, 0, 15),
-                          child: Text('Recent listings at ${Location.values[user.location].locationName}', style: TextStyle(fontSize: 17, color: CupertinoColors.secondaryLabel)),
+                          child: Text('Recent listings at ${Location.values[user.location].fullName}', style: TextStyle(fontSize: 17, color: CupertinoColors.secondaryLabel)),
                         ),
                         // streambuilder for recent listings in your area
                         StreamBuilder<QuerySnapshot>(
                             stream: userLocListings,
                             builder: (context, snapshot) {
                               if (snapshot.hasError) {
-                                print(snapshot.error);
                                 return const Text('Something went wrong');
                               }
 
@@ -175,7 +174,7 @@ class _HomepageState extends State<Homepage> {
                                       if (index == snapshot.data!.size) {
                                         return GestureDetector(
                                             onTap: () {
-                                              Navigator.pushNamed(context, 'listings');
+                                              Navigator.pushNamed(context, 'listings', arguments: user.location);
                                             },
                                             child: Container(
                                                 alignment: Alignment.topCenter,

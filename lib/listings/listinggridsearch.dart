@@ -5,9 +5,10 @@ import 'listing.dart';
 import 'listinghelper.dart';
 
 class ListingGridSearch extends StatefulWidget {
-  const ListingGridSearch({Key? key, required this.searchResults}) : super(key: key);
+  const ListingGridSearch({Key? key, required this.searchResults, this.padding = EdgeInsets.zero}) : super(key: key);
 
   final List<dynamic> searchResults;
+  final EdgeInsets padding;
 
   @override
   State<ListingGridSearch> createState() => _ListingGridSearchState();
@@ -28,7 +29,7 @@ class _ListingGridSearchState extends State<ListingGridSearch> {
                 });
               });
             },
-            child: l.showListing()
+            child: l.showListingFull()
         );
       } else {
         return Container();
@@ -36,9 +37,11 @@ class _ListingGridSearchState extends State<ListingGridSearch> {
     });
 
     return GridView.count(
+        padding: widget.padding,
         mainAxisSpacing: 16,
         crossAxisSpacing: 16,
         crossAxisCount: 2,
+        childAspectRatio: 0.78,
         children: list.whereType<GestureDetector>().toList()
     );
   }

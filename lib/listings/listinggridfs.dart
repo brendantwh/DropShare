@@ -6,10 +6,11 @@ import 'listing.dart';
 import 'listinghelper.dart';
 
 class ListingGridFs extends StatefulWidget {
-  const ListingGridFs({Key? key, required this.stream, required this.showMySold}) : super(key: key);
+  const ListingGridFs({Key? key, required this.stream, required this.showMySold, this.padding = EdgeInsets.zero}) : super(key: key);
 
   final Stream<QuerySnapshot<Map<String, dynamic>>> stream;
   final bool showMySold;
+  final EdgeInsets padding;
 
   @override
   State<ListingGridFs> createState() => _ListingGridFsState();
@@ -44,6 +45,7 @@ class _ListingGridFsState extends State<ListingGridFs> {
           }
 
           return GridView.count(
+              padding: widget.padding,
               mainAxisSpacing: 16,
               crossAxisSpacing: 16,
               crossAxisCount: 2,

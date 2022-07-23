@@ -1,8 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../user/dsuser.dart';
 import 'package:flutter/material.dart';
 import 'listinggridfs.dart';
+import '../locations/location.dart';
+import 'dart:ui' as ui;
 
 class ListingsPage extends StatefulWidget {
   const ListingsPage({Key? key}) : super(key: key);
@@ -12,230 +13,409 @@ class ListingsPage extends StatefulWidget {
 }
 
 class _ListingsPageState extends State<ListingsPage> {
-  final items = FirebaseFirestore.instance //index 0
+  Stream<QuerySnapshot<Map<String, dynamic>>> items = FirebaseFirestore.instance //index -2
       .collection('search_listings')
       .orderBy('time', descending: true)
       .snapshots();
 
-  final freeItems = FirebaseFirestore.instance //index 1
-      .collection('search_listings')
-      .where('price', isEqualTo: 0)
-      .snapshots();
+  bool free = false;
 
-  final hallsItems = FirebaseFirestore.instance
-      .collection('search_listings')
-      .where('location', whereIn: [0,1,2,3,4,5])
-      .snapshots();
+  bool initialLocSet = false;
+  Set<int> selectedLocations = {-2}; // -2 for all, -1 for free (unused)
 
-  final rcItems = FirebaseFirestore.instance
-      .collection('search_listings')
-      .where('location', whereIn: [7,8,9,10,11])
-      .snapshots();
-
-  final utrItems = FirebaseFirestore.instance
-      .collection('search_listings')
-      .where('location', isEqualTo: 12)
-      .snapshots();
-
-  final pgpItems = FirebaseFirestore.instance
-      .collection('search_listings')
-      .where('location', isEqualTo: 6)
-      .snapshots();
-
-  int index = 0; //0 set as default for all items, as inkwells tapped, index changes to reflect categorized items
+  EdgeInsets outerPadding = const EdgeInsets.only(right: 6);
+  EdgeInsets innerPadding = const EdgeInsets.fromLTRB(10, 2, 10, 2);
 
   @override
   Widget build(BuildContext context) {
+    int? initialLoc = ModalRoute.of(context)?.settings.arguments as int?;
+    if (!initialLocSet && initialLoc != null) {
+      selectedLocations = {initialLoc};
+      initialLocSet = true;
+    }
+
+    if (selectedLocations.isEmpty || selectedLocations.contains(-2) || selectedLocations.length >= 10) {
+      if (free) {
+        items = FirebaseFirestore.instance //index 0
+            .collection('search_listings')
+            .orderBy('time', descending: true)
+            .where('price', isEqualTo: 0)
+            .snapshots();
+      } else {
+        items = FirebaseFirestore.instance //index 0
+            .collection('search_listings')
+            .orderBy('time', descending: true)
+            .snapshots();
+      }
+    } else {
+      if (free) {
+        items = FirebaseFirestore.instance
+            .collection('search_listings')
+            .where('location', whereIn: selectedLocations.toList())
+            .where('price', isEqualTo: 0)
+            .orderBy('time', descending: true)
+            .snapshots();
+      } else {
+        items = FirebaseFirestore.instance
+            .collection('search_listings')
+            .where('location', whereIn: selectedLocations.toList())
+            .orderBy('time', descending: true)
+            .snapshots();
+      }
+    }
+
     return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
-            middle: Text('Listings', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
-            trailing: Wrap(spacing: 10, children: <Widget>[
-              GestureDetector(
-                  key: const Key('create'),
-                  onTap: () {
-                    Navigator.pushNamed(context, 'create');
-                  },
-                  child: const Icon(CupertinoIcons.add)),
-              GestureDetector(
-                  key: const Key('userpage'),
-                  onTap: () {
-                    DsUser.getMine().then((user) {
-                      Navigator.pushNamed(context, 'userpage', arguments: user);
-                    });
-                  },
-                  child: const Icon(
-                      CupertinoIcons.person_crop_circle))
-            ])
-        ),
+            middle: Text('Listings',
+                style: TextStyle(
+                    fontFamily: CupertinoTheme.of(context)
+                        .textTheme
+                        .textStyle
+                        .fontFamily)),
+            trailing: GestureDetector(
+                key: const Key('create'),
+                onTap: () {
+                  Navigator.pushNamed(context, 'create');
+                },
+                child: const Icon(CupertinoIcons.add))),
         child: SafeArea(
-          minimum: const EdgeInsets.fromLTRB(20, 15, 20, 34),
-          child: Column(
+          top: false,
+          minimum: const EdgeInsets.only(bottom: 34),
+          child: Stack(
             children: [
-              CupertinoButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, 'search');
-                  },
-                  child: const Text('Search')
+              selectedLocations.isEmpty
+                  ? const Center(
+                  child: Text(
+                      'There\'s nothing here!',
+                      style: TextStyle(
+                          color: CupertinoDynamicColor.withBrightness(
+                              color: CupertinoColors.secondaryLabel,
+                              darkColor: CupertinoColors.systemGrey2)
+                      ),
+                      textScaleFactor: 0.87
+                  )
+              )
+                  : selectedLocations.length >= 10
+                  ? const Center(
+                  child: Text(
+                      'Select at most 10 filters',
+                      style: TextStyle(
+                          color: CupertinoDynamicColor.withBrightness(
+                              color: CupertinoColors.secondaryLabel,
+                              darkColor: CupertinoColors.systemGrey2)
+                      ),
+                      textScaleFactor: 0.87
+                  )
+              )
+                  : Container(
+                  margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  child: ListingGridFs(stream: items, showMySold: false, padding: const EdgeInsets.only(top: 90 + 150))
               ),
-              Container(
-                decoration: BoxDecoration(
-                    border: Border.all(color: CupertinoColors.opaqueSeparator)
+              ClipRect(
+                child: BackdropFilter(
+                    filter: ui.ImageFilter.blur(sigmaX: 7.5, sigmaY: 7.5),
+                    child: Container(
+                        width: double.infinity,
+                        height: 140,
+                        margin: const EdgeInsets.fromLTRB(0, 90, 0, 0),
+                        decoration: const BoxDecoration(
+                          color: Color(0xF7FFFFFF),
+                          border: Border(
+                              bottom: BorderSide(
+                              width: 0,
+                              color: CupertinoColors.opaqueSeparator)
+                          )
+                        ),
+                        child: Column(
+                          children: [
+                            Container(
+                                margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                child: CupertinoSearchTextField(
+                                    onTap: () => Navigator.pushNamed(context, 'search'))),
+                            Container(
+                              margin: const EdgeInsets.fromLTRB(20, 5, 20, 5),
+                              height: 30,
+                              child: Material(
+                                  color: const Color.fromARGB(0, 255, 255, 255),
+                                  child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: 2,
+                                      itemBuilder: (context, index) {
+                                        List<String> content = ['All listings', 'Free listings'];
+
+                                        if (index == 0) {
+                                          // All listings
+                                          return Padding(
+                                            padding: outerPadding,
+                                            child: InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  if (selectedLocations.contains(-2)) {
+                                                    selectedLocations.clear();
+                                                  } else {
+                                                    selectedLocations.clear();
+                                                    selectedLocations.add(-2);
+                                                  }
+                                                });
+                                              },
+                                              child: Container(
+                                                padding: innerPadding,
+                                                decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    color: selectedLocations.contains(-2)
+                                                        ? CupertinoColors.opaqueSeparator
+                                                        : CupertinoColors.lightBackgroundGray),
+                                                child: Center(
+                                                  child: Text(content[index]),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        } else {
+                                          // Free items
+                                          return Padding(
+                                            padding: outerPadding,
+                                            child: InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  free = !free;
+                                                });
+                                              },
+                                              child: Container(
+                                                padding: innerPadding,
+                                                decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    color: free
+                                                        ? CupertinoColors.opaqueSeparator
+                                                        : CupertinoColors.lightBackgroundGray),
+                                                child: Center(
+                                                  child: Text(content[index]),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      }
+                                  )
+                              ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+                              height: 30,
+                              child: Material(
+                                  color: const Color.fromARGB(0, 255, 255, 255),
+                                  child: ListView.builder(
+                                      scrollDirection: Axis.horizontal,
+                                      itemCount: 15,
+                                      itemBuilder: (context, index) {
+                                        List<String> content = Location.values.map((loc) => loc.shortName).toList();
+                                        content.insert(0, 'All Halls');
+                                        content.insert(8, 'All RCs');
+
+                                        if (index == 0) {
+                                          // All halls
+                                          bool contains = selectedLocations.contains(0)
+                                              && selectedLocations.contains(1)
+                                              && selectedLocations.contains(2)
+                                              && selectedLocations.contains(3)
+                                              && selectedLocations.contains(4)
+                                              && selectedLocations.contains(5);
+
+                                          return Padding(
+                                            padding: const EdgeInsets.only(left: 20, right: 6),
+                                            child: InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  if (contains) {
+                                                    for (int i = 0; i <= 5; i++) {
+                                                      selectedLocations.remove(-2);
+                                                      selectedLocations.remove(i);
+                                                    }
+                                                  } else {
+                                                    for (int i = 0; i <= 5; i++) {
+                                                      selectedLocations.remove(-2);
+                                                      selectedLocations.add(i);
+                                                    }
+                                                  }
+                                                });
+                                              },
+                                              child: Container(
+                                                padding: innerPadding,
+                                                decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    color: contains
+                                                        ? CupertinoColors.opaqueSeparator
+                                                        : CupertinoColors.lightBackgroundGray),
+                                                child: Center(
+                                                  child: Text(content[index]),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        } else if (index == 8) {
+                                          // All RCs
+                                          bool contains = selectedLocations.contains(7)
+                                              && selectedLocations.contains(8)
+                                              && selectedLocations.contains(9)
+                                              && selectedLocations.contains(10)
+                                              && selectedLocations.contains(11);
+
+                                          return Padding(
+                                            padding: outerPadding,
+                                            child: InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  if (contains) {
+                                                    for (int i = 7; i <= 11; i++) {
+                                                      selectedLocations.remove(i);
+                                                      selectedLocations.remove(-2);
+                                                    }
+                                                  } else {
+                                                    for (int i = 7; i <= 11; i++) {
+                                                      selectedLocations.add(i);
+                                                      selectedLocations.remove(-2);
+                                                    }
+                                                  }
+                                                });
+                                              },
+                                              child: Container(
+                                                padding: innerPadding,
+                                                decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    color: contains
+                                                        ? CupertinoColors.opaqueSeparator
+                                                        : CupertinoColors.lightBackgroundGray),
+                                                child: Center(
+                                                  child: Text(content[index]),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        } else if (index >= 1 && index <= 6){
+                                          // Individual hall locations
+                                          return Padding(
+                                            padding: outerPadding,
+                                            child: InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  selectedLocations.remove(-2);
+                                                  if (selectedLocations.contains(index - 1)) {
+                                                    selectedLocations.remove(index - 1);
+                                                  } else {
+                                                    selectedLocations.add(index - 1);
+                                                  }
+                                                });
+                                              },
+                                              child: Container(
+                                                padding: innerPadding,
+                                                decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    color: selectedLocations.contains(index - 1)
+                                                        ? CupertinoColors.opaqueSeparator
+                                                        : CupertinoColors.lightBackgroundGray),
+                                                child: Center(
+                                                  child: Text(content[index]),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        } else if (index == 7) {
+                                          // PGP
+                                          return Padding(
+                                            padding: outerPadding,
+                                            child: InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  selectedLocations.remove(-2);
+                                                  if (selectedLocations.contains(index - 1)) {
+                                                    selectedLocations.remove(index - 1);
+                                                  } else {
+                                                    selectedLocations.add(index - 1);
+                                                  }
+                                                });
+                                              },
+                                              child: Container(
+                                                padding: innerPadding,
+                                                decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    color: selectedLocations.contains(index - 1)
+                                                        ? CupertinoColors.opaqueSeparator
+                                                        : CupertinoColors.lightBackgroundGray),
+                                                child: Center(
+                                                  child: Text(content[index]),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        } else if (index >= 9 && index <= 13) {
+                                          // Individual RC locations
+                                          return Padding(
+                                            padding: outerPadding,
+                                            child: InkWell(
+                                              onTap: () {
+                                                setState(() {
+                                                  selectedLocations.remove(-2);
+                                                  if (selectedLocations.contains(index - 2)) {
+                                                    selectedLocations.remove(index - 2);
+                                                  } else {
+                                                    selectedLocations.add(index - 2);
+                                                  }
+                                                });
+                                              },
+                                              child: Container(
+                                                padding: innerPadding,
+                                                decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    color: selectedLocations.contains(index - 2)
+                                                        ? CupertinoColors.opaqueSeparator
+                                                        : CupertinoColors.lightBackgroundGray),
+                                                child: Center(
+                                                  child: Text(content[index]),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        } else {
+                                          // UTR (last item)
+                                          return Padding(
+                                            padding: const EdgeInsets.only(right: 20),
+                                            child: InkWell(
+                                              onTap: () {
+                                                selectedLocations.remove(-2);
+                                                setState(() {
+                                                  if (selectedLocations.contains(index - 2)) {
+                                                    selectedLocations.remove(index - 2);
+                                                  } else {
+                                                    selectedLocations.add(index - 2);
+                                                  }
+                                                });
+                                              },
+                                              child: Container(
+                                                padding: innerPadding,
+                                                decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    color: selectedLocations.contains(index - 2)
+                                                        ? CupertinoColors.opaqueSeparator
+                                                        : CupertinoColors.lightBackgroundGray),
+                                                child: Center(
+                                                  child: Text(content[index]),
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                      }
+                                  )
+                              ),
+                            ),
+                          ],
+                        )
+                    )
                 ),
-                height: 50,
-                child: Material(child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            index = 0;
-                          });
-                        },
-                        child: Container(
-                          width: 100,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: index == 0 ?
-                              CupertinoColors.opaqueSeparator :
-                              CupertinoColors.lightBackgroundGray
-                          ),
-                          child: const Center(child: Text('All listings'),),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            index = 1;
-                          });
-                        },
-                        child: Container(
-                          width: 108,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: index == 1 ?
-                              CupertinoColors.opaqueSeparator :
-                              CupertinoColors.lightBackgroundGray
-                          ),
-                          child: const Center(child: Text('Free listings'),),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            index = 2;
-                          });
-                        },
-                        child: Container(
-                          width: 60,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: index == 2 ?
-                              CupertinoColors.opaqueSeparator :
-                              CupertinoColors.lightBackgroundGray
-                          ),
-                          child: const Center(child: Text('Halls'),),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            index = 3;
-                          });
-                        },
-                        child: Container(
-                          width: 50,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: index == 3 ?
-                              CupertinoColors.opaqueSeparator :
-                              CupertinoColors.lightBackgroundGray
-                          ),
-                          child: const Center(child: Text('RCs'),),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            index = 4;
-                          });
-                        },
-                        child: Container(
-                          width: 50,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: index == 4 ?
-                              CupertinoColors.opaqueSeparator :
-                              CupertinoColors.lightBackgroundGray
-                          ),
-                          child: const Center(child: Text('UTR'),),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            index = 5;
-                          });
-                        },
-                        child: Container(
-                          width: 50,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              color: index == 5 ?
-                              CupertinoColors.opaqueSeparator :
-                              CupertinoColors.lightBackgroundGray
-                          ),
-                          child: const Center(child: Text('PGP'),),
-                        ),
-                      ),
-                    ),
-                  ],
-                )),
-              ),
-              const SizedBox(height: 20,),
-              index == 0 ?
-              Flexible(
-                  child: ListingGridFs(stream: items, showMySold: false)
-              )
-                  : index == 1 ?
-              Flexible(
-                  child: ListingGridFs(stream: freeItems, showMySold: false)
-              )
-                  : index == 2 ?
-              Flexible(
-                  child: ListingGridFs(stream: hallsItems, showMySold: false)
-              )
-                  : index == 3 ?
-              Flexible(
-                  child: ListingGridFs(stream: rcItems, showMySold: false)
-              )
-                  : index == 4 ?
-              Flexible(
-                  child: ListingGridFs(stream: utrItems, showMySold: false)
-              )
-                  :
-              Flexible(
-                  child: ListingGridFs(stream: pgpItems, showMySold: false)
               )
             ],
-          ),
-        )
+          )
+        ),
     );
   }
 }

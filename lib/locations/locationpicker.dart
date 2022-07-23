@@ -48,10 +48,10 @@ class _LocationPickerState extends State<LocationPicker> {
               });
             },
             children: List<Widget>.generate(Location.count, (int index) {
-              return Center(child: Text(Location.values[index].locationName));
+              return Center(child: Text(Location.values[index].shortName));
             })),
       ),
-      child: Text(Location.values[_selectedLocation].locationName),
+      child: Text(Location.values[_selectedLocation].shortName),
     );
   }
 }

@@ -65,7 +65,7 @@ class _ModifyPageState extends State<ModifyPage> {
                       itemBuilder: (context) {
                         return Location.values
                             .map((loc) => PullDownMenuItem(
-                            title: loc.locationName,
+                            title: loc.fullName,
                             textStyle: TextStyle(
                               color: CupertinoColors.black,
                               fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily,
@@ -84,7 +84,7 @@ class _ModifyPageState extends State<ModifyPage> {
                                 onPressed: showMenu,
                                 padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                                 child: Text(
-                                    Location.values[_selectedLocation].locationName,
+                                    Location.values[_selectedLocation].fullName,
                                     style: const TextStyle(color: CupertinoColors.black)
                                 )
                             )

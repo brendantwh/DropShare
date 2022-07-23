@@ -207,7 +207,7 @@ class _IndivListingState extends State<IndivListing> {
 
     // final String time = DateFormat('hh:mm a, dd MMM yyyy').format(listing.time);
     final String relativeTime = timeago.format(listing.time);
-    final String location = Location.values[listing.location].locationName;
+    final String location = Location.values[listing.location].fullName;
     final String price = listing.price == 0
         ? 'Free'
         : NumberFormat.currency(locale: 'en_SG', symbol: '\$')

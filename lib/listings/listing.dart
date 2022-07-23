@@ -286,7 +286,7 @@ class Listing {
                       color: CupertinoColors.secondaryLabel,
                     ),
                   ),
-                  Text(' ${Location.values[location].locationName}', style: TextStyle(fontSize: 12, color: CupertinoColors.systemGrey, fontWeight: FontWeight.w500))
+                  Text(' ${Location.values[location].shortName}', style: TextStyle(fontSize: 12, color: CupertinoColors.systemGrey, fontWeight: FontWeight.w500))
                 ],
               )
             ],
@@ -336,7 +336,7 @@ class Listing {
                           color: CupertinoColors.secondaryLabel,
                         ),
                       ),
-                      Text(' ${Location.values[location].locationName}', style: TextStyle(fontSize: 12, color: CupertinoColors.systemGrey, fontWeight: FontWeight.w500))
+                      Text(' ${Location.values[location].shortName}', style: TextStyle(fontSize: 12, color: CupertinoColors.systemGrey, fontWeight: FontWeight.w500))
                     ],
                   )
                 ],
