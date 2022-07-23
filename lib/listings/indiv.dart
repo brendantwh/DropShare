@@ -9,6 +9,7 @@ import 'listing.dart';
 import 'report.dart';
 import '../locations/location.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'dart:io';
 
 class IndivListing extends StatefulWidget {
   const IndivListing({Key? key}) : super(key: key);
@@ -18,7 +19,7 @@ class IndivListing extends StatefulWidget {
 }
 
 class _IndivListingState extends State<IndivListing> {
-  void _manageListingActionSheet(BuildContext context, Listing listing) {
+  void _manageListingActionSheet(BuildContext context, ListingHelper helper) {
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => CupertinoActionSheet(
@@ -29,13 +30,13 @@ class _IndivListingState extends State<IndivListing> {
           },
           child: Text('Cancel', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
         ),
-        actions: listing.sold
+        actions: helper.listing.sold
             ? <CupertinoActionSheetAction>[
                 CupertinoActionSheetAction(
                   isDestructiveAction: true,
                   onPressed: () {
                     Navigator.pop(context);
-                    _deleteListingAlertDialog(context, listing);
+                    _deleteListingAlertDialog(context, helper.listing);
                   },
                   child: Wrap(
                     crossAxisAlignment: WrapCrossAlignment.center,
@@ -50,7 +51,7 @@ class _IndivListingState extends State<IndivListing> {
                     isDefaultAction: true,
                     onPressed: () {
                       Navigator.pop(context);
-                      _sellStatusAlertDialog(context, listing);
+                      _sellStatusAlertDialog(context, helper);
                     },
                     child: Text('Mark as unsold', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
                 )
@@ -60,7 +61,7 @@ class _IndivListingState extends State<IndivListing> {
                   isDestructiveAction: true,
                   onPressed: () {
                     Navigator.pop(context);
-                    _deleteListingAlertDialog(context, listing);
+                    _deleteListingAlertDialog(context, helper.listing);
                   },
                   child: Wrap(
                     crossAxisAlignment: WrapCrossAlignment.center,
@@ -74,7 +75,7 @@ class _IndivListingState extends State<IndivListing> {
                 CupertinoActionSheetAction(
                     onPressed: () {
                       Navigator.pop(context);
-                      Navigator.pushNamed(context, 'create', arguments: listing);
+                      Navigator.pushNamed(context, 'create', arguments: helper);
                     },
                     child: Text('Edit listing', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
                 ),
@@ -82,7 +83,7 @@ class _IndivListingState extends State<IndivListing> {
                     isDefaultAction: true,
                     onPressed: () {
                       Navigator.pop(context);
-                      _sellStatusAlertDialog(context, listing);
+                      _sellStatusAlertDialog(context, helper);
                     },
                     child: Text('Mark as sold', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
                 )
@@ -119,7 +120,9 @@ class _IndivListingState extends State<IndivListing> {
     );
   }
 
-  void _sellStatusAlertDialog(BuildContext context, Listing listing) {
+  void _sellStatusAlertDialog(BuildContext context, ListingHelper helper) {
+    Listing listing = helper.listing;
+
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
@@ -148,7 +151,7 @@ class _IndivListingState extends State<IndivListing> {
               Navigator.pushNamed(
                   context,
                   'indiv',
-                  arguments: listing
+                  arguments: helper
               );
             },
             child: Text('Yes', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
@@ -158,7 +161,9 @@ class _IndivListingState extends State<IndivListing> {
     );
   }
 
-  void _adminActionSheet(BuildContext context, Listing listing) {
+  void _adminActionSheet(BuildContext context, ListingHelper helper) {
+    Listing listing = helper.listing;
+
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => CupertinoActionSheet(
@@ -188,7 +193,7 @@ class _IndivListingState extends State<IndivListing> {
           CupertinoActionSheetAction(
               onPressed: () {
                 Navigator.pop(context);
-                Navigator.pushNamed(context, 'create', arguments: listing);
+                Navigator.pushNamed(context, 'create', arguments: helper);
               },
               child: Text('Edit listing', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
           ),
@@ -219,31 +224,7 @@ class _IndivListingState extends State<IndivListing> {
 
     Widget actions;
     if (userIsAdmin && adminView) {
-      actions = Wrap(
-        direction: Axis.vertical,
-        crossAxisAlignment: WrapCrossAlignment.end,
-        spacing: 10,
-        children: [
-          Unreport(listing: listing),
-          CupertinoButton(
-              color: const Color(0xfff2f4f5),
-              padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-              onPressed: () => _adminActionSheet(context, listing),
-              child: Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: 10,
-                children: const [
-                  Icon(CupertinoIcons.settings_solid, color: CupertinoColors.activeBlue),
-                  Text(
-                      'Admin actions',
-                      style: TextStyle(
-                          color: CupertinoColors.activeBlue
-                      ))
-                ],
-              )
-          )
-        ],
-      );
+      actions = Unreport(helper: helper);
     } else {
       actions = CupertinoButton(
           color: const Color(0xffd9e6fa),
@@ -286,20 +267,24 @@ class _IndivListingState extends State<IndivListing> {
     return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
           trailing: (userIsAdmin && adminView)
-              ? Unreport(listing: listing)
+              ? GestureDetector(
+                  onTap: () => _adminActionSheet(context, helper),
+                  child: Icon(CupertinoIcons.gear),
+                )
               : userIsSeller
               ? GestureDetector(
-                  onTap: () => _manageListingActionSheet(context, listing),
-                  child: Icon(CupertinoIcons.settings_solid) ,
+                  onTap: () => _manageListingActionSheet(context, helper),
+                  child: Icon(CupertinoIcons.settings_solid),
                 )
-              : Report(listing: listing),
+              : Report(helper: helper),
         ),
-        child: ListView(
+        child: Column(
           children: [
+            SizedBox(height: Platform.isIOS ? 90 : 68),
             mounted
                 ? Container(
-              child: AspectRatio(aspectRatio: 1, child: listing.showImageSwiper()),
-            )
+                    child: AspectRatio(aspectRatio: 1, child: listing.showImageSwiper()),
+                  )
                 : Container(),
             Container(
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 34),

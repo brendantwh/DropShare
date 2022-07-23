@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 
-import 'listing.dart';
+import 'listinghelper.dart';
 
 class Unreport extends StatefulWidget {
-  const Unreport({Key? key, required this.listing}) : super(key: key);
+  const Unreport({Key? key, required this.helper}) : super(key: key);
 
-  final Listing listing;
+  final ListingHelper helper;
 
   @override
   State<Unreport> createState() => _UnreportState();
@@ -15,11 +15,11 @@ class _UnreportState extends State<Unreport> {
   @override
   Widget build(BuildContext context) {
     return CupertinoButton(
-        color: widget.listing.reported
+        color: widget.helper.listing.reported
             ? CupertinoColors.destructiveRed
             : const Color(0xfff2f4f5),
-        padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
-        onPressed: widget.listing.reported
+        padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+        onPressed: widget.helper.listing.reported
             ? () {
                 showCupertinoDialog(
                     context: context,
@@ -54,7 +54,7 @@ class _UnreportState extends State<Unreport> {
                               isDefaultAction: true,
                               onPressed: () {
                                 Navigator.pop(context);
-                                widget.listing.unreport();
+                                widget.helper.listing.unreport();
                                 showCupertinoDialog(
                                     context: context,
                                     builder: (context) {
@@ -66,8 +66,8 @@ class _UnreportState extends State<Unreport> {
                                                 isDefaultAction: true,
                                                 onPressed: () {
                                                   Navigator.pop(context);
-                                                  widget.listing.reported = false;
-                                                  Navigator.pushReplacementNamed(context, 'indiv', arguments: widget.listing);
+                                                  widget.helper.listing.reported = false;
+                                                  Navigator.pushReplacementNamed(context, 'indiv', arguments: widget.helper);
                                                 },
                                                 child: Text('Close', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)))
                                           ]
@@ -88,7 +88,7 @@ class _UnreportState extends State<Unreport> {
         child: Wrap(
             crossAxisAlignment: WrapCrossAlignment.center,
             spacing: 10,
-            children: widget.listing.reported
+            children: widget.helper.listing.reported
                 ? const [
                     Icon(CupertinoIcons.flag_fill,
                         color: CupertinoColors.white),

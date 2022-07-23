@@ -174,7 +174,7 @@ class DsUser {
             admin
                 ? Container(
                     alignment: Alignment.centerRight,
-                    margin: const EdgeInsets.only(top: 5),
+                    margin: const EdgeInsets.only(top: 10),
                     height: 30,
                     child: CupertinoButton(
                         color: CupertinoColors.systemBlue,

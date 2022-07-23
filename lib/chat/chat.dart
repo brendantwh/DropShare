@@ -7,7 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:pull_down_button/pull_down_button.dart';
 
 import '../listings/listing.dart';
-import '../listings/report.dart';
 import '../locations/location.dart';
 import 'chathelper.dart';
 import 'chatimage.dart';
@@ -75,9 +74,7 @@ class _ChatState extends State<Chat> {
     List<String> dates = <String>[];
 
     return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-          trailing: Report(listing: listing)
-      ),
+      navigationBar: const CupertinoNavigationBar(),
       child: SafeArea(
           child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

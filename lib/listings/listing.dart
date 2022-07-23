@@ -163,12 +163,19 @@ class Listing {
                   ),
                 )
             ),
+        errorWidget: (context, url, error) {
+          print(error);
+          return Center(child: Icon(CupertinoIcons.exclamationmark_triangle_fill, color: CupertinoColors.secondaryLabel));
+        },
       );
     } else {
       return OptimizedCacheImage(
         imageUrl: imageURL[ind],
         placeholder: (context, url) => const CupertinoActivityIndicator(),
-        errorWidget: (context, url, error) => Text(error),
+        errorWidget: (context, url, error) {
+          print(error);
+          return Center(child: Icon(CupertinoIcons.exclamationmark_triangle_fill, color: CupertinoColors.secondaryLabel));
+        },
       );
     }
   }
@@ -267,7 +274,7 @@ class Listing {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(priceString, style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w500)),
+                  Flexible(child: Text(priceString, style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis)),
                   Text('${timeago.format(time)}', style: TextStyle(fontSize: 12, color: CupertinoColors.systemGrey, fontWeight: FontWeight.w500)),
                 ],
               ),
@@ -317,7 +324,7 @@ class Listing {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(priceString, style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w500)),
+                      Flexible(child: Text(priceString, style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w500), overflow: TextOverflow.ellipsis,)),
                       Text('${timeago.format(time)}', style: TextStyle(fontSize: 12, color: CupertinoColors.systemGrey, fontWeight: FontWeight.w500)),
                     ],
                   ),

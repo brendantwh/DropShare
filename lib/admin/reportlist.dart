@@ -24,8 +24,8 @@ class _ReportListState extends State<ReportList> {
         ),
         child: SafeArea(
           top: false,
-          minimum: const EdgeInsets.fromLTRB(20, 15, 20, 34),
-          child: ListingGridFs(stream: reportedListings, showMySold: true)
+          minimum: const EdgeInsets.fromLTRB(20, 0, 20, 34),
+          child: ListingGridFs(stream: reportedListings, showMySold: true, padding: const EdgeInsets.fromLTRB(0, 110, 0, 0))
         )
     );
   }

@@ -2,6 +2,7 @@ import '../listings/listinggridsearch.dart';
 import 'search.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:ui' as ui;
+import 'dart:io';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -35,6 +36,8 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
+    double pfPadding = Platform.isIOS ? 90 : 68;
+
     //Variables for filtering
     var lst;
     var data = ModalRoute.of(context)?.settings.arguments;
@@ -59,7 +62,7 @@ class _SearchPageState extends State<SearchPage> {
             children: [
               Container(
                   margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  child: ListingGridSearch(searchResults: searchRes, padding: const EdgeInsets.only(top: 90 + 105))
+                  child: ListingGridSearch(searchResults: searchRes, padding: EdgeInsets.only(top: pfPadding + 105))
               ),
               ClipRect(
                 child: BackdropFilter(
@@ -67,7 +70,7 @@ class _SearchPageState extends State<SearchPage> {
                     child: Container(
                         width: double.infinity,
                         height: 90,
-                        margin: const EdgeInsets.fromLTRB(0, 90, 0, 0),
+                        margin: EdgeInsets.fromLTRB(0, pfPadding, 0, 0),
                         decoration: const BoxDecoration(
                             color: Color(0xF7FFFFFF),
                             border: Border(

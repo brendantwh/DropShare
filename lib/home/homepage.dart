@@ -36,7 +36,14 @@ class _HomepageState extends State<Homepage> {
               slivers: [
                 CupertinoSliverNavigationBar(
                     automaticallyImplyLeading: false,
-                    largeTitle: Text('Home'),
+                    largeTitle: Text(
+                      'Home',
+                      style: TextStyle(
+                          fontFamily: CupertinoTheme.of(context)
+                              .textTheme
+                              .textStyle
+                              .fontFamily)
+                    ),
                     trailing: GestureDetector(
                         key: const Key('create'),
                         onTap: () {
@@ -149,7 +156,7 @@ class _HomepageState extends State<Homepage> {
 
                               if (snapshot.data!.size == 0) {
                                 return const SizedBox(
-                                  height: 182,
+                                  height: 184,
                                   child: Center(
                                       child: Text(
                                           'There\'s nothing here!',
@@ -165,7 +172,7 @@ class _HomepageState extends State<Homepage> {
                               }
 
                               return SizedBox(
-                                  height: 182,
+                                  height: 184,
                                   child: ListView.builder(
                                     clipBehavior: Clip.none,
                                     scrollDirection: Axis.horizontal,
@@ -236,21 +243,24 @@ class _HomepageState extends State<Homepage> {
                               }
 
                               if (snapshot.data!.size == 0) {
-                                return const Center(
-                                    child: Text(
-                                        'There\'s nothing here!',
-                                        style: TextStyle(
-                                            color: CupertinoDynamicColor.withBrightness(
-                                                color: CupertinoColors.secondaryLabel,
-                                                darkColor: CupertinoColors.systemGrey2)
-                                        ),
-                                        textScaleFactor: 0.87
-                                    )
+                                return const SizedBox(
+                                  height: 184,
+                                  child: Center(
+                                      child: Text(
+                                          'There\'s nothing here!',
+                                          style: TextStyle(
+                                              color: CupertinoDynamicColor.withBrightness(
+                                                  color: CupertinoColors.secondaryLabel,
+                                                  darkColor: CupertinoColors.systemGrey2)
+                                          ),
+                                          textScaleFactor: 0.87
+                                      )
+                                  ),
                                 );
                               }
 
                               return SizedBox(
-                                  height: 182,
+                                  height: 184,
                                   child: ListView.builder(
                                     clipBehavior: Clip.none,
                                     scrollDirection: Axis.horizontal,

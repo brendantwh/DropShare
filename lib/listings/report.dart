@@ -1,11 +1,11 @@
 import 'package:flutter/cupertino.dart';
 
-import 'listing.dart';
+import 'listinghelper.dart';
 
 class Report extends StatefulWidget {
-  const Report({Key? key, required this.listing}) : super(key: key);
+  const Report({Key? key, required this.helper}) : super(key: key);
 
-  final Listing listing;
+  final ListingHelper helper;
 
   @override
   State<Report> createState() => _ReportState();
@@ -19,7 +19,7 @@ class _ReportState extends State<Report> {
         showCupertinoDialog(
             context: context,
             builder: (context) {
-              if (widget.listing.reported) {
+              if (widget.helper.listing.reported) {
                 return CupertinoAlertDialog(
                     title: Text('Listing reported', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
                     content: Text('This listing has already been reported.', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
@@ -47,7 +47,7 @@ class _ReportState extends State<Report> {
                       ),
                       CupertinoDialogAction(
                         onPressed: () {
-                          widget.listing.report();
+                          widget.helper.listing.report();
                           Navigator.pop(context);
                           showCupertinoDialog(
                               context: context,
@@ -60,8 +60,8 @@ class _ReportState extends State<Report> {
                                           isDefaultAction: true,
                                           onPressed: () {
                                             Navigator.pop(context);
-                                            widget.listing.reported = true;
-                                            Navigator.pushReplacementNamed(context, 'indiv', arguments: widget.listing);
+                                            widget.helper.listing.reported = true;
+                                            Navigator.pushReplacementNamed(context, 'indiv', arguments: widget.helper);
                                           },
                                           child: Text('Close', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)))
                                     ]
@@ -76,7 +76,7 @@ class _ReportState extends State<Report> {
             });
       },
       child: Icon(
-          widget.listing.reported
+          widget.helper.listing.reported
               ? CupertinoIcons.flag_fill
               : CupertinoIcons.flag,
           color: CupertinoColors.destructiveRed
