@@ -1,4 +1,5 @@
 import 'package:dropshare/main.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:typesense/typesense.dart';
 
 class Search {
@@ -77,4 +78,21 @@ class Search {
         Field('reported', Type.bool)
       }
   );
+
+  static get domain => _host;
+
+  static get health async {
+    Map<String, dynamic> healthData = await adminClient.health.retrieve();
+    if (healthData['ok'] == true) {
+      return const Icon(CupertinoIcons.checkmark_circle, color: CupertinoColors.systemGreen);
+    } else {
+      return const Icon(CupertinoIcons.exclamationmark_circle, color: CupertinoColors.systemRed);
+    }
+  }
+
+  static get docCount async {
+    final colDetails = await adminClient.collection('search_listings')
+        .retrieve();
+    return colDetails.documentCount;
+  }
 }

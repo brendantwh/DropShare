@@ -15,8 +15,16 @@ class _AdminPageState extends State<AdminDashboard> {
     final DsUser user = ModalRoute.of(context)?.settings.arguments as DsUser;
 
     return CupertinoPageScaffold(
-        navigationBar: const CupertinoNavigationBar(
-            middle: Text('Admin Dashboard', textScaleFactor: 1)
+        navigationBar: CupertinoNavigationBar(
+            middle: Text(
+                'Admin Dashboard',
+                style: TextStyle(
+                    fontFamily: CupertinoTheme.of(context)
+                        .textTheme
+                        .textStyle
+                        .fontFamily),
+                textScaleFactor: 1
+            )
         ),
         backgroundColor: CupertinoColors.systemGroupedBackground,
         child: SafeArea(
@@ -29,8 +37,9 @@ class _AdminPageState extends State<AdminDashboard> {
                 CupertinoFormSection.insetGrouped(
                     header: Text('Management'.toUpperCase()),
                     children: [
-                      GestureDetector(
-                          onTap: () => Navigator.pushNamed(context, 'typesenseConfig'),
+                      CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: () => Navigator.pushNamed(context, 'typesenseConfig'),
                           child: CupertinoFormRow(
                             padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
                             prefix: Wrap(
@@ -41,11 +50,12 @@ class _AdminPageState extends State<AdminDashboard> {
                                 Text('Typesense')
                               ],
                             ),
-                            child: Icon(CupertinoIcons.chevron_forward, size: 18, color: CupertinoColors.secondaryLabel),
+                            child: Icon(CupertinoIcons.chevron_forward, size: 20, color: CupertinoColors.tertiaryLabel),
                           )
                       ),
-                      GestureDetector(
-                          onTap: () => Navigator.pushNamed(context, 'userlist'),
+                      CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: () => Navigator.pushNamed(context, 'userlist'),
                           child: CupertinoFormRow(
                             padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
                             prefix: Wrap(
@@ -56,11 +66,12 @@ class _AdminPageState extends State<AdminDashboard> {
                                 Text('View all users')
                               ],
                             ),
-                            child: Icon(CupertinoIcons.chevron_forward, size: 18, color: CupertinoColors.secondaryLabel),
+                            child: Icon(CupertinoIcons.chevron_forward, size: 20, color: CupertinoColors.tertiaryLabel),
                           )
                       ),
-                      GestureDetector(
-                          onTap: () => Navigator.pushNamed(context, 'reportlist'),
+                      CupertinoButton(
+                          padding: EdgeInsets.zero,
+                          onPressed: () => Navigator.pushNamed(context, 'reportlist'),
                           child: CupertinoFormRow(
                             padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
                             prefix: Wrap(
@@ -71,7 +82,7 @@ class _AdminPageState extends State<AdminDashboard> {
                                 Text('Reported listings')
                               ],
                             ),
-                            child: Icon(CupertinoIcons.chevron_forward, size: 18, color: CupertinoColors.secondaryLabel),
+                            child: Icon(CupertinoIcons.chevron_forward, size: 20, color: CupertinoColors.tertiaryLabel),
                           )
                       ),
                     ]

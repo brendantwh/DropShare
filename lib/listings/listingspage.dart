@@ -154,6 +154,13 @@ class _ListingsPageState extends State<ListingsPage> {
                               margin: const EdgeInsets.fromLTRB(20, 5, 20, 5),
                               height: 30,
                               child: Material(
+                                  textStyle: TextStyle(
+                                      color: CupertinoColors.black,
+                                      fontFamily: CupertinoTheme.of(context)
+                                          .textTheme
+                                          .textStyle
+                                          .fontFamily
+                                  ),
                                   color: const Color.fromARGB(0, 255, 255, 255),
                                   child: ListView.builder(
                                       scrollDirection: Axis.horizontal,
@@ -221,6 +228,13 @@ class _ListingsPageState extends State<ListingsPage> {
                               margin: const EdgeInsets.fromLTRB(0, 5, 0, 5),
                               height: 30,
                               child: Material(
+                                  textStyle: TextStyle(
+                                      color: CupertinoColors.black,
+                                      fontFamily: CupertinoTheme.of(context)
+                                          .textTheme
+                                          .textStyle
+                                          .fontFamily
+                                  ),
                                   color: const Color.fromARGB(0, 255, 255, 255),
                                   child: ListView.builder(
                                       scrollDirection: Axis.horizontal,

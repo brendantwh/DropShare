@@ -20,8 +20,16 @@ class _UserListState extends State<UserList> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
         backgroundColor: CupertinoColors.systemGroupedBackground,
-        navigationBar: const CupertinoNavigationBar(
-            middle: Text('User list', textScaleFactor: 1)
+        navigationBar: CupertinoNavigationBar(
+            middle: Text(
+                'User list',
+                style: TextStyle(
+                    fontFamily: CupertinoTheme.of(context)
+                        .textTheme
+                        .textStyle
+                        .fontFamily),
+                textScaleFactor: 1
+            )
         ),
         child: SafeArea(
             top: false,
