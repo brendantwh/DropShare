@@ -18,8 +18,7 @@ class _SearchPageState extends State<SearchPage> {
       padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
       child: const Text(
         'Enter search query',
-        style: const TextStyle(fontWeight: FontWeight.w500, color: CupertinoColors.systemGrey),
-        textScaleFactor: 0.87,
+        style: const TextStyle(fontWeight: FontWeight.w500, color: CupertinoColors.systemGrey, fontSize: 14),
       )
   );
   List<dynamic> searchRes = [];
@@ -48,7 +47,7 @@ class _SearchPageState extends State<SearchPage> {
 
     return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
-            middle: Text('Search', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
+            middle: Text('Search', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily), textScaleFactor: 1),
             trailing: GestureDetector(
               onTap: () {
                 Navigator.pushNamed(context, 'filter');
@@ -119,8 +118,7 @@ class _SearchPageState extends State<SearchPage> {
                                             padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
                                             child: Text(
                                               '${res['found']} ${res['found'] == 1 ? 'listing' : 'listings'} found',
-                                              style: const TextStyle(fontWeight: FontWeight.w500, color: CupertinoColors.systemGrey),
-                                              textScaleFactor: 0.87,
+                                              style: const TextStyle(fontWeight: FontWeight.w500, color: CupertinoColors.systemGrey, fontSize: 14),
                                             )
                                         );
                                         searchRes = res['hits'];

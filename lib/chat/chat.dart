@@ -210,8 +210,9 @@ class _ChatState extends State<Chat> {
                                         children: <Widget>[
                                           Text(listing.title,
                                               style: const TextStyle(
-                                                  fontWeight: FontWeight.w600),
-                                              textScaleFactor: 1.14,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 19
+                                              ),
                                           ),
                                           const SizedBox(height: 8),
                                           Wrap(
@@ -220,13 +221,21 @@ class _ChatState extends State<Chat> {
                                             children: [
                                               const Icon(CupertinoIcons.money_dollar_circle_fill, size: 20, color: Color(0xFF86888C)),
                                               const SizedBox(width: 6),
-                                              Text(price,
-                                                  textScaleFactor: 0.90),
+                                              Text(
+                                                price,
+                                                style: const TextStyle(
+                                                    fontSize: 16
+                                                )
+                                              ),
                                               const SizedBox(width: 30),
                                               const Icon(CupertinoIcons.house_fill, size: 20, color: Color(0xFF86888C)),
                                               const SizedBox(width: 6),
-                                              Text(Location.values[location].shortName,
-                                                  textScaleFactor: 0.90)
+                                              Text(
+                                                  Location.values[location].shortName,
+                                                  style: const TextStyle(
+                                                      fontSize: 16
+                                                  )
+                                              )
                                             ],
                                           )
                                         ],

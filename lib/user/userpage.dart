@@ -26,7 +26,7 @@ class _UserpageState extends State<Userpage> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
-            middle: Text('Your account', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
+            middle: Text('Your account', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily), textScaleFactor: 1),
             trailing: Wrap(spacing: 10, children: <Widget>[
               GestureDetector(
                   key: const Key('sign out button'),

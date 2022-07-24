@@ -23,7 +23,7 @@ class _AdminHomeState extends State<AdminHome> {
         child: CupertinoPageScaffold(
             navigationBar: CupertinoNavigationBar(
                 automaticallyImplyLeading: false,
-                middle: Text('[ADMIN] DropShare', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
+                middle: Text('[ADMIN] DropShare', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily), textScaleFactor: 1),
                 trailing: Wrap(spacing: 10, children: <Widget>[
                   GestureDetector(
                       key: const Key('adminDash'),

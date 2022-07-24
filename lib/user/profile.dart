@@ -27,7 +27,7 @@ class _ProfileState extends State<Profile> {
 
     return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
-            middle: Text('Your profile', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
+            middle: Text('Your profile', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily), textScaleFactor: 1),
             trailing: GestureDetector(
               key: const Key('sign out button'),
               onTap: () {
@@ -101,8 +101,7 @@ class _ProfileState extends State<Profile> {
                   padding: const EdgeInsets.only(bottom: 10),
                   child: const Text(
                       'YOUR LISTINGS',
-                      style: TextStyle(fontWeight: FontWeight.w500, color: CupertinoColors.systemGrey),
-                      textScaleFactor: 0.87
+                      style: TextStyle(fontWeight: FontWeight.w500, color: CupertinoColors.systemGrey, fontSize: 14),
                   )
               ),
               Flexible(

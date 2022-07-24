@@ -24,7 +24,7 @@ class _ModifyPageState extends State<ModifyPage> {
 
     return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
-          middle: Text('Edit your profile', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
+          middle: Text('Edit your profile', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily), textScaleFactor: 1),
           trailing: GestureDetector(
             onTap: () {
               if (usernameController.text.length > 16) {

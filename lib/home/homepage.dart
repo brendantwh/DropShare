@@ -21,11 +21,15 @@ class _HomepageState extends State<Homepage> {
         .collection('search_listings')
         .where('location', isEqualTo: user.location)
         .orderBy('time', descending: true)
+        .where('visible', isEqualTo: true)
+        .where('sold', isEqualTo: false)
         .limit(2)
         .snapshots();
     final latestListings = FirebaseFirestore.instance
         .collection('search_listings')
         .orderBy('time', descending: true)
+        .where('visible', isEqualTo: true)
+        .where('sold', isEqualTo: false)
         .limit(2)
         .snapshots();
 
@@ -44,7 +48,8 @@ class _HomepageState extends State<Homepage> {
                               .textStyle
                               .fontFamily,
                           letterSpacing: -0.7,
-                      )
+                      ),
+                      textScaleFactor: 1
                     ),
                     trailing: GestureDetector(
                         key: const Key('create'),
@@ -65,6 +70,7 @@ class _HomepageState extends State<Homepage> {
                         Container(
                           margin: const EdgeInsets.fromLTRB(0, 15, 0, 10),
                             child: CupertinoSearchTextField(
+                                focusNode: FocusNode(canRequestFocus: false),
                                 onTap: () => Navigator.pushNamed(context, 'search')
                             )
                         ),
@@ -149,11 +155,25 @@ class _HomepageState extends State<Homepage> {
                             stream: userLocListings,
                             builder: (context, snapshot) {
                               if (snapshot.hasError) {
-                                return const Text('Something went wrong');
+                                print(snapshot.error);
+                                return const SizedBox(
+                                  height: 184,
+                                  child: Center(
+                                      child: Text(
+                                        'Something went wrong!',
+                                        style: TextStyle(
+                                            color: CupertinoDynamicColor.withBrightness(
+                                                color: CupertinoColors.secondaryLabel,
+                                                darkColor: CupertinoColors.systemGrey2),
+                                            fontSize: 14
+                                        ),
+                                      )
+                                  ),
+                                );
                               }
 
                               if (snapshot.connectionState == ConnectionState.waiting) {
-                                return const Text("Loading");
+                                return const Center(child: CupertinoActivityIndicator());
                               }
 
                               if (snapshot.data!.size == 0) {
@@ -165,9 +185,10 @@ class _HomepageState extends State<Homepage> {
                                           style: TextStyle(
                                               color: CupertinoDynamicColor.withBrightness(
                                                   color: CupertinoColors.secondaryLabel,
-                                                  darkColor: CupertinoColors.systemGrey2)
+                                                  darkColor: CupertinoColors.systemGrey2
+                                              ),
+                                              fontSize: 14
                                           ),
-                                          textScaleFactor: 0.87
                                       )
                                   ),
                                 );
@@ -236,12 +257,24 @@ class _HomepageState extends State<Homepage> {
                             stream: latestListings,
                             builder: (context, snapshot) {
                               if (snapshot.hasError) {
-                                print(snapshot.error);
-                                return const Text('Something went wrong');
+                                return const SizedBox(
+                                  height: 184,
+                                  child: Center(
+                                      child: Text(
+                                        'Something went wrong!',
+                                        style: TextStyle(
+                                            color: CupertinoDynamicColor.withBrightness(
+                                                color: CupertinoColors.secondaryLabel,
+                                                darkColor: CupertinoColors.systemGrey2),
+                                            fontSize: 14
+                                        ),
+                                      )
+                                  ),
+                                );
                               }
 
                               if (snapshot.connectionState == ConnectionState.waiting) {
-                                return const Text("Loading");
+                                return const Center(child: CupertinoActivityIndicator());
                               }
 
                               if (snapshot.data!.size == 0) {
@@ -253,9 +286,9 @@ class _HomepageState extends State<Homepage> {
                                           style: TextStyle(
                                               color: CupertinoDynamicColor.withBrightness(
                                                   color: CupertinoColors.secondaryLabel,
-                                                  darkColor: CupertinoColors.systemGrey2)
+                                                  darkColor: CupertinoColors.systemGrey2),
+                                              fontSize: 14
                                           ),
-                                          textScaleFactor: 0.87
                                       )
                                   ),
                                 );

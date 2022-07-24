@@ -43,11 +43,15 @@ class _ListingsPageState extends State<ListingsPage> {
             .collection('search_listings')
             .orderBy('time', descending: true)
             .where('price', isEqualTo: 0)
+            .where('visible', isEqualTo: true)
+            .where('sold', isEqualTo: false)
             .snapshots();
       } else {
         items = FirebaseFirestore.instance //index 0
             .collection('search_listings')
             .orderBy('time', descending: true)
+            .where('visible', isEqualTo: true)
+            .where('sold', isEqualTo: false)
             .snapshots();
       }
     } else {
@@ -57,12 +61,16 @@ class _ListingsPageState extends State<ListingsPage> {
             .where('location', whereIn: selectedLocations.toList())
             .where('price', isEqualTo: 0)
             .orderBy('time', descending: true)
+            .where('visible', isEqualTo: true)
+            .where('sold', isEqualTo: false)
             .snapshots();
       } else {
         items = FirebaseFirestore.instance
             .collection('search_listings')
             .where('location', whereIn: selectedLocations.toList())
             .orderBy('time', descending: true)
+            .where('visible', isEqualTo: true)
+            .where('sold', isEqualTo: false)
             .snapshots();
       }
     }
@@ -74,7 +82,9 @@ class _ListingsPageState extends State<ListingsPage> {
                     fontFamily: CupertinoTheme.of(context)
                         .textTheme
                         .textStyle
-                        .fontFamily)),
+                        .fontFamily),
+                textScaleFactor: 1
+            ),
             trailing: GestureDetector(
                 key: const Key('create'),
                 onTap: () {
@@ -87,33 +97,38 @@ class _ListingsPageState extends State<ListingsPage> {
           child: Stack(
             children: [
               selectedLocations.isEmpty
-                  ? const Center(
-                  child: Text(
-                      'There\'s nothing here!',
-                      style: TextStyle(
-                          color: CupertinoDynamicColor.withBrightness(
-                              color: CupertinoColors.secondaryLabel,
-                              darkColor: CupertinoColors.systemGrey2)
-                      ),
-                      textScaleFactor: 0.87
-                  )
-              )
+                  ? Container(
+                      padding: EdgeInsets.only(top: pfPadding + 150),
+                      alignment: Alignment.center,
+                      child: const Text(
+                        'There\'s nothing here!',
+                        style: TextStyle(
+                            color: CupertinoDynamicColor.withBrightness(
+                                color: CupertinoColors.secondaryLabel,
+                                darkColor: CupertinoColors.systemGrey2),
+                            fontSize: 14
+                        ),
+                      )
+                    )
                   : selectedLocations.length >= 10
-                  ? const Center(
-                  child: Text(
-                      'Select at most 10 filters',
-                      style: TextStyle(
-                          color: CupertinoDynamicColor.withBrightness(
+                  ? Container(
+                      padding: EdgeInsets.only(top: pfPadding + 150),
+                      alignment: Alignment.center,
+                      child: const Text(
+                        'Select at most 10 filters',
+                        style: TextStyle(
+                            color: CupertinoDynamicColor.withBrightness(
                               color: CupertinoColors.secondaryLabel,
-                              darkColor: CupertinoColors.systemGrey2)
+                              darkColor: CupertinoColors.systemGrey2,
+                            ),
+                            fontSize: 14
+                        ),
                       ),
-                      textScaleFactor: 0.87
-                  )
-              )
+                    )
                   : Container(
-                  margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  child: ListingGridFs(stream: items, showMySold: false, padding: EdgeInsets.only(top: pfPadding + 150))
-              ),
+                        margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                        child: ListingGridFs(stream: items, showMySold: false, padding: EdgeInsets.only(top: pfPadding + 150))
+                    ),
               ClipRect(
                 child: BackdropFilter(
                     filter: ui.ImageFilter.blur(sigmaX: 7.5, sigmaY: 7.5),

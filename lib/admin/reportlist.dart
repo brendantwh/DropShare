@@ -20,7 +20,7 @@ class _ReportListState extends State<ReportList> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
         navigationBar: const CupertinoNavigationBar(
-            middle: Text('Reported listings')
+            middle: Text('Reported listings', textScaleFactor: 1)
         ),
         child: SafeArea(
           top: false,

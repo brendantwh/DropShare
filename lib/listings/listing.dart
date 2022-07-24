@@ -194,9 +194,9 @@ class Listing {
       loop: false,
       control: const SwiperControl(
           padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
-          color: CupertinoColors.systemTeal,
-          iconNext: CupertinoIcons.chevron_right_circle_fill,
-          iconPrevious: CupertinoIcons.chevron_left_circle_fill
+          color: CupertinoColors.activeBlue,
+          iconNext: CupertinoIcons.chevron_right,
+          iconPrevious: CupertinoIcons.chevron_left
       ),
       pagination: const SwiperPagination(builder: SwiperPagination.dots),
     );

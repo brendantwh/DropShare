@@ -70,7 +70,7 @@ class _CreateState extends State<Create> {
     return CupertinoPageScaffold(
         backgroundColor: CupertinoColors.systemGroupedBackground,
         navigationBar: CupertinoNavigationBar(
-            middle: Text('${listing != null ? 'Edit' : 'Create'} listing', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
+            middle: Text('${listing != null ? 'Edit' : 'Create'} listing', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily), textScaleFactor: 1),
             trailing: GestureDetector(
                 key: const Key('create button'),
                 onTap: () {

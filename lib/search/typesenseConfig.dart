@@ -14,7 +14,7 @@ class _TypesenseConfigState extends State<TypesenseConfig> {
     // for Typesense admin client
     return CupertinoPageScaffold(
         navigationBar: const CupertinoNavigationBar(
-          middle: Text('Typesense Config')
+          middle: Text('Typesense Config', textScaleFactor: 1)
         ),
         child: SafeArea(
           minimum: const EdgeInsets.fromLTRB(20, 15, 20, 34),

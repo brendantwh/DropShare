@@ -16,7 +16,7 @@ class _AdminPageState extends State<AdminDashboard> {
 
     return CupertinoPageScaffold(
         navigationBar: const CupertinoNavigationBar(
-            middle: Text('Admin Dashboard')
+            middle: Text('Admin Dashboard', textScaleFactor: 1)
         ),
         backgroundColor: CupertinoColors.systemGroupedBackground,
         child: SafeArea(

@@ -27,7 +27,7 @@ class _ChatlistState extends State<Chatlist> {
 
     return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
-            middle: Text('Chat list', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily))
+            middle: Text('Chat list', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily), textScaleFactor: 1)
         ),
         child: SafeArea(
           minimum: const EdgeInsets.fromLTRB(20.0, 100.0, 20.0, 0),
@@ -39,7 +39,7 @@ class _ChatlistState extends State<Chatlist> {
               }
 
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Text('Loading');
+                return const Center(child: CupertinoActivityIndicator());
               }
 
               if (snapshot.data!.size == 0) {
@@ -49,9 +49,10 @@ class _ChatlistState extends State<Chatlist> {
                         style: TextStyle(
                             color: CupertinoDynamicColor.withBrightness(
                                 color: CupertinoColors.secondaryLabel,
-                                darkColor: CupertinoColors.systemGrey2)
+                                darkColor: CupertinoColors.systemGrey2
+                            ),
+                            fontSize: 14,
                         ),
-                        textScaleFactor: 0.87
                     )
                 );
               }
@@ -81,8 +82,7 @@ class _ChatlistState extends State<Chatlist> {
                             Widget subheader;
                             TextStyle subStyle = const TextStyle(
                                 fontSize: 16,
-                                color: CupertinoColors.secondaryLabel,
-                                fontWeight: FontWeight.w500
+                                color: CupertinoColors.secondaryLabel
                             );
 
                             if (latestMsg.isEmpty || latestMsg == 'image') {

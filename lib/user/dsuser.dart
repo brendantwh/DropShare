@@ -71,7 +71,7 @@ class DsUser {
     return Container(
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
-          color: CupertinoColors.quaternarySystemFill),
+          color: CupertinoColors.secondarySystemGroupedBackground),
       margin: const EdgeInsets.fromLTRB(0, 6, 0, 0),
       padding: const EdgeInsets.fromLTRB(12, 6, 12, 6),
       child: GestureDetector(

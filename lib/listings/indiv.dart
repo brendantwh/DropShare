@@ -36,7 +36,7 @@ class _IndivListingState extends State<IndivListing> {
                   isDestructiveAction: true,
                   onPressed: () {
                     Navigator.pop(context);
-                    _deleteListingAlertDialog(context, helper.listing);
+                    _deleteListingAlertDialog(context, helper);
                   },
                   child: Wrap(
                     crossAxisAlignment: WrapCrossAlignment.center,
@@ -61,7 +61,7 @@ class _IndivListingState extends State<IndivListing> {
                   isDestructiveAction: true,
                   onPressed: () {
                     Navigator.pop(context);
-                    _deleteListingAlertDialog(context, helper.listing);
+                    _deleteListingAlertDialog(context, helper);
                   },
                   child: Wrap(
                     crossAxisAlignment: WrapCrossAlignment.center,
@@ -92,7 +92,7 @@ class _IndivListingState extends State<IndivListing> {
     );
   }
 
-  void _deleteListingAlertDialog(BuildContext context, Listing listing) {
+  void _deleteListingAlertDialog(BuildContext context, ListingHelper helper) {
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
@@ -110,8 +110,8 @@ class _IndivListingState extends State<IndivListing> {
             isDestructiveAction: true,
             onPressed: () {
               Navigator.pop(context);
-              listing.hide();
-              Navigator.pop(context);
+              helper.listing.hide();
+              Navigator.pushReplacementNamed(context, 'userpage', arguments: helper.me);
             },
             child: Text('Yes', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
           )
@@ -162,8 +162,6 @@ class _IndivListingState extends State<IndivListing> {
   }
 
   void _adminActionSheet(BuildContext context, ListingHelper helper) {
-    Listing listing = helper.listing;
-
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => CupertinoActionSheet(
@@ -179,7 +177,7 @@ class _IndivListingState extends State<IndivListing> {
             isDestructiveAction: true,
             onPressed: () {
               Navigator.pop(context);
-              _deleteListingAlertDialog(context, listing);
+              _deleteListingAlertDialog(context, helper);
             },
             child: Wrap(
               crossAxisAlignment: WrapCrossAlignment.center,
@@ -297,7 +295,7 @@ class _IndivListingState extends State<IndivListing> {
                     children: [
                       Text(listing.title,
                           style: const TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.w600)),
+                              fontSize: 23, fontWeight: FontWeight.w600)),
                       Container(
                           padding: const EdgeInsets.only(bottom: 2),
                           child: Text(relativeTime, style: TextStyle(fontSize: 15))

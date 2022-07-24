@@ -38,9 +38,7 @@ class _UserTypeRedirectState extends State<UserTypeRedirect> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-        child: Center(
-          child: Image.asset('assets/icon/transparent.png', scale: 0.5)
-        )
+        child: Center(child: Image.asset('assets/icon/transparent.png', width: MediaQuery.of(context).size.width * 0.35))
     );
   }
 }

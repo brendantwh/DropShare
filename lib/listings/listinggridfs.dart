@@ -23,23 +23,41 @@ class _ListingGridFsState extends State<ListingGridFs> {
         stream: widget.stream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
-            return const Text('Something went wrong');
+            return Container(
+                padding: widget.padding,
+                alignment: Alignment.center,
+                child: const Text(
+                  'Something went wrong!',
+                  style: TextStyle(
+                      color: CupertinoDynamicColor.withBrightness(
+                          color: CupertinoColors.secondaryLabel,
+                          darkColor: CupertinoColors.systemGrey2),
+                      fontSize: 14
+                  ),
+                )
+            );
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Text("Loading");
+            return Container(
+                padding: widget.padding,
+                alignment: Alignment.center,
+                child: const CupertinoActivityIndicator(),
+            );
           }
 
           if (snapshot.data!.size == 0) {
-            return const Center(
-                child: Text(
-                    'There\'s nothing here!',
-                    style: TextStyle(
-                        color: CupertinoDynamicColor.withBrightness(
-                            color: CupertinoColors.secondaryLabel,
-                            darkColor: CupertinoColors.systemGrey2)
-                    ),
-                    textScaleFactor: 0.87
+            return Container(
+                padding: widget.padding,
+                alignment: Alignment.center,
+                child: const Text(
+                  'There\'s nothing here!',
+                  style: TextStyle(
+                      color: CupertinoDynamicColor.withBrightness(
+                          color: CupertinoColors.secondaryLabel,
+                          darkColor: CupertinoColors.systemGrey2),
+                      fontSize: 14
+                  ),
                 )
             );
           }

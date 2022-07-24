@@ -28,7 +28,7 @@ class _FilterPageState extends State<FilterPage> {
     return CupertinoPageScaffold(
       backgroundColor: CupertinoColors.systemGroupedBackground,
       navigationBar: CupertinoNavigationBar(
-            middle: Text('Filter', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily)),
+            middle: Text('Filter', style: TextStyle(fontFamily: CupertinoTheme.of(context).textTheme.textStyle.fontFamily), textScaleFactor: 1),
             trailing: Wrap(spacing: 10, children: <Widget>[
               GestureDetector(
                 onTap: () {
@@ -100,25 +100,31 @@ class _FilterPageState extends State<FilterPage> {
               
               Container(
                 padding: const EdgeInsets.only(left: 26, right: 20),
-                child: Material(child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Text('Price Range'),
-                    Flexible(
-                      child: RangeSlider(
-                      min: 0,
-                      max: 500,
-                      values: values,
-                      divisions: 500,
-                      labels: labels,
-                      onChanged: (value) {
-                        setState(() {
-                          values = value;
-                          labels = RangeLabels('\$${value.start.toInt().toString()}','\$${value.end.toInt().toString()}');
-                        });
-                      }))
-                ],))
+                child: Material(
+                    color: CupertinoColors.secondarySystemGroupedBackground,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const Text('Price Range'),
+                        Flexible(
+                          child: RangeSlider(
+                            min: 0,
+                            max: 500,
+                            values: values,
+                            divisions: 500,
+                            labels: labels,
+                            onChanged: (value) {
+                              setState(() {
+                                values = value;
+                                labels = RangeLabels('\$${value.start.toInt().toString()}','\$${value.end.toInt().toString()}');
+                              });
+                            }
+                          )
+                        )
+                      ],
+                    )
+                )
               ),
           ]),
           Container(
