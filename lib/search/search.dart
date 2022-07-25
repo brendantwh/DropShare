@@ -70,11 +70,11 @@ class Search {
         Field('time', Type.int64),
         Field('price', Type.float),
         Field('location', Type.int32),
-        Field('description', Type.stringify, isOptional: true),
+        Field('description', Type.string),
         Field('uid', Type.string),
         Field('visible', Type.bool),
         Field('sold', Type.bool),
-        Field('imageURL', Type.string),
+        Field('imageURL', Type.stringify, isOptional: true),
         Field('reported', Type.bool)
       }
   );
