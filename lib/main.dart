@@ -67,9 +67,9 @@ class _MyAppState extends State<MyApp> {
         onGenerateRoute: (RouteSettings settings) {
           switch (settings.name) {
             case 'home':
-              return CupertinoPageRoute(builder: (context) => const Homepage(), settings: settings);
+              return CupertinoPageRoute(builder: (context) => const Homepage(), settings: settings, title: 'Home');
             case 'listings':
-              return CupertinoPageRoute(builder: (_) => const ListingsPage(), settings: settings);
+              return CupertinoPageRoute(builder: (_) => const ListingsPage(), settings: settings, title: 'Listings');
             case 'login':
               return CupertinoPageRoute(builder: (_) => const Login(), settings: settings);
             case 'signup':
@@ -85,25 +85,25 @@ class _MyAppState extends State<MyApp> {
             case 'chatlist':
               return CupertinoPageRoute(builder: (context) => const Chatlist(), settings: settings);
             case 'userpage':
-              return CupertinoPageRoute(builder: (context) => const Profile(), settings: settings);
+              return CupertinoPageRoute(builder: (context) => const Profile(), settings: settings, title: 'Profile');
             case 'modifypage':
               return CupertinoPageRoute(builder: (context) => const ModifyPage(), settings: settings);
             case 'typesenseConfig':
               return CupertinoPageRoute(builder: (_) => const TypesenseConfig(), settings: settings);
             case 'search':
-              return CupertinoPageRoute(builder: (context) => const SearchPage(), settings: settings);
+              return CupertinoPageRoute(builder: (context) => const SearchPage(), settings: settings, title: 'Search');
             case 'filter':
               return CupertinoPageRoute(builder: (_) => const FilterPage(), settings: settings);
             case 'adminDash':
-              return CupertinoPageRoute(builder: (context) => const AdminDashboard(), settings: settings);
+              return CupertinoPageRoute(builder: (context) => const AdminDashboard(), settings: settings, title: 'Admin');
             case 'userlist':
               return CupertinoPageRoute(builder: (_) => const UserList(), settings: settings);
             case 'reportlist':
-              return CupertinoPageRoute(builder: (_) => const ReportList(), settings: settings);
+              return CupertinoPageRoute(builder: (_) => const ReportList(), settings: settings, title: 'Reported');
             case 'userTypeRedirect':
               return CupertinoPageRoute(builder: (_) => const UserTypeRedirect(), settings: settings);
             case 'adminHome':
-              return CupertinoPageRoute(builder: (_) => const AdminHome(), settings: settings);
+              return CupertinoPageRoute(builder: (_) => const AdminHome(), settings: settings, title: '[A] Home');
           }
         },
         theme: Platform.isIOS

@@ -148,7 +148,23 @@ class _HomepageState extends State<Homepage> {
                         Container(
                           alignment: Alignment.bottomLeft,
                           padding: const EdgeInsets.fromLTRB(0, 25, 0, 15),
-                          child: Text('Recent listings at ${Location.values[user.location].fullName}', style: TextStyle(fontSize: 17, color: CupertinoColors.secondaryLabel)),
+                          child: Wrap(
+                            direction: Axis.horizontal,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 0,
+                            children: [
+                              Text('Recent listings at ', style: TextStyle(fontSize: 17, color: CupertinoColors.secondaryLabel)),
+                              Icon(
+                                user.location >= 0 && user.location <= 5
+                                    ? CupertinoIcons.house_fill
+                                    : CupertinoIcons.building_2_fill,
+                                size: 18,
+                                color: CupertinoColors.secondaryLabel,
+                              ),
+                              Text(' ${Location.values[user.location].fullName}',
+                                style: TextStyle(fontSize: 17, color: CupertinoColors.secondaryLabel)),
+                            ],
+                          )
                         ),
                         // streambuilder for recent listings in your area
                         StreamBuilder<QuerySnapshot>(

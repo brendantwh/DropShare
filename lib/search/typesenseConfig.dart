@@ -50,14 +50,28 @@ class _TypesenseConfigState extends State<TypesenseConfig> {
                             showCupertinoModalPopup<void>(
                               context: context,
                               builder:  (context) => CupertinoAlertDialog(
-                                title: const Text('Typesense domain'),
+                                title: Text('Typesense domain',
+                                    style: TextStyle(
+                                        fontFamily: CupertinoTheme.of(context)
+                                            .textTheme
+                                            .textStyle
+                                            .fontFamily
+                                    )
+                                ),
                                 content: Text(Search.domain),
                                 actions: <CupertinoDialogAction>[
                                   CupertinoDialogAction(
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
-                                    child: const Text('Close'),
+                                    child: Text('Close',
+                                        style: TextStyle(
+                                            fontFamily: CupertinoTheme.of(context)
+                                                .textTheme
+                                                .textStyle
+                                                .fontFamily
+                                        )
+                                    ),
                                   )
                                 ],
                               ),
@@ -105,14 +119,35 @@ class _TypesenseConfigState extends State<TypesenseConfig> {
                             showCupertinoModalPopup<void>(
                               context: context,
                               builder:  (context) => CupertinoAlertDialog(
-                                title: const Text('Document count'),
+                                title: Text('Document count',
+                                    style: TextStyle(
+                                        fontFamily: CupertinoTheme.of(context)
+                                            .textTheme
+                                            .textStyle
+                                            .fontFamily
+                                    )
+                                ),
                                 content: Center(
                                   child: Wrap(
                                     direction: Axis.vertical,
                                     crossAxisAlignment: WrapCrossAlignment.center,
                                     children: [
-                                      Text('Typesense count: $tsCount'),
-                                      Text('Firestore count: $fsCount')
+                                      Text('Typesense count: $tsCount',
+                                        style: TextStyle(
+                                          fontFamily: CupertinoTheme.of(context)
+                                              .textTheme
+                                              .textStyle
+                                              .fontFamily
+                                        ),
+                                      ),
+                                      Text('Firestore count: $fsCount',
+                                        style: TextStyle(
+                                            fontFamily: CupertinoTheme.of(context)
+                                                .textTheme
+                                                .textStyle
+                                                .fontFamily
+                                        ),
+                                      )
                                     ],
                                   ),
                                 ),
@@ -121,7 +156,14 @@ class _TypesenseConfigState extends State<TypesenseConfig> {
                                     onPressed: () {
                                       Navigator.pop(context);
                                     },
-                                    child: const Text('Close'),
+                                    child: Text('Close',
+                                      style: TextStyle(
+                                          fontFamily: CupertinoTheme.of(context)
+                                              .textTheme
+                                              .textStyle
+                                              .fontFamily
+                                      ),
+                                    ),
                                   )
                                 ],
                               ),
@@ -132,6 +174,19 @@ class _TypesenseConfigState extends State<TypesenseConfig> {
                               child: Icon(null, size: 18, color: CupertinoColors.secondaryLabel)
                           )
                       ),
+                      // only to update schema
+                      // CupertinoButton(
+                      //     padding: EdgeInsets.zero,
+                      //     onPressed: () {
+                      //       collection();
+                      //       showConsoleDialog(context);
+                      //     },
+                      //     child: const CupertinoFormRow(
+                      //         padding: const EdgeInsets.fromLTRB(20, 10, 14, 10),
+                      //         prefix: Text('Update collection schema', style: TextStyle(color: CupertinoColors.link)),
+                      //         child: Icon(CupertinoIcons.device_laptop, color: CupertinoColors.link)
+                      //     )
+                      // ),
                       CupertinoButton(
                           padding: EdgeInsets.zero,
                           onPressed: () {
@@ -152,10 +207,11 @@ class _TypesenseConfigState extends State<TypesenseConfig> {
     );
   }
 
-  // Future<void> collection() async {
-  //   await Search.adminClient.collection('search_listings').delete();
-  //   await Search.adminClient.collections.create(Search.listingSchema);
-  // }
+  Future<void> collection() async {
+    await Search.adminClient.collection('search_listings').delete();
+    await Search.adminClient.collections.create(Search.listingSchema);
+    await Search.adminClient.collection('search_listings').retrieve().then((res) => print(res));
+  }
 
   Future<void> retrieveKeys() async {
     await Search.adminClient.keys.retrieve().then((res) => print(res));
@@ -169,14 +225,36 @@ class _TypesenseConfigState extends State<TypesenseConfig> {
     showCupertinoModalPopup<void>(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
-        title: const Text('Use with console'),
-        content: const Text('Check Flutter console for details.'),
+        title: Text(
+          'Use with console',
+          style: TextStyle(
+              fontFamily: CupertinoTheme.of(context)
+                  .textTheme
+                  .textStyle
+                  .fontFamily
+          )
+        ),
+        content: Text('Check Flutter console for details.',
+          style: TextStyle(
+            fontFamily: CupertinoTheme.of(context)
+                .textTheme
+                .textStyle
+                .fontFamily
+          ),
+        ),
         actions: <CupertinoDialogAction>[
           CupertinoDialogAction(
             onPressed: () {
               Navigator.pop(context);
             },
-            child: const Text('Close'),
+            child: Text('Close',
+              style: TextStyle(
+                  fontFamily: CupertinoTheme.of(context)
+                      .textTheme
+                      .textStyle
+                      .fontFamily
+              ),
+            ),
           )
         ],
       ),
