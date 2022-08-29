@@ -7,7 +7,7 @@
 	<key>REVERSED_CLIENT_ID</key>
 	<string>com.googleusercontent.apps.159254472357-p6nht31m3qupufn7r5u0vhnj803op44f</string>
 	<key>API_KEY</key>
-	<string>AIzaSyCAFSLswLkWCd5JwDAmQC86yYg5vMGt0q0</string>
+	<string> API_KEY here - get from https://console.cloud.google.com/apis/credentials/key/d7e63ff2-adb9-444f-8e29-9333043fd8ea?project=dropshare-b6a08  </string>
 	<key>GCM_SENDER_ID</key>
 	<string>159254472357</string>
 	<key>PLIST_VERSION</key>
